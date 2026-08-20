@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Jhon Steven Alvarez Ruiz">
+  <defs>
+    <linearGradient id="brasa" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#D4402C"/>
+      <stop offset="0.55" stop-color="#E8A44C"/>
+      <stop offset="1" stop-color="#FFCE8A"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="9" fill="#0A0806"/>
+  <rect x="0.5" y="0.5" width="63" height="63" rx="8.5" fill="none" stroke="#E8A44C" stroke-opacity="0.28"/>
+  <!-- Horizonte: la misma imagen que gobierna el sitio, reducida a una marca. -->
+  <path d="M6 44 H58" stroke="url(#brasa)" stroke-width="1.2" stroke-opacity="0.75"/>
+  <text x="32" y="39" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="700"
+        letter-spacing="-1.6" fill="#FCF8F0">JA</text>
+  <circle cx="32" cy="52" r="2" fill="#3FBF87"/>
+</svg>

@@ -1,0 +1,14 @@
+{
+  "name": "sitio-jhon-steven-alvarez-ruiz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sitio personal de Jhon Steven Alvarez Ruiz. Estático, generado, sin dependencias.",
+  "type": "module",
+  "scripts": {
+    "build": "node construir.js",
+    "test": "node --test pruebas/*.test.mjs",
+    "servir": "node construir.js && node --run servir:solo",
+    "servir:solo": "python3 -m http.server 8099 --directory publico"
+  },
+  "engines": { "node": ">=20" }
+}
