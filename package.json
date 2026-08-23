@@ -7,8 +7,11 @@
   "scripts": {
     "build": "node construir.js",
     "test": "node --test pruebas/*.test.mjs",
+    "sync": "npm run sync:github && npm run sync:activity",
+    "sync:github": "node herramientas/sincronizar-github.js",
+    "sync:activity": "node herramientas/sincronizar-actividad.js",
     "servir": "node construir.js && node --run servir:solo",
     "servir:solo": "python3 -m http.server 8099 --directory publico"
   },
-  "engines": { "node": ">=20" }
+  "engines": { "node": "24.x" }
 }

@@ -1,0 +1,10 @@
+[Unit]
+Description=Publicar actividad agregada de Orquesta IA en el sitio
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Documentos/Repos/sitio
+ExecStart=/usr/bin/bash %h/Documentos/Repos/sitio/herramientas/publicar-actividad.sh
+Nice=10

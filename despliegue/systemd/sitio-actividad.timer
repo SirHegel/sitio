@@ -1,0 +1,11 @@
+[Unit]
+Description=Actualizar cada hora la actividad pública de Orquesta IA
+
+[Timer]
+OnCalendar=*-*-* *:42:00
+Persistent=true
+RandomizedDelaySec=4m
+Unit=sitio-actividad.service
+
+[Install]
+WantedBy=timers.target

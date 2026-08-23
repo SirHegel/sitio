@@ -1,112 +1,147 @@
-/* Pruebas del sitio. Se ejecutan con:  node --test pruebas/
-   Cubren lo que se puede romper en silencio: la transcripción de Bach, la
-   presencia del nombre en cada título, y que el sitemap no prometa páginas
-   que no existen. */
+/* Pruebas integrales del generador estático y de sus datos públicos. */
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, existsSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+} from "node:fs";
+import { fileURLToPath } from "node:url";
 
-import { aFrecuencia, VOCES, PATRON } from "../activos/musica.js";
-import { PERSONA, PROYECTOS } from "../datos.js";
+import {
+  ACTIVIDAD_IA,
+  PERSONA,
+  PROYECTOS,
+  REPOSITORIOS_GITHUB,
+} from "../datos.js";
+import { cargarEscritos } from "../escritos.js";
 
-/* ------------------------------------------------------------ la música */
+const raiz = fileURLToPath(new URL("..", import.meta.url));
+const construido = fileURLToPath(new URL("../publico/", import.meta.url));
+const musica = fileURLToPath(new URL("../activos/beethoven-quinta-sinfonia.mp3", import.meta.url));
 
-test("la nota de referencia cae donde debe", () => {
-  assert.equal(Math.round(aFrecuencia("A4")), 440);
-  assert.equal(Math.round(aFrecuencia("C4") * 100) / 100, 261.63);
-  assert.equal(Math.round(aFrecuencia("C3") * 100) / 100, 130.81);
+execFileSync(process.execPath, ["construir.js"], { cwd: raiz });
+
+const sitemap = readFileSync(`${construido}sitemap.xml`, "utf8");
+const rutasPublicas = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)]
+  .map((coincidencia) => new URL(coincidencia[1]).pathname);
+const archivoRuta = (ruta) => `${construido}${ruta.slice(1)}index.html`;
+
+test("la Quinta de Beethoven es un archivo MP3 real e íntegro", () => {
+  assert.ok(existsSync(musica), "falta la grabación local");
+  assert.ok(statSync(musica).size > 30 * 1024 * 1024, "el archivo no parece contener la sinfonía completa");
+  const bytes = readFileSync(musica);
+  assert.ok(bytes.subarray(0, 3).equals(Buffer.from("ID3")) || bytes[0] === 0xff, "cabecera MP3 inválida");
+  assert.equal(
+    createHash("sha256").update(bytes).digest("hex"),
+    "564507b35cb7d3e7c7f762d00c00f7ea09f487f674bd48fd4d274e444b3066a6",
+  );
 });
 
-test("las alteraciones suben y bajan un semitono", () => {
-  assert.equal(Math.round(aFrecuencia("F#3") * 100) / 100, 185.00);
-  assert.equal(aFrecuencia("Bb2").toFixed(4), aFrecuencia("A#2").toFixed(4));
-});
-
-test("el preludio tiene 35 compases de cinco voces", () => {
-  assert.equal(VOCES.length, 35);
-  for (const [i, compas] of VOCES.entries()) {
-    assert.equal(compas.length, 5, `el compás ${i + 1} no tiene cinco voces`);
+test("el reproductor usa solo el archivo y no sintetiza una partitura", () => {
+  const fuente = readFileSync(`${raiz}/activos/musica.js`, "utf8");
+  assert.match(fuente, /beethoven-quinta-sinfonia\.mp3/);
+  for (const resto of ["AudioContext", "createOscillator", "COMPASES", "VOCES", "aFrecuencia"]) {
+    assert.ok(!fuente.includes(resto), `quedó código musical antiguo: ${resto}`);
   }
 });
 
-test("las voces de cada compás van de grave a agudo", () => {
-  for (const [i, compas] of VOCES.entries()) {
-    for (let v = 1; v < compas.length; v++) {
-      assert.ok(compas[v] > compas[v - 1], `compás ${i + 1}: la voz ${v + 1} no es más aguda que la anterior`);
-    }
-  }
+test("el sitemap enumera rutas únicas que existen", () => {
+  assert.ok(rutasPublicas.length >= 30, "el catálogo perdió páginas");
+  assert.equal(new Set(rutasPublicas).size, rutasPublicas.length, "hay rutas duplicadas");
+  assert.ok(!rutasPublicas.includes("/admin/"), "el panel privado no debe indexarse");
+  for (const ruta of rutasPublicas) assert.ok(existsSync(archivoRuta(ruta)), `sitemap promete ${ruta}`);
 });
 
-test("empieza y termina en Do mayor", () => {
-  const primero = VOCES[0].map((f) => Math.round(f * 100) / 100);
-  assert.deepEqual(primero, [130.81, 164.81, 196.00, 261.63, 329.63]);  // Do3 Mi3 Sol3 Do4 Mi4
-  const ultimo = VOCES[34].map((f) => Math.round(f * 100) / 100);
-  assert.deepEqual(ultimo, [65.41, 130.81, 164.81, 196.00, 261.63]);    // Do2 Do3 Mi3 Sol3 Do4
-});
-
-test("la figura arpegiada cubre las cinco voces en ocho semicorcheas", () => {
-  assert.equal(PATRON.length, 8);
-  assert.deepEqual([...new Set(PATRON)].sort(), [0, 1, 2, 3, 4]);
-});
-
-/* -------------------------------------------------------------- el sitio */
-
-const construido = (() => {
-  execFileSync("node", ["construir.js"], { cwd: new URL("..", import.meta.url).pathname });
-  return new URL("../publico/", import.meta.url).pathname;
-})();
-
-const rutas = ["/", "/academico/", "/proyectos/", "/trayectoria/",
-  ...PROYECTOS.map((p) => `/proyectos/${p.slug}/`)];
-
-test("cada ruta se escribe en disco", () => {
-  for (const r of rutas) {
-    assert.ok(existsSync(construido + r.slice(1) + "index.html"), `falta ${r}`);
-  }
-});
-
-test("el nombre completo está en el título de todas las páginas", () => {
-  // Es la razón de ser del sitio: si el nombre no está en el <title>, la
-  // página no compite por la búsqueda del nombre.
-  for (const r of rutas) {
-    const html = readFileSync(construido + r.slice(1) + "index.html", "utf8");
-    const titulo = html.match(/<title>([\s\S]*?)<\/title>/)[1];
-    assert.ok(titulo.includes(PERSONA.nombre), `${r} → «${titulo}»`);
-  }
-});
-
-test("cada página declara su canónico y no se duplica", () => {
-  const vistos = new Set();
-  for (const r of rutas) {
-    const html = readFileSync(construido + r.slice(1) + "index.html", "utf8");
-    const canon = html.match(/<link rel="canonical" href="([^"]+)"/)[1];
-    assert.ok(canon.endsWith(r), `${r} apunta a ${canon}`);
-    assert.ok(!vistos.has(canon), `canónico repetido: ${canon}`);
-    vistos.add(canon);
-  }
-});
-
-test("el JSON-LD es válido y siempre incluye la Persona", () => {
-  for (const r of rutas) {
-    const html = readFileSync(construido + r.slice(1) + "index.html", "utf8");
-    const bruto = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1];
+test("todas las páginas tienen título, canónico único y marcado de persona", () => {
+  const canonicos = new Set();
+  for (const ruta of rutasPublicas) {
+    const html = readFileSync(archivoRuta(ruta), "utf8");
+    const titulo = html.match(/<title>([\s\S]*?)<\/title>/)?.[1] || "";
+    const canonico = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
+    const bruto = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
+    assert.ok(titulo.includes(PERSONA.nombre), `${ruta} no incluye el nombre en su título`);
+    assert.ok(canonico?.endsWith(ruta), `${ruta} apunta a ${canonico}`);
+    assert.ok(!canonicos.has(canonico), `canónico repetido: ${canonico}`);
+    canonicos.add(canonico);
     const ld = JSON.parse(bruto);
-    const tipos = ld["@graph"].map((n) => n["@type"]);
-    assert.ok(tipos.includes("Person"), `${r} no declara Person`);
-    const persona = ld["@graph"].find((n) => n["@type"] === "Person");
-    assert.equal(persona.name, PERSONA.nombre);
-    assert.ok(persona.sameAs.length >= 3, "sameAs debe enlazar los perfiles");
+    const persona = ld["@graph"].find((nodo) => nodo["@type"] === "Person");
+    assert.equal(persona?.name, PERSONA.nombre, `${ruta} no declara la persona canónica`);
+    assert.ok(persona.sameAs.length >= 3);
   }
 });
 
-test("el sitemap solo promete páginas que existen", () => {
-  const mapa = readFileSync(construido + "sitemap.xml", "utf8");
-  const locs = [...mapa.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  assert.equal(locs.length, rutas.length);
-  for (const loc of locs) {
-    const ruta = new URL(loc).pathname;
-    assert.ok(existsSync(construido + ruta.slice(1) + "index.html"), `sitemap promete ${ruta}`);
+test("cada repositorio público de GitHub tiene un módulo de proyecto", () => {
+  assert.equal(REPOSITORIOS_GITHUB.total, REPOSITORIOS_GITHUB.repositorios.length);
+  assert.ok(REPOSITORIOS_GITHUB.total >= 20);
+  const directorio = `${construido}proyectos/`;
+  const entradas = readdirSync(directorio, { withFileTypes: true }).filter((entrada) => entrada.isDirectory());
+  const html = entradas
+    .map((entrada) => readFileSync(`${directorio}${entrada.name}/index.html`, "utf8"))
+    .join("\n");
+  for (const repo of REPOSITORIOS_GITHUB.repositorios) {
+    assert.match(repo.url, /^https:\/\/github\.com\/SirHegel\//);
+    assert.ok(html.includes(repo.url), `falta el repositorio ${repo.nombre}`);
+  }
+  assert.ok(entradas.length >= PROYECTOS.length);
+});
+
+test("el blog genera artículos, temas y feed", async () => {
+  const escritos = await cargarEscritos(`${raiz}/escritos`);
+  assert.ok(escritos.length >= 3);
+  for (const escrito of escritos) {
+    assert.ok(existsSync(archivoRuta(`/blog/${escrito.slug}/`)), `falta ${escrito.slug}`);
+    const html = readFileSync(archivoRuta(`/blog/${escrito.slug}/`), "utf8");
+    assert.ok(html.includes(escrito.titulo));
+  }
+  const feed = readFileSync(`${construido}feed.xml`, "utf8");
+  assert.equal([...feed.matchAll(/<item>/g)].length, escritos.length);
+  for (const tema of ["derecho", "economia", "pensamientos", "analisis"]) {
+    assert.ok(existsSync(archivoRuta(`/blog/tema/${tema}/`)), `falta el tema ${tema}`);
+  }
+});
+
+test("la actividad publicada cuadra y no expone el ledger", () => {
+  const totalProveedor = ACTIVIDAD_IA.porProveedor.reduce((suma, fila) => suma + fila.tokens, 0);
+  const llamadasProveedor = ACTIVIDAD_IA.porProveedor.reduce((suma, fila) => suma + fila.llamadas, 0);
+  assert.equal(totalProveedor, ACTIVIDAD_IA.totales.tokens);
+  assert.equal(llamadasProveedor, ACTIVIDAD_IA.totales.llamadas);
+  const claves = [];
+  const recorrer = (valor) => {
+    if (!valor || typeof valor !== "object") return;
+    for (const [clave, hijo] of Object.entries(valor)) {
+      claves.push(clave.toLowerCase());
+      recorrer(hijo);
+    }
+  };
+  recorrer(ACTIVIDAD_IA);
+  for (const privado of ["prompt", "session", "session_id", "account", "ruta", "execution_id"]) {
+    assert.ok(!claves.includes(privado), `el agregado contiene el campo privado ${privado}`);
+  }
+  assert.ok(!JSON.stringify(ACTIVIDAD_IA).includes("/home/"));
+  const html = readFileSync(archivoRuta("/actividad/"), "utf8");
+  assert.ok(html.includes(ACTIVIDAD_IA.totales.tokens.toLocaleString("es-CO")));
+});
+
+test("el panel es privado, no indexable y no se autoaudita", () => {
+  const html = readFileSync(archivoRuta("/admin/"), "utf8");
+  assert.match(html, /name="robots" content="noindex, nofollow, noarchive"/);
+  assert.match(html, /src="\/activos\/admin\.js"/);
+  assert.ok(!html.includes("/activos/analitica.js"));
+  assert.ok(!html.includes("/_vercel/insights/script.js"));
+  assert.match(html, /data-ruta="\/admin\/"/);
+});
+
+test("la analítica pública es agregada y explica sus límites", () => {
+  const inicio = readFileSync(archivoRuta("/"), "utf8");
+  assert.match(inicio, /src="\/_vercel\/insights\/script\.js"/);
+  assert.match(inicio, /src="\/activos\/analitica\.js"/);
+  const privacidad = readFileSync(archivoRuta("/privacidad/"), "utf8");
+  for (const texto of ["ipapi.is", "90 días", "no la convierte en hash", "VPN residencial"]) {
+    assert.ok(privacidad.includes(texto), `la política no explica: ${texto}`);
   }
 });

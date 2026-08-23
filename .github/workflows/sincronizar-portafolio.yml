@@ -1,0 +1,53 @@
+name: Sincronizar portafolio con GitHub
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sincronizar-portafolio
+  cancel-in-progress: false
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Obtener el sitio
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+
+      - name: Consultar repositorios publicos
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node herramientas/sincronizar-github.js
+
+      - name: Verificar el snapshot
+        run: node --check datos-github.js
+
+      - name: Publicar solo cuando haya cambios
+        shell: bash
+        run: |
+          set -euo pipefail
+          cambios="$(git status --porcelain=v1 -- datos-github.js)"
+          if [[ -z "$cambios" ]]; then
+            echo "GitHub no cambio; no hay nada que publicar."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- datos-github.js
+          git commit -m "Sincronizar proyectos publicos de GitHub"
+          git push

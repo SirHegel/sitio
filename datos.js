@@ -1,6 +1,11 @@
 // Contenido del sitio. Fuente única: nada se escribe dos veces.
 // Los datos personales están contrastados con LinkedIn, certificados y el CV.
 
+import { ACTIVIDAD_IA } from "./datos-actividad.js";
+import { REPOSITORIOS_GITHUB } from "./datos-github.js";
+
+export { ACTIVIDAD_IA, REPOSITORIOS_GITHUB };
+
 export const SITIO = "https://jhonstevenalvarezruiz.vercel.app";
 
 // Clave de IndexNow: permite avisar a Bing y Yandex de cada publicación sin
@@ -64,9 +69,25 @@ export const PRESENTACION = [
   `No son tres campos. Son un solo problema abordado con tres instrumentos.`,
 ];
 
+export const ACTUALIDAD = {
+  empresa: "Polidinámica",
+  titulo: "Infraestructura propia para cualificar leads",
+  estado: "En desarrollo",
+  cuerpo: `Actualmente diseño para Polidinámica un bot conectado a una base de datos propia que
+    captura, organiza y cualifica leads. El objetivo no es sumar otro formulario: es construir
+    una memoria comercial verificable que permita priorizar oportunidades, explicar por qué un
+    prospecto merece atención y mejorar con cada interacción. Es un proyecto ambicioso porque
+    une conversación, datos y criterio comercial en una sola infraestructura auditable.`,
+};
+
+const corteActividad = new Intl.DateTimeFormat("es-CO", {
+  dateStyle: "medium",
+  timeZone: "America/Bogota",
+}).format(new Date(ACTIVIDAD_IA.actualizadoEn));
+
 export const METRICAS = [
-  { valor: 8352635, sufijo: "", etiqueta: "tokens enrutados", nota: "medición real sobre 104 ejecuciones" },
-  { valor: 5, sufijo: "", etiqueta: "repositorios en producción", nota: "auditados, con CI bloqueante" },
+  { valor: ACTIVIDAD_IA.totales.tokens, sufijo: "", etiqueta: "tokens contabilizados", nota: `${ACTIVIDAD_IA.totales.llamadas} llamadas · corte ${corteActividad}`, enlace: "/actividad/" },
+  { valor: REPOSITORIOS_GITHUB.total, sufijo: "", etiqueta: "repositorios públicos", nota: "sincronizados automáticamente desde GitHub", enlace: "/proyectos/#github" },
   { valor: 61, sufijo: "%", etiqueta: "líneas de prueba por línea de código", nota: "en el repositorio con mayor disciplina" },
   { valor: 90, sufijo: "%", etiqueta: "reducción de tiempo administrativo", nota: "automatización financiera en Designter" },
 ];
@@ -81,7 +102,7 @@ export const EXPERIENCIA = [
     puntos: [
       "Lideré la reestructuración integral de la plataforma digital de la compañía, alineando arquitectura de información y experiencia de usuario con la estrategia comercial.",
       "Desarrollé desde cero un panel administrativo con sistema de login seguro, que permitió gestión autónoma de contenidos sin intervención técnica externa.",
-      "Integré un bot conversacional de ventas para automatizar la atención, captar prospectos y acortar el embudo de conversión.",
+      "Actualmente desarrollo un bot conectado a una base de datos propia para capturar, cualificar y priorizar leads con trazabilidad de cada decisión comercial.",
       "Ejecuté un estudio SEO intensivo y optimicé el rendimiento del sitio para posicionamiento orgánico y tiempos de carga.",
     ],
   },
@@ -221,6 +242,27 @@ export const IDIOMAS = "Español (nativo) · Inglés (intermedio)";
 
 export const PROYECTOS = [
   {
+    slug: "polidinamica-inteligencia-leads",
+    nombre: "Inteligencia de leads para Polidinámica",
+    resumen: "Bot en desarrollo con base de datos propia para capturar, cualificar y priorizar leads mediante criterios comerciales trazables.",
+    repo: "",
+    demo: "",
+    estado: "En desarrollo",
+    visibilidad: "Proyecto privado",
+    lenguajes: ["Arquitectura de datos", "Automatización", "IA"],
+    cifras: "Bot + base de datos propia · cualificación auditable",
+    porQue: `Un lead no debería reducirse a un formulario ni a una intuición aislada. Este sistema
+      busca conservar el contexto de cada conversación, convertir señales dispersas en criterios
+      comparables y explicar por qué una oportunidad recibe determinada prioridad. Existe para que
+      la operación comercial de Polidinámica aprenda de su propia historia sin depender de una caja
+      negra ni perder la responsabilidad humana sobre la decisión.`,
+    detalles: [
+      ["Memoria comercial propia", "La información no queda repartida entre conversaciones y hojas aisladas: se organiza en una base diseñada para el proceso real de Polidinámica."],
+      ["Cualificación explicable", "Cada prioridad debe poder rastrearse hasta señales y criterios concretos; una puntuación sin explicación no constituye conocimiento comercial."],
+      ["Proyecto ambicioso y vivo", "El bot, el modelo de datos y las reglas de cualificación evolucionan juntos a medida que la operación produce evidencia nueva."],
+    ],
+  },
+  {
     slug: "orquesta-ia",
     nombre: "Orquesta IA",
     resumen: "Orquestador local multicuenta que reparte trabajo entre 8 cuentas de IA de 4 proveedores, con contabilidad de cuotas y traspaso de contexto ante fallo.",
@@ -236,7 +278,7 @@ export const PROYECTOS = [
       ["Enrutado por tipo de tarea", "Cada tipo de trabajo tiene un perfil de modelo asignado, no un modelo fijo. El perfil se resuelve en tiempo de ejecución contra la cuota disponible."],
       ["Contabilidad por ventana", "El gasto se imputa a la ventana de cuota vigente de cada cuenta, no al total del día. Sin eso, la detección de límite llega tarde."],
       ["Auditoría cruzada", "Un modelo revisa la salida de otro antes de darla por buena. La verificación no es opcional en el camino feliz."],
-      ["Medición real", "8.352.635 tokens enrutados en 104 ejecuciones, 82% completadas. La cifra sale del registro, no de una estimación."],
+      ["Medición real", `${ACTIVIDAD_IA.totales.tokens.toLocaleString("es-CO")} tokens enrutados en ${ACTIVIDAD_IA.totales.llamadas.toLocaleString("es-CO")} ejecuciones, con ${ACTIVIDAD_IA.totales.tasaExito.toLocaleString("es-CO")}% completadas. La cifra se actualiza desde el registro agregado, no desde una estimación.`],
     ],
   },
   {

@@ -17,6 +17,7 @@ export const MENU = [
   { ruta: "/", texto: "Inicio" },
   { ruta: "/academico/", texto: "Académico" },
   { ruta: "/proyectos/", texto: "Proyectos" },
+  { ruta: "/blog/", texto: "Blog" },
   { ruta: "/trayectoria/", texto: "Trayectoria" },
 ];
 
@@ -80,13 +81,26 @@ export function migas(tramos) {
 
 /* --------------------------------------------------------------- la página */
 
-export function pagina({ ruta, titulo, descripcion, grafo = [], cuerpo, puerta = false }) {
+export function pagina({
+  ruta,
+  titulo,
+  descripcion,
+  grafo = [],
+  cuerpo,
+  puerta = false,
+  noIndex = false,
+  analitica = true,
+  scripts = [],
+  claseCuerpo = "",
+}) {
   const url = SITIO + ruta;
   const ld = { "@context": "https://schema.org", "@graph": grafo };
 
   const enlaces = MENU.map(
-    (m) =>
-      `<a href="${m.ruta}"${m.ruta === ruta ? ' class="activo" aria-current="page"' : ""}>${esc(m.texto)}</a>`
+    (m) => {
+      const activo = m.ruta === "/" ? ruta === "/" : ruta.startsWith(m.ruta);
+      return `<a href="${m.ruta}"${activo ? ' class="activo" aria-current="page"' : ""}>${esc(m.texto)}</a>`;
+    }
   ).join("\n          ");
 
   return `<!doctype html>
@@ -100,7 +114,7 @@ export function pagina({ ruta, titulo, descripcion, grafo = [], cuerpo, puerta =
 <link rel="canonical" href="${url}">
 
 <meta name="author" content="${esc(PERSONA.nombre)}">
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="robots" content="${noIndex ? "noindex, nofollow, noarchive" : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"}">
 <meta name="google-site-verification" content="${GOOGLE_ETIQUETA}">
 <meta name="theme-color" content="#0A0806">
 <meta name="color-scheme" content="dark">
@@ -124,14 +138,14 @@ ${ruta === "/" ? `<meta property="profile:first_name" content="Jhon Steven">
 <meta name="twitter:image" content="${SITIO}/activos/portada.png">
 
 <link rel="icon" href="/activos/icono.svg" type="image/svg+xml">
-<link rel="alternate" type="application/rss+xml" title="${esc(PERSONA.nombre)}" href="${SITIO}/sitemap.xml">
+<link rel="alternate" type="application/rss+xml" title="Escritos de ${esc(PERSONA.nombre)}" href="${SITIO}/feed.xml">
 <link rel="stylesheet" href="/activos/estilos.css">
 
 <script type="application/ld+json">
 ${json(ld)}
 </script>
 </head>
-<body>
+<body${claseCuerpo ? ` class="${esc(claseCuerpo)}"` : ""} data-ruta="${esc(ruta)}">
 
 <a class="saltar" href="#principal">Saltar al contenido</a>
 
@@ -169,6 +183,8 @@ ${cuerpo}
       <div>
         <h4>Sitio</h4>
         ${MENU.map((m) => `<a href="${m.ruta}">${esc(m.texto)}</a>`).join("\n        ")}
+        <a href="/privacidad/">Privacidad</a>
+        <a href="/admin/" rel="nofollow" data-navegacion="normal">Administrar</a>
       </div>
       <div>
         <h4>Contacto</h4>
@@ -177,7 +193,7 @@ ${cuerpo}
       </div>
       <div>
         <h4>Nota</h4>
-        <p class="pie-nota medida-corta">Sitio estático, sin dependencias externas. La música es Bach sintetizado en el navegador, no un archivo.</p>
+        <p class="pie-nota medida-corta">Beethoven, Quinta Sinfonía. Grabación de la Skidmore College Orchestra liberada al dominio público.</p>
       </div>
     </div>
     <p class="firma">© ${new Date().getFullYear()} ${esc(PERSONA.nombre)} · ${esc(PERSONA.ciudad)}, ${esc(PERSONA.pais)}</p>
@@ -185,12 +201,17 @@ ${cuerpo}
 
 </div>
 
-<button id="mando" type="button" aria-pressed="false" aria-label="Reproducir o silenciar la música">
+<button id="mando" type="button" aria-pressed="false"
+        data-titulo-musica="Beethoven · Sinfonía n.º 5"
+        aria-label="Reproducir o silenciar la Quinta Sinfonía de Beethoven">
   <span class="onda" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
   <span class="obra">Música</span>
 </button>
 
 <script type="module" src="/activos/animacion.js"></script>
+${analitica ? `<script defer src="/_vercel/insights/script.js"></script>
+<script type="module" src="/activos/analitica.js"></script>` : ""}
+${scripts.map((src) => `<script type="module" src="${esc(src)}"></script>`).join("\n")}
 </body>
 </html>
 `;
@@ -211,7 +232,7 @@ function puertaHTML() {
       </button>
     </div>
     <p class="pie-nota sep-s">
-      Bach, Preludio n.º 1 en Do mayor, BWV 846 — sintetizado en el navegador
+      Beethoven, Sinfonía n.º 5 en do menor, op. 67 — Skidmore College Orchestra
     </p>
   </div>
 </div>`;
