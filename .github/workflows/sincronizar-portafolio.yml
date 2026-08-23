@@ -36,6 +36,11 @@ jobs:
       - name: Verificar el snapshot
         run: node --check datos-github.js
 
+      - name: Probar y construir el sitio actualizado
+        run: |
+          npm test
+          npm run build
+
       - name: Publicar solo cuando haya cambios
         shell: bash
         run: |
