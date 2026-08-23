@@ -7,7 +7,8 @@
  * ejecuta en GitHub Actions se usa el token efimero del propio workflow.
  */
 
-import { rename, unlink, writeFile } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
+import { readFile, rename, unlink, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -15,8 +16,10 @@ const PROPIETARIO = "SirHegel";
 const API = "https://api.github.com";
 const VERSION_API = "2022-11-28";
 const MAXIMO_EXTRACTO = 900;
-const DESTINO = join(dirname(dirname(fileURLToPath(import.meta.url))), "datos-github.js");
+const RAIZ = dirname(dirname(fileURLToPath(import.meta.url)));
+const DESTINO = join(RAIZ, "datos-github.js");
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
+const COMMIT_AUTOMATICO = "Sincronizar proyectos publicos de GitHub";
 
 const CABECERAS = {
   Accept: "application/vnd.github+json",
@@ -27,6 +30,46 @@ const CABECERAS = {
 
 function compararTexto(a, b) {
   return a < b ? -1 : a > b ? 1 : 0;
+}
+
+async function snapshotAnterior() {
+  try {
+    const fuente = await readFile(DESTINO, "utf8");
+    const marca = "export const REPOSITORIOS_GITHUB = ";
+    const inicio = fuente.indexOf(marca);
+    if (inicio < 0) return null;
+    const json = fuente.slice(inicio + marca.length).trim().replace(/;\s*$/, "");
+    const datos = JSON.parse(json);
+    return datos && Array.isArray(datos.repositorios) ? datos : null;
+  } catch {
+    return null;
+  }
+}
+
+function ultimoCommitEsSincronizacion() {
+  try {
+    return execFileSync("git", ["log", "-1", "--pretty=%s"], {
+      cwd: RAIZ,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim() === COMMIT_AUTOMATICO;
+  } catch {
+    return false;
+  }
+}
+
+function estabilizarRepositorioDelSitio(repositorios, anterior) {
+  // El commit que guarda este snapshot también cambia `pushed_at` y los bytes
+  // del propio repositorio `sitio`. Sin esta excepción, cada ejecución crearía
+  // otro commit aunque ningún proyecto real hubiese cambiado. Tras un commit
+  // manual sí se refresca una vez; tras el commit automático se conserva la
+  // ficha anterior y el catálogo vuelve a ser determinista.
+  if (!anterior || !ultimoCommitEsSincronizacion()) return false;
+  const previo = anterior.repositorios.find((repo) => repo?.nombre === "sitio");
+  const indice = repositorios.findIndex((repo) => repo?.nombre === "sitio");
+  if (!previo || indice < 0) return false;
+  repositorios[indice] = previo;
+  return true;
 }
 
 function mensajeSeguro(valor) {
@@ -325,6 +368,7 @@ async function principal() {
     throw new Error(`Se requiere Node.js 20 o posterior; version detectada: ${process.versions.node}.`);
   }
 
+  const anterior = await snapshotAnterior();
   const repositoriosBase = await listarRepositorios();
   const repositorios = [];
 
@@ -333,6 +377,8 @@ async function principal() {
   for (const repo of repositoriosBase) {
     repositorios.push(await enriquecerRepositorio(repo));
   }
+
+  estabilizarRepositorioDelSitio(repositorios, anterior);
 
   await guardarAtomico(serializar(repositorios));
   console.log(`Snapshot actualizado: ${repositorios.length} repositorios publicos propios de ${PROPIETARIO}.`);
