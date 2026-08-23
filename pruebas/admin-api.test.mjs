@@ -123,6 +123,7 @@ test("la visita descarta consultas, credenciales y detalles de User-Agent", () =
   assert.deepEqual(validateVisitInput({ path: "/blog/?correo=privado", referrer: "https://buscador.test/ruta?q=secreto" }, "https://ejemplo.test"), {
     path: "/blog/",
     referrer: "buscador.test",
+    campana: "",
   });
   assert.throws(() => validateVisitInput({ path: "/", ip: "192.0.2.1" }), { code: "campo_no_permitido" });
   assert.throws(() => validateVisitInput({ path: "/admin/", referrer: "" }), { code: "ruta_privada" });
@@ -192,4 +193,20 @@ test("los eventos agregados nunca conservan IP, hash ni User-Agent bruto", () =>
   assert.ok(!serialized.includes("192.0.2.55"));
   assert.ok(!serialized.includes("f".repeat(64)));
   assert.ok(!serialized.includes("detalle bruto"));
+});
+
+test("la etiqueta de canal se conserva y se limpia, y nunca admite datos personales", () => {
+  // Un rótulo normal sobrevive y la ruta sigue quedando sin consulta.
+  assert.deepEqual(validateVisitInput({ path: "/blog/?via=linkedin", referrer: "" }, "https://ejemplo.test"), {
+    path: "/blog/",
+    referrer: "Directo",
+    campana: "linkedin",
+  });
+
+  // Se recorta a minúsculas y a un alfabeto corto: si alguien intenta
+  // colar un correo o un nombre por el enlace, no queda nada utilizable
+  // para identificar a una persona.
+  assert.equal(validateVisitInput({ path: "/blog/?via=Juan.Perez@gmail.com", referrer: "" }, "https://ejemplo.test").campana, "juanperezgmailcom");
+  assert.equal(validateVisitInput({ path: "/blog/?via=" + "x".repeat(80), referrer: "" }, "https://ejemplo.test").campana.length, 32);
+  assert.equal(validateVisitInput({ path: "/blog/", referrer: "" }, "https://ejemplo.test").campana, "");
 });

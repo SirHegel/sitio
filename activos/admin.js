@@ -297,40 +297,65 @@ function fechaHora(valor) {
 
 function renderAuditoria(contenido, datos) {
   const resumen = datos.resumen || {};
+  /* --- Cifras de cabecera -------------------------------------------
+     Se cuentan personas aparte de robots: mezclarlos infla el total y
+     hace creer que hubo audiencia donde solo pasó un indexador. */
+  const recientes = datos.recientes || [];
+  const robots = recientes.filter((v) => v.dispositivo === "Robot").length;
+  const personas = recientes.length - robots;
   const tarjetas = elemento(
     "div",
     { class: "admin-tarjetas" },
-    elemento("article", {}, elemento("strong", { text: resumen.total || 0 }), elemento("span", { text: "Ingresos auditados" })),
-    elemento("article", {}, elemento("strong", { text: Object.keys(resumen.porPais || {}).length }), elemento("span", { text: "Países" })),
-    elemento("article", {}, elemento("strong", { text: datos.periodoDias || 0 }), elemento("span", { text: "Días con ingresos" })),
+    tarjeta(resumen.total || 0, "Ingresos auditados"),
+    tarjeta(personas, "De personas", robots ? `y ${robots} de robots` : ""),
+    tarjeta(Object.keys(resumen.porCiudad || {}).length, "Ciudades"),
+    tarjeta(datos.periodoDias || 0, "Días con registro"),
   );
+
+  /* --- Módulos ------------------------------------------------------
+     Cada bloque responde una pregunta distinta: dónde están, con qué
+     entran, qué leen, de dónde vienen y por qué enlace llegaron. */
   const dimensiones = elemento(
     "div",
     { class: "admin-dimensiones" },
-    tablaDimension("País", resumen.porPais),
     tablaDimension("Ciudad", resumen.porCiudad),
-    tablaDimension("Dispositivo", resumen.porDispositivo),
-    tablaDimension("VPN / red privada", resumen.porVpn),
+    tablaDimension("País", resumen.porPais),
+    tablaDimension("Qué leyeron", resumen.porRuta),
+    tablaDimension("De dónde vinieron", resumen.porReferente),
+    tablaDimension("Enlace compartido", resumen.porCampana),
+    tablaDimension("Equipo", resumen.porDispositivo),
+    tablaDimension("Red privada o VPN", resumen.porVpn),
   );
-  const cuerpo = elemento("tbody");
-  for (const visita of datos.recientes || []) {
-    cuerpo.append(elemento(
-      "tr",
-      {},
-      elemento("td", { text: fechaHora(visita.hora) }),
-      elemento("td", { text: `${visita.ciudad}, ${visita.pais}` }),
-      elemento("td", { text: `${visita.dispositivo} · ${visita.sistema} · ${visita.navegador}` }),
-      elemento("td", { text: visita.ruta }),
-      elemento("td", { text: visita.referente }),
-      elemento("td", { text: visita.vpn }),
+
+  /* --- Ingresos recientes -------------------------------------------
+     Antes eran seis columnas dentro de una caja con desplazamiento
+     lateral: para leer el referente había que arrastrar la barra y se
+     perdía de vista la fila. Ahora cada ingreso es una ficha con la
+     información apilada, que se lee de arriba abajo y cabe igual en un
+     monitor que en un teléfono. */
+  const lista = elemento("div", { class: "admin-ingresos" });
+  for (const visita of recientes) {
+    const etiquetas = elemento("div", { class: "admin-ingreso-etqs" });
+    if (visita.dispositivo === "Robot") etiquetas.append(elemento("span", { class: "etq robot", text: "Robot" }));
+    if (visita.vpn === "detectada") etiquetas.append(elemento("span", { class: "etq alerta", text: "VPN o proxy" }));
+    if (visita.campana && visita.campana !== "Sin etiqueta") {
+      etiquetas.append(elemento("span", { class: "etq canal", text: `via ${visita.campana}` }));
+    }
+    lista.append(elemento(
+      "article",
+      { class: "admin-ingreso" },
+      elemento("time", { class: "admin-ingreso-hora", text: fechaHora(visita.hora) }),
+      elemento("p", { class: "admin-ingreso-ruta", text: visita.ruta }),
+      elemento("p", { class: "admin-ingreso-lugar", text: `${visita.ciudad}, ${visita.pais}` }),
+      elemento("p", { class: "admin-ingreso-equipo", text: `${visita.dispositivo} · ${visita.sistema} · ${visita.navegador}` }),
+      elemento("p", { class: "admin-ingreso-ref", text: `Llegó desde: ${visita.referente}` }),
+      etiquetas,
     ));
   }
-  if (!cuerpo.children.length) cuerpo.append(elemento("tr", {}, elemento("td", { colspan: 6, text: "Aún no hay visitas registradas." })));
-  const tabla = elemento(
-    "div",
-    { class: "admin-tabla-scroll" },
-    elemento("table", {}, elemento("thead", {}, elemento("tr", {}, ...["Momento", "Ubicación", "Equipo", "Ruta", "Referente", "VPN"].map((texto) => elemento("th", { scope: "col", text: texto })))), cuerpo),
-  );
+  if (!lista.children.length) {
+    lista.append(elemento("p", { class: "admin-vacio", text: "Aún no hay visitas registradas." }));
+  }
+
   const vercel = elemento("a", {
     class: "boton",
     href: "https://vercel.com/sir-hegel/jhonstevenalvarezruiz/analytics",
@@ -338,17 +363,28 @@ function renderAuditoria(contenido, datos) {
     rel: "noopener",
     text: "Abrir analítica agregada de Vercel",
   });
+
   contenido.replaceChildren(
     elemento("section", { class: "admin-auditoria" },
-      elemento("h2", { text: "Auditoría anónima de ingresos" }),
-      elemento("p", { text: datos.nota }),
-      elemento("p", { text: "Las páginas, visitantes, rutas, países y dispositivos se contabilizan de forma agregada en Web Analytics; aquí se conserva únicamente una muestra privada del primer ingreso de cada sesión con ciudad y estimación de red." }),
-      vercel,
+      elemento("h2", { text: "Auditoría de ingresos" }),
+      elemento("p", { class: "admin-nota", text: datos.nota }),
+      elemento("p", { class: "admin-nota", text: "No se guarda ninguna dirección IP: se usa un instante para deducir ciudad y tipo de red, y se descarta. Por eso aquí se ve desde dónde y con qué entraron, nunca quién es la persona." }),
       tarjetas,
       dimensiones,
       elemento("h3", { text: "Ingresos recientes" }),
-      tabla,
+      lista,
+      vercel,
     ),
+  );
+}
+
+function tarjeta(valor, rotulo, pie = "") {
+  return elemento(
+    "article",
+    {},
+    elemento("strong", { text: String(valor) }),
+    elemento("span", { text: rotulo }),
+    ...(pie ? [elemento("em", { text: pie })] : []),
   );
 }
 
