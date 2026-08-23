@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-08-23T20:01:42.000Z",
+  "actualizadoEn": "2026-08-23T23:22:21.000Z",
   "total": 20,
   "repositorios": [
     {
@@ -667,11 +667,11 @@ export const REPOSITORIOS_GITHUB = {
       "lenguajes": [
         {
           "nombre": "JavaScript",
-          "bytes": 245202
+          "bytes": 251765
         },
         {
           "nombre": "CSS",
-          "bytes": 42239
+          "bytes": 45101
         },
         {
           "nombre": "Python",
@@ -688,8 +688,8 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-08-20T23:00:55.000Z",
-      "actualizadoEn": "2026-08-23T20:01:42.000Z",
-      "publicadoEn": "2026-08-23T20:01:02.000Z",
+      "actualizadoEn": "2026-08-23T23:22:21.000Z",
+      "publicadoEn": "2026-08-23T23:22:09.000Z",
       "extractoReadme": "Sitio de Jhon Steven Alvarez Ruiz\n\nSitio personal, blog y portafolio de Jhon Steven Alvarez Ruiz — economista,\nanalista de datos y desarrollador en Neiva, Colombia. El HTML público se genera\nsin dependencias; las funciones privadas de Vercel permiten publicar escritos y\nconsultar una auditoría anónima desde /admin/.\n\nArquitectura\n\n· Pieza · Responsabilidad ·\n\n· datos.js · Perfil, experiencia y proyectos seleccionados. ·\n· datos-github.js · Snapshot seguro de todos los repositorios públicos propios. ·\n· datos-actividad.js · Totales anónimos de tokens, llamadas, tareas y proveedores. ·\n· escritos/.md · Fuente editorial del blog. ·\n· plantilla.js · Cabecera, navegación, SEO y JSON-LD comunes. ·\n· construir.js · Blog, proyectos, actividad, feed, sitemap y HTML estático. ·\n· api/ y lib/ · Autenticación, CMS y auditoría en funciones de Vercel. ·\n· activos/animacion.js · Movimiento, audio…"
     }
   ]
