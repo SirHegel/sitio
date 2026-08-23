@@ -145,3 +145,26 @@ test("la analítica pública es agregada y explica sus límites", () => {
     assert.ok(privacidad.includes(texto), `la política no explica: ${texto}`);
   }
 });
+
+test("el revelado no depende del alto del bloque, para que un artículo largo se vea en móvil", () => {
+  const fuente = readFileSync(new URL("../activos/animacion.js", import.meta.url), "utf8");
+  const observador = fuente.slice(fuente.indexOf("vigiaRevelado = new IntersectionObserver"));
+  const umbral = /threshold:\s*([0-9.]+)/.exec(observador);
+  assert.ok(umbral, "el observador de revelado debe declarar un umbral explícito");
+
+  // Un umbral mayor que cero exige ver una FRACCIÓN del elemento. El cuerpo
+  // de un artículo largo mide del orden de 19.700 px en un móvil de 844 px
+  // de alto: con umbral 0,06 harían falta 1.180 px visibles y la condición
+  // no se cumple nunca, así que la clase `visible` no llega y el texto se
+  // queda invisible. Con umbral 0 basta un pixel y el alto deja de importar.
+  const altoArticulo = 19_675;
+  const altoPantalla = 844;
+  const exigido = Number(umbral[1]) * altoArticulo;
+  assert.ok(
+    exigido <= altoPantalla,
+    `umbral ${umbral[1]} exige ${Math.round(exigido)} px visibles y la pantalla solo tiene ${altoPantalla} px`,
+  );
+
+  // Y debe existir la red de seguridad para lo que ya está en pantalla.
+  assert.match(observador, /classList\.add\("visible"\)/);
+});

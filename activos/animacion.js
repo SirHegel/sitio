@@ -170,6 +170,19 @@ function revelado() {
     [...grupo.children].forEach((hijo, i) => hijo.style.setProperty("--i", i));
   });
 
+  /* El umbral es 0 y no una fracción del elemento. Con `threshold: 0.06`
+     se exigía que se viera el 6 % de la pieza, y eso vuelve imposible
+     revelar cualquier bloque más alto que unas dieciséis pantallas: el
+     cuerpo de un artículo largo mide ~19.700 px en un móvil, cuyo 6 % son
+     ~1.180 px, más que los ~844 px que tiene la pantalla. La condición no
+     se cumplía nunca, la clase `visible` no llegaba y el artículo entero
+     se quedaba en opacity 0.
+
+     Se veía solo en pantallas pequeñas y con textos largos, porque en un
+     monitor el mismo 6 % sí cabe en el alto disponible. Con umbral 0
+     basta con que asome un pixel, así que el tamaño del bloque deja de
+     importar. El `rootMargin` negativo conserva la intención original:
+     revelar cuando la pieza ya entró de verdad, no al rozar el borde. */
   const vigia = (vigiaRevelado = new IntersectionObserver(
     (entradas) => {
       for (const e of entradas) {
@@ -178,10 +191,18 @@ function revelado() {
         vigia.unobserve(e.target);
       }
     },
-    { rootMargin: "0px 0px -12% 0px", threshold: 0.06 }
+    { rootMargin: "0px 0px -12% 0px", threshold: 0 }
   ));
 
-  piezas.forEach((p) => vigia.observe(p));
+  piezas.forEach((p) => {
+    /* Red de seguridad: si una pieza ya ocupa la pantalla al cargar
+       —o el observador no llega a dispararse por cualquier motivo— se
+       muestra igualmente. Un texto ilegible es peor que un texto sin
+       animación. */
+    const caja = p.getBoundingClientRect();
+    if (caja.top < innerHeight && caja.bottom > 0) p.classList.add("visible");
+    else vigia.observe(p);
+  });
 }
 
 /* ------------------------------------------------------------- contadores */
