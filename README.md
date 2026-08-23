@@ -104,7 +104,7 @@ corporativa puede parecer un proxy.
 
 ## Sincronización automática
 
-`.github/workflows/sincronizar-portafolio.yml` consulta GitHub cada seis horas.
+`.github/workflows/sincronizar-portafolio.yml` consulta GitHub cada hora.
 Excluye forks y repositorios privados, sanea los README y solo crea un commit
 cuando cambia el catálogo.
 
