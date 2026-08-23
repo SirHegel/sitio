@@ -60,7 +60,8 @@ test("la sesión está firmada, expira y usa una cookie endurecida", () => {
   const req = request({ cookie: `${SESSION_COOKIE}=${session.token}` });
   assert.equal(readSession(req, env, now + 1_000)?.sub, "admin:administrador");
   assert.equal(readSession(req, env, now + SESSION_SECONDS * 1_000), null);
-  assert.equal(verifySignedToken(`${session.token.slice(0, -1)}x`, "admin:administrador", env, now), null);
+  const reemplazo = session.token.endsWith("A") ? "B" : "A";
+  assert.equal(verifySignedToken(`${session.token.slice(0, -1)}${reemplazo}`, "admin:administrador", env, now), null);
   assert.match(cookie(SESSION_COOKIE, session.token, SESSION_SECONDS), /HttpOnly; Secure; SameSite=Strict/);
   assert.ok(SESSION_COOKIE.startsWith("__Host-"));
 });
