@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-08-23T23:22:21.000Z",
+  "actualizadoEn": "2026-08-25T01:06:42.000Z",
   "total": 20,
   "repositorios": [
     {
@@ -128,7 +128,7 @@ export const REPOSITORIOS_GITHUB = {
       "forks": 0,
       "creadoEn": "2026-08-21T21:33:46.000Z",
       "actualizadoEn": "2026-08-21T22:10:03.000Z",
-      "publicadoEn": "2026-08-21T22:09:41.000Z",
+      "publicadoEn": "2026-08-25T01:06:42.000Z",
       "extractoReadme": "BetPlaycito Nelson\n\nDashboard local y persistente para registrar tendencias históricas de fútbol, comparar equipos y visualizar porcentajes en gráficos circulares. Funciona en Windows, macOS y Ubuntu; no necesita una cuenta en la nube ni envía los datos a servicios externos.\n[!IMPORTANT]\nLos porcentajes resumen únicamente los registros ingresados. No garantizan resultados futuros ni constituyen asesoría de apuestas.\nDescargar e instalar\n\nLa versión más reciente está en GitHub Releases.\n\n· Sistema · Archivo recomendado · Uso ·\n\n· Windows 10/11 x64 · BetPlaycito-Nelson--Windows-x64-Setup.exe · Abrir, aceptar el permiso de instalación y seguir el asistente. ·\n· Windows x64 portable · BetPlaycito-Nelson--Windows-x64-portable.exe · Un solo archivo; doble clic sin instalar. ·\n· Mac con Apple Silicon · BetPlaycito-Nelson--macOS-arm64.dmg · Abrir la imagen y arrastrar la app a Aplicaciones. ·\n·…"
     },
     {
