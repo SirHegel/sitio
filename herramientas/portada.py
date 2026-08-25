@@ -120,7 +120,7 @@ def scrim(img, caja, opacidad=0.62):
 
 def retrato(img, caja):
     """Pega el retrato con filete, del mismo grosor y color que el resto."""
-    ruta = Path(__file__).resolve().parent.parent / "activos" / "retrato.jpg"
+    ruta = Path(__file__).resolve().parent.parent / "activos" / "retrato-profesional.jpg"
     if not ruta.exists():
         return img
     x, y, lado = caja
@@ -163,10 +163,10 @@ def componer():
     d.line([(M, y), (M + 190, y)], fill=AMBAR, width=2)
 
     f_titular = ImageFont.truetype(SERIF_FINO, 31)
-    d.text((M, y + 26), "Economista y analista de datos", font=f_titular, fill=AMBAR)
+    d.text((M, y + 26), "Analista de datos y automatización", font=f_titular, fill=AMBAR)
 
     f_sub = ImageFont.truetype(SERIF_FINO, 21)
-    d.text((M, y + 76), "Análisis y Desarrollo de Software",
+    d.text((M, y + 76), "Economía aplicada · Desarrollo de software",
            font=f_sub, fill=TOPO)
 
     f_pie = ImageFont.truetype(SANS, 19)

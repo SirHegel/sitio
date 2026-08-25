@@ -15,6 +15,7 @@ const json = (o) => JSON.stringify(o, null, 2).replace(/</g, "\\u003c");
 
 export const MENU = [
   { ruta: "/", texto: "Inicio" },
+  { ruta: "/hoja-de-vida/", texto: "Hoja de vida" },
   { ruta: "/academico/", texto: "Académico" },
   { ruta: "/proyectos/", texto: "Proyectos" },
   { ruta: "/blog/", texto: "Blog" },
@@ -34,12 +35,13 @@ export function persona() {
     familyName: "Alvarez Ruiz",
     jobTitle: PERSONA.titular,
     description:
-      "Economista y analista de datos en Neiva, Huila, Colombia. Tecnólogo en Análisis y " +
-      "Desarrollo de Software (SENA) y estudiante de Economía (UNAD). Trabaja automatización " +
+      "Analista de datos y desarrollador de automatización en Neiva, Huila, Colombia. " +
+      "Estudiante de Economía (UNAD) y Tecnología en Análisis y Desarrollo de Software (SENA). Trabaja automatización " +
       "en Python, análisis de datos y arquitectura de sistemas multiagente.",
     url: SITIO + "/",
-    image: SITIO + "/activos/retrato.jpg",
+    image: SITIO + "/activos/retrato-profesional.jpg",
     email: "mailto:" + PERSONA.email,
+    telephone: PERSONA.telefono,
     sameAs: PERSONA.perfiles(),
     knowsAbout: PERSONA.sabeDe,
     knowsLanguage: [
@@ -54,10 +56,11 @@ export function persona() {
       addressCountry: "CO",
     },
     alumniOf: [
-      { "@type": "CollegeOrUniversity", name: "Universidad Nacional Abierta y a Distancia (UNAD)", sameAs: "https://www.unad.edu.co/" },
-      { "@type": "EducationalOrganization", name: "Servicio Nacional de Aprendizaje (SENA)", sameAs: "https://www.sena.edu.co/" },
+      { "@type": "EducationalOrganization", name: "I.E. Humberto Tafur Charry" },
     ],
     affiliation: [
+      { "@type": "CollegeOrUniversity", name: "Universidad Nacional Abierta y a Distancia (UNAD)", sameAs: "https://www.unad.edu.co/" },
+      { "@type": "EducationalOrganization", name: "Servicio Nacional de Aprendizaje (SENA)", sameAs: "https://www.sena.edu.co/" },
       { "@type": "CollegeOrUniversity", name: "Universidad Surcolombiana", sameAs: "https://www.usco.edu.co/" },
     ],
     worksFor: [
@@ -178,7 +181,7 @@ ${cuerpo}
         <h4>Perfiles</h4>
         <a href="${PERSONA.linkedin}" rel="me noopener" target="_blank">LinkedIn</a>
         <a href="${PERSONA.github}" rel="me noopener" target="_blank">GitHub · SirHegel</a>
-        <a href="${PERSONA.humanizar}" rel="me noopener" target="_blank">humanizar.tech</a>
+        <a href="${PERSONA.humanizar}" rel="noopener" target="_blank">CAUCE V3</a>
       </div>
       <div>
         <h4>Sitio</h4>

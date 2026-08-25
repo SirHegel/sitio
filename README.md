@@ -1,13 +1,14 @@
 # Sitio de Jhon Steven Alvarez Ruiz
 
-Sitio personal, blog y portafolio de **Jhon Steven Alvarez Ruiz** — economista,
-analista de datos y desarrollador en Neiva, Colombia. El HTML público se genera
+Sitio personal, blog y portafolio de **Jhon Steven Alvarez Ruiz** — analista de
+datos y desarrollador de automatización en Neiva, Colombia. El HTML público se genera
 sin dependencias; las funciones privadas de Vercel permiten publicar escritos y
 consultar una auditoría anónima desde `/admin/`.
 
 ```bash
 npm test                  # seguridad, contenido, audio, rutas y snapshots
 npm run build             # genera publico/
+npm run cv                # regenera la hoja de vida ATS en HTML y PDF
 npm run servir            # http://127.0.0.1:8099
 npm run sync:github       # actualiza los repositorios públicos
 npm run sync:activity     # actualiza el agregado del ledger local

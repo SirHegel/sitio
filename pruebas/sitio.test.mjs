@@ -18,11 +18,23 @@ import {
   PROYECTOS,
   REPOSITORIOS_GITHUB,
 } from "../datos.js";
+import { ARCHIVO_HOJA_DE_VIDA, EVIDENCIA_TECNICA, HOJA_DE_VIDA } from "../datos-hoja-de-vida.js";
 import { cargarEscritos } from "../escritos.js";
 
 const raiz = fileURLToPath(new URL("..", import.meta.url));
 const construido = fileURLToPath(new URL("../publico/", import.meta.url));
 const musica = fileURLToPath(new URL("../activos/beethoven-quinta-sinfonia.mp3", import.meta.url));
+const hojaDeVidaPdf = fileURLToPath(new URL(`..${ARCHIVO_HOJA_DE_VIDA}`, import.meta.url));
+const hojaDeVidaFuente = fileURLToPath(new URL("../documentos/hoja-de-vida/hoja-de-vida-jhon-steven-alvarez-ruiz.html", import.meta.url));
+const hojaDeVidaManifiesto = fileURLToPath(new URL("../documentos/hoja-de-vida/manifiesto.json", import.meta.url));
+
+const sha256 = (contenido) => createHash("sha256").update(contenido).digest("hex");
+const fuentesHojaDeVida = [
+  "datos.js",
+  "datos-hoja-de-vida.js",
+  "herramientas/generar-hoja-de-vida.js",
+  "activos/retrato-profesional.jpg",
+];
 
 execFileSync(process.execPath, ["construir.js"], { cwd: raiz });
 
@@ -71,7 +83,8 @@ test("todas las páginas tienen título, canónico único y marcado de persona",
     const ld = JSON.parse(bruto);
     const persona = ld["@graph"].find((nodo) => nodo["@type"] === "Person");
     assert.equal(persona?.name, PERSONA.nombre, `${ruta} no declara la persona canónica`);
-    assert.ok(persona.sameAs.length >= 3);
+    assert.ok(persona.sameAs.length >= 2);
+    assert.ok(!persona.sameAs.includes(PERSONA.humanizar), `${ruta} confunde el proyecto CAUCE con la identidad personal`);
   }
 });
 
@@ -103,6 +116,104 @@ test("el blog genera artículos, temas y feed", async () => {
   for (const tema of ["derecho", "economia", "pensamientos", "analisis"]) {
     assert.ok(existsSync(archivoRuta(`/blog/tema/${tema}/`)), `falta el tema ${tema}`);
   }
+});
+
+test("el blog conserva tarjetas distinguibles en móvil", () => {
+  const estilos = readFileSync(`${raiz}/activos/estilos.css`, "utf8");
+  const inicio = estilos.indexOf("@media (max-width: 34rem)", estilos.indexOf(".lista-escritos"));
+  const fin = estilos.indexOf("\n}\n", inicio);
+  assert.ok(inicio >= 0 && fin > inicio, "falta el ajuste móvil del blog");
+  const movil = estilos.slice(inicio, fin);
+  assert.match(movil, /\.escrito-card \{[\s\S]*?border-color: var\(--filete-2\);[\s\S]*?border-left: 2px solid/);
+  assert.match(movil, /\.escrito-card:focus-within,[\s\S]*?\.escrito-card:active/);
+});
+
+test("trayectoria presenta certificaciones e investigación como una llamada accesible", () => {
+  const html = readFileSync(archivoRuta("/trayectoria/"), "utf8");
+  assert.match(html, /<a class="ficha llamada-academica revelar sep-m" href="\/academico\/">/);
+  assert.match(html, /<h3>Certificaciones e investigación<\/h3>/);
+  assert.match(html, /<i aria-hidden="true">→<\/i>/);
+  assert.doesNotMatch(html, /<p class="sep-m"><a class="mas revelar" href="\/academico\/">/);
+});
+
+test("la hoja de vida pública ofrece un PDF ATS y datos de contacto coherentes", () => {
+  assert.ok(rutasPublicas.includes("/hoja-de-vida/"), "la hoja de vida falta en el sitemap");
+  const html = readFileSync(archivoRuta("/hoja-de-vida/"), "utf8");
+  assert.ok(html.includes(`href="${ARCHIVO_HOJA_DE_VIDA}"`), "falta el enlace al PDF");
+  assert.match(html, /download="hoja-de-vida-jhon-steven-alvarez-ruiz\.pdf"/);
+  assert.ok(html.includes(PERSONA.telefono));
+  assert.ok(html.includes(PERSONA.email));
+  assert.ok(html.includes("/activos/retrato-profesional.jpg"));
+  assert.ok(html.includes(HOJA_DE_VIDA.cauce.url));
+  assert.ok(html.includes(HOJA_DE_VIDA.cauce.repositorioPublico));
+  assert.ok(html.includes("Aycomer") && html.includes("Proyecto privado"));
+  assert.ok(!html.includes('href=""'), "la hoja de vida contiene un enlace vacío");
+  for (const termino of ["CAUCE V3", "OpenClaw", "Hermes", "Claude Code", "PostgreSQL", "MySQL", "SQLite"]) {
+    assert.ok(html.includes(termino), `la página no incluye ${termino}`);
+  }
+
+  assert.ok(existsSync(hojaDeVidaPdf), "falta el PDF descargable");
+  const pdf = readFileSync(hojaDeVidaPdf);
+  assert.ok(pdf.subarray(0, 5).equals(Buffer.from("%PDF-")), "el archivo descargable no es PDF");
+  assert.ok(pdf.length > 100_000, "el PDF parece incompleto");
+
+  const fuente = readFileSync(hojaDeVidaFuente, "utf8");
+  for (const texto of [PERSONA.nombre, PERSONA.telefono, PERSONA.email, "Perfil profesional", "Experiencia profesional", "Educación", "Certificaciones"]) {
+    assert.ok(fuente.includes(texto), `la fuente ATS no incluye ${texto}`);
+  }
+  const telefonosPublicados = [...`${html}\n${fuente}`.matchAll(/(?<!\d)3(?:[ .-]?\d){9}(?!\d)/g)]
+    .map((coincidencia) => coincidencia[0].replace(/\D/g, ""));
+  assert.deepEqual(new Set(telefonosPublicados), new Set([PERSONA.telefono.replace(/\D/g, "").slice(-10)]));
+  assert.ok(!html.includes("CONTRASEÑAS") && !fuente.includes("CONTRASEÑAS"));
+
+  const manifiesto = JSON.parse(readFileSync(hojaDeVidaManifiesto, "utf8"));
+  const huellaFuentes = createHash("sha256");
+  for (const relativa of fuentesHojaDeVida) {
+    huellaFuentes.update(relativa).update("\0").update(readFileSync(`${raiz}/${relativa}`)).update("\0");
+  }
+  assert.equal(manifiesto.fuenteSha256, huellaFuentes.digest("hex"), "el PDF no refleja las fuentes actuales");
+  assert.equal(manifiesto.htmlSha256, sha256(Buffer.from(fuente)), "la fuente HTML cambió después de generar el PDF");
+  assert.equal(manifiesto.pdfSha256, sha256(pdf), "el PDF cambió después de su validación");
+  assert.equal(manifiesto.pdfBytes, pdf.length);
+  assert.equal(manifiesto.paginas, 5);
+  assert.equal(manifiesto.etiquetado, true);
+  assert.equal(manifiesto.textoExtraible, true);
+});
+
+test("las métricas técnicas del dossier se suman y coinciden con los proyectos", () => {
+  const suma = EVIDENCIA_TECNICA.proyectos.reduce(
+    (total, proyecto) => ({
+      fuente: total.fuente + proyecto.fuente,
+      prueba: total.prueba + proyecto.prueba,
+      casos: total.casos + proyecto.casos,
+    }),
+    { fuente: 0, prueba: 0, casos: 0 },
+  );
+  assert.deepEqual(EVIDENCIA_TECNICA.totales, suma);
+  assert.deepEqual(suma, { fuente: 24_352, prueba: 8_768, casos: 385 });
+  for (const evidencia of EVIDENCIA_TECNICA.proyectos) {
+    const proyecto = PROYECTOS.find((item) => item.nombre === evidencia.nombre);
+    assert.ok(proyecto, `falta el proyecto medido ${evidencia.nombre}`);
+    for (const valor of [evidencia.fuente, evidencia.prueba, evidencia.casos]) {
+      assert.ok(proyecto.cifras.includes(valor.toLocaleString("es-CO")), `${evidencia.nombre} no publica ${valor}`);
+    }
+  }
+});
+
+test("la navegación enlaza la hoja de vida desde todas las páginas públicas", () => {
+  for (const ruta of rutasPublicas) {
+    const html = readFileSync(archivoRuta(ruta), "utf8");
+    assert.match(html, /href="\/hoja-de-vida\/"[^>]*>Hoja de vida<\/a>/, `${ruta} no enlaza la hoja de vida`);
+  }
+});
+
+test("el perfil público no presenta como terminados los estudios que siguen en curso", () => {
+  for (const ruta of ["/", "/proyectos/sitio/", "/proyectos/sirhegel/"]) {
+    const html = readFileSync(archivoRuta(ruta), "utf8");
+    assert.ok(!/economista/i.test(html), `${ruta} conserva el título profesional no terminado`);
+  }
+  const academico = readFileSync(archivoRuta("/academico/"), "utf8");
+  assert.ok(academico.includes("(en curso)"));
 });
 
 test("la actividad publicada cuadra y no expone el ledger", () => {

@@ -29,18 +29,19 @@ export const PERSONA = {
     "Jhon Alvarez",
     "SirHegel",
   ],
-  titular: "Economista y analista de datos",
-  subtitular: "Tecnólogo en Análisis y Desarrollo de Software · Arquitectura de sistemas multiagente",
+  titular: "Analista de datos y desarrollador de automatización",
+  subtitular: "Estudiante de Economía y Tecnología ADSO · Arquitectura de sistemas multiagente",
   ciudad: "Neiva",
   region: "Huila",
   pais: "Colombia",
   email: "alvarezruizj289@gmail.com",
+  telefono: "+57 310 560 5147",
   linkedin: "https://www.linkedin.com/in/jhonstevenalvarezruiz/",
   github: "https://github.com/SirHegel",
   humanizar: "https://www.humanizar.tech/",
   // sameAs: la lista que le dice a Google "estos perfiles son la misma persona".
   perfiles() {
-    return [this.linkedin, this.github, this.humanizar];
+    return [this.linkedin, this.github];
   },
   sabeDe: [
     "Análisis de datos",
@@ -62,7 +63,7 @@ export const EPIGRAFE = {
 };
 
 export const PRESENTACION = [
-  `Soy <b>Jhon Steven Alvarez Ruiz</b>, economista y analista de datos en Neiva, Huila.
+  `Soy <b>Jhon Steven Alvarez Ruiz</b>, analista de datos y desarrollador de automatización en Neiva, Huila.
    Trabajo con tres materiales que la convención académica mantiene separados sin buena razón:
    la crítica de la economía política, la arquitectura de sistemas multiagente y la lógica que
    permite decir cuándo un conjunto de partes constituye un todo y cuándo sigue siendo un montón.`,
@@ -89,7 +90,7 @@ export const METRICAS = [
   { valor: ACTIVIDAD_IA.totales.tokens, sufijo: "", etiqueta: "tokens contabilizados", nota: `${ACTIVIDAD_IA.totales.llamadas} llamadas · corte ${corteActividad}`, enlace: "/actividad/" },
   { valor: REPOSITORIOS_GITHUB.total, sufijo: "", etiqueta: "repositorios públicos", nota: "sincronizados automáticamente desde GitHub", enlace: "/proyectos/#github" },
   { valor: 61, sufijo: "%", etiqueta: "líneas de prueba por línea de código", nota: "en el repositorio con mayor disciplina" },
-  { valor: 90, sufijo: "%", etiqueta: "reducción de tiempo administrativo", nota: "automatización financiera en Designter" },
+  { valor: 385, sufijo: "", etiqueta: "casos de prueba declarados", nota: "en cinco proyectos técnicos seleccionados" },
 ];
 
 export const EXPERIENCIA = [
@@ -114,7 +115,7 @@ export const EXPERIENCIA = [
     fechas: "Octubre 2025 — Actualidad",
     puntos: [
       "Dirijo la operación y el desarrollo de aplicativos web y ecosistemas digitales para infoproductores.",
-      "Desarrollé un ecosistema de automatización financiera en Python con Google Sheets API que redujo un 90% el tiempo de registro administrativo.",
+      "Desarrollé un ecosistema de automatización financiera en Python con Google Sheets API que redujo el registro manual y centralizó la trazabilidad administrativa.",
       "Diseñé un tablero de Business Intelligence que categoriza automáticamente ingresos personales y corporativos y emite alertas de salud financiera.",
       "Audito y optimizo embudos de venta con análisis de datos para sostener la rentabilidad de cada página comercial.",
     ],
@@ -131,28 +132,29 @@ export const EXPERIENCIA = [
     ],
   },
   {
-    cargo: "Auditor y Analista de Datos Financieros",
+    cargo: "Analista Comercial y Desarrollo de PYMES",
     empresa: "Translegal Group Colombia S.A.S",
     lugar: "Cartagena, Colombia · Remoto",
     desde: "2024-09",
-    fechas: "Septiembre 2024 — Agosto 2025",
+    fechas: "Septiembre — diciembre de 2024 · Febrero — agosto de 2025",
     puntos: [
-      "Diseñé e implementé modelos de análisis financiero orientados a optimización de recursos y flujos de capital en pymes.",
-      "Ejecuté auditoría interna y control de datos garantizando precisión, integridad y transparencia de la información.",
-      "Construí y administré bases de datos estructuradas para gestión de clientes y desempeño comercial.",
-      "Elaboré reportes e indicadores clave de desempeño (KPI) con SQL, Python y Power BI que soportaron decisiones estratégicas.",
-      "Integré análisis cuantitativo y cualitativo en estudios de mercado para planificación comercial.",
+      "Apoyé técnicamente la creación, actualización y administración de bases de datos empresariales de PYMES en Cartagena.",
+      "Desarrollé estrategias de promoción y ventas digitales dirigidas al fortalecimiento comercial de pequeñas y medianas empresas.",
+      "Analicé información suministrada por clientes y elaboré reportes de seguimiento y control para decisiones comerciales.",
+      "Gestioné relaciones públicas y comunicación corporativa con aliados empresariales y clientes potenciales.",
     ],
   },
   {
-    cargo: "Auditor y Analista de Datos en Ventas",
+    cargo: "Auditor y Auxiliar Administrativo",
     empresa: "Fundación para el Desarrollo Sostenible y la Participación Ciudadana (FUNDESPAC)",
     lugar: "Cali, Colombia · Híbrido",
     desde: "2024-01",
     fechas: "Enero 2024 — Agosto 2025",
     puntos: [
-      "Implementé modelos de control y auditoría interna que mejoraron un 25% la trazabilidad de las operaciones financieras.",
-      "Analicé tendencias de mercado y comportamiento del cliente para fortalecer la estrategia de ventas.",
+      "Verifiqué y controlé procesos administrativos y financieros de acuerdo con las políticas institucionales.",
+      "Realicé seguimiento a indicadores y metas de ventas, con elaboración de reportes y análisis de resultados.",
+      "Mantuve actualizados registros y bases de datos y apoyé la organización, archivo y custodia de documentación de auditoría.",
+      "Brindé asesoría a clientes y aliados estratégicos sobre productos y servicios de la organización.",
     ],
   },
 ];
@@ -265,11 +267,11 @@ export const PROYECTOS = [
   {
     slug: "orquesta-ia",
     nombre: "Orquesta IA",
-    resumen: "Orquestador local multicuenta que reparte trabajo entre 8 cuentas de IA de 4 proveedores, con contabilidad de cuotas y traspaso de contexto ante fallo.",
+    resumen: "Orquestador local multicuenta que reparte trabajo entre varias cuentas de cuatro proveedores, con contabilidad de cuotas y traspaso de contexto ante fallo.",
     repo: "https://github.com/SirHegel/orquesta-ia",
     demo: "",
     lenguajes: ["Python", "SQLite", "systemd"],
-    cifras: "3.037 líneas de código · 769 de prueba",
+    cifras: "4.923 líneas de fuente · 2.882 de prueba · 96 casos",
     porQue: `El problema no es llamar a un modelo: es decidir cuál, con qué cuota restante, y qué
       hacer cuando el que estaba trabajando se queda sin ventana a mitad de tarea. Orquesta IA
       contabiliza el gasto por ventana de cuota, detecta el límite antes de chocarse con él y
@@ -284,11 +286,11 @@ export const PROYECTOS = [
   {
     slug: "automatizacion-evidencias-adso",
     nombre: "Automatización de evidencias ADSO",
-    resumen: "Motor de 1.133 líneas que regenera, valida y audita entregables académicos, con auditoría de privacidad sobre cada parte extraída de cada archivo.",
+    resumen: "Motor de 8.405 líneas de fuente que regenera, valida y audita entregables académicos, con controles de privacidad sobre cada archivo.",
     repo: "https://github.com/SirHegel/automatizacion-evidencias-adso",
     demo: "",
     lenguajes: ["Python", "GitHub Actions"],
-    cifras: "8.405 líneas de código · 341 de prueba · CI bloqueante",
+    cifras: "8.405 líneas de fuente · 341 de prueba · 13 casos · CI bloqueante",
     porQue: `Un entregable no está bien porque se vea bien. Este motor descomprime los documentos
       de ofimática y lee su XML, exporta los PDF y los verifica, y corre una auditoría de privacidad
       sobre cada parte extraída de cada archivo. Cuando encuentra un riesgo, la integración continua
@@ -306,25 +308,25 @@ export const PROYECTOS = [
     repo: "https://github.com/SirHegel/colmat-x-automation",
     demo: "",
     lenguajes: ["Python", "OAuth 1.0a", "SQLite", "Jinja"],
-    cifras: "2.112 líneas de código · 1.294 de prueba · 0,61 líneas de prueba por línea de código",
-    porQue: `La disciplina de prueba más alta del conjunto. Estado transaccional, OAuth 1.0a y una
-      doble salvaguarda contra la publicación accidental: aprobar un texto aprueba <i>ese</i> texto,
+    cifras: "2.112 líneas de fuente · 1.294 de prueba · 57 casos",
+    porQue: `La disciplina de prueba más alta del conjunto. Estado transaccional, OAuth 1.0a y tres
+      puertas contra la publicación accidental: aprobar un texto aprueba <i>ese</i> texto,
       porque la aprobación se ata al hash de lo revisado. Si el contenido cambia después de la
       revisión, la aprobación deja de valer.`,
     detalles: [
       ["Aprobación vinculada al hash", "Se aprueba un contenido concreto, no un identificador de fila que alguien puede editar después."],
       ["Estado transaccional", "La reserva ocurre en base de datos antes de la llamada de red, no después."],
-      ["Doble salvaguarda", "Dos condiciones independientes deben cumplirse para publicar."],
+      ["Tres puertas de publicación", "Deben coincidir la aprobación del contenido, la habilitación explícita del modo real y la ejecución deliberada con --live."],
     ],
   },
   {
     slug: "sincategorematico-bot",
     nombre: "Sincategoremático Bot",
-    resumen: "Sistema de publicación con aprobación humana obligatoria por Telegram, a prueba de duplicados por construcción.",
+    resumen: "Sistema de publicación con aprobación humana obligatoria por Telegram que mitiga duplicados mediante reserva previa y bloquea reintentos ciegos.",
     repo: "https://github.com/SirHegel/sincategorematico-bot",
     demo: "",
     lenguajes: ["Python", "SQLite", "systemd"],
-    cifras: "1.133 líneas de código · 134 de prueba",
+    cifras: "5.996 líneas de fuente · 3.366 de prueba · 153 casos",
     porQue: `Tres superficies sobre un mismo núcleo: bot de Telegram, tablero HTTP local y
       aplicación de escritorio. Protocolo de reclamación de propiedad con SHA-256 y caducidad;
       el token vive con permisos <code>0600</code> fuera del repositorio. Reserva en base de datos
@@ -343,7 +345,7 @@ export const PROYECTOS = [
     repo: "https://github.com/SirHegel/bloquitos",
     demo: "https://sirhegel.github.io/bloquitos/",
     lenguajes: ["JavaScript", "HTML", "CSS"],
-    cifras: "3.011 líneas de código · 740 de prueba · 60 pruebas",
+    cifras: "2.916 líneas de fuente · 885 de prueba · 66 casos",
     porQue: `La superficie de entrega más amplia del conjunto: navegador, aplicación instalable,
       ejecutable de escritorio y base de datos local, sin una sola dependencia externa. La política
       de seguridad de contenido apunta entera a <code>'self'</code>: el juego no puede pedir un
@@ -362,7 +364,7 @@ export const PROYECTOS = [
     repo: "https://github.com/SirHegel/designter-financial-bot",
     demo: "",
     lenguajes: ["Python", "Google Sheets API"],
-    cifras: "Redujo un 90% el tiempo de registro contable",
+    cifras: "Registro conversacional · tablero y alertas financieras",
     porQue: `Escribir un gasto en lenguaje natural y que quede categorizado, imputado y visible en
       el tablero antes de terminar la frase. El cuello de botella de la contabilidad de una pyme
       no es el análisis: es el registro. Atacado el registro, el análisis se vuelve posible.`,

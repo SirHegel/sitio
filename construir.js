@@ -13,6 +13,7 @@ import {
   EDUCACION, INVESTIGACION, LINEAS, CERTIFICACIONES, IDIOMAS, PROYECTOS, ACTUALIDAD,
   ACTIVIDAD_IA, REPOSITORIOS_GITHUB,
 } from "./datos.js";
+import { ARCHIVO_HOJA_DE_VIDA, HOJA_DE_VIDA } from "./datos-hoja-de-vida.js";
 import { cargarEscritos, categoriasDe, slugificar } from "./escritos.js";
 
 const raiz = dirname(fileURLToPath(import.meta.url));
@@ -41,6 +42,19 @@ function nombreLegible(nombre) {
       ? parte.charAt(0).toUpperCase() + parte.slice(1).toLowerCase()
       : parte.toLowerCase())
   ).join(" ");
+}
+
+function repoConPerfilActual(repo) {
+  const nombre = repo.nombre.toLowerCase();
+  if (nombre !== "sitio" && nombre !== "sirhegel") return repo;
+  const descripcion = nombre === "sitio"
+    ? "Sitio canónico de Jhon Steven Alvarez Ruiz — analista de datos y desarrollador de automatización. Estático, generado y sin dependencias."
+    : "Analista de datos, desarrollador de automatización y estudiante de Economía. Sistemas de IA, teoría heterodoxa y filosofía.";
+  const extractoReadme = String(repo.extractoReadme || "")
+    .replace(/economista,\s*analista de datos y desarrollador/gi, "analista de datos y desarrollador de automatización")
+    .replace(/economista y analista de datos/gi, "analista de datos y desarrollador de automatización")
+    .replace(/economista,\s*analista de datos y filósofo/gi, "analista de datos, desarrollador de automatización y estudiante de Economía");
+  return { ...repo, descripcion, extractoReadme };
 }
 
 function proyectoDesdeGitHub(repo) {
@@ -77,13 +91,14 @@ function proyectoDesdeGitHub(repo) {
   };
 }
 
-const githubPorNombre = new Map(REPOSITORIOS_GITHUB.repositorios.map((r) => [r.nombre.toLowerCase(), r]));
+const repositoriosGitHubVigentes = REPOSITORIOS_GITHUB.repositorios.map(repoConPerfilActual);
+const githubPorNombre = new Map(repositoriosGitHubVigentes.map((r) => [r.nombre.toLowerCase(), r]));
 const proyectosCurados = PROYECTOS.map((proyecto) => {
   const vivo = proyecto.repo ? githubPorNombre.get(nombreRepo(proyecto.repo)) : null;
   return { ...proyecto, github: vivo || null };
 });
 const nombresCurados = new Set(proyectosCurados.map((p) => nombreRepo(p.repo)).filter(Boolean));
-const proyectosAutomaticos = REPOSITORIOS_GITHUB.repositorios
+const proyectosAutomaticos = repositoriosGitHubVigentes
   .filter((repo) => !nombresCurados.has(repo.nombre.toLowerCase()))
   .map(proyectoDesdeGitHub)
   .sort((a, b) => (b.github.publicadoEn || "").localeCompare(a.github.publicadoEn || ""));
@@ -189,6 +204,7 @@ function inicio() {
         <p class="lugar">Disponible para trabajo remoto</p>
         <div class="acciones">
           <a class="boton primario" href="/proyectos/"><span>Ver proyectos</span></a>
+          <a class="boton" href="/hoja-de-vida/"><span>Hoja de vida</span></a>
           <a class="boton" href="/academico/"><span>Formación académica</span></a>
           <a class="boton" href="${PERSONA.linkedin}" rel="me noopener" target="_blank"><span>LinkedIn</span></a>
           <a class="boton" href="${PERSONA.github}" rel="me noopener" target="_blank"><span>GitHub</span></a>
@@ -196,7 +212,7 @@ function inicio() {
       </div>
       <figure class="retrato">
         <img src="/activos/retrato.jpg" width="800" height="800" fetchpriority="high"
-             alt="Retrato de ${esc(PERSONA.nombre)}, economista y analista de datos en ${esc(PERSONA.ciudad)}, ${esc(PERSONA.pais)}">
+             alt="Retrato de ${esc(PERSONA.nombre)}, analista de datos y desarrollador de automatización en ${esc(PERSONA.ciudad)}, ${esc(PERSONA.pais)}">
         <figcaption>${esc(PERSONA.nombre)} · ${esc(PERSONA.ciudad)}, ${esc(PERSONA.region)}</figcaption>
       </figure>
     </section>
@@ -254,10 +270,10 @@ ${epigrafe()}`;
   return pagina({
     ruta: "/",
     puerta: true,
-    titulo: "Jhon Steven Alvarez Ruiz — Economista y analista de datos | Neiva, Colombia",
+    titulo: "Jhon Steven Alvarez Ruiz — datos, automatización y sistemas multiagente | Neiva",
     descripcion:
-      "Sitio oficial de Jhon Steven Alvarez Ruiz, economista y analista de datos en Neiva, Huila. " +
-      "Formación en Economía (UNAD) y Análisis y Desarrollo de Software (SENA), semillero de " +
+      "Sitio oficial de Jhon Steven Alvarez Ruiz, analista de datos y desarrollador de automatización " +
+      "en Neiva, Huila. Estudiante de Economía (UNAD) y Tecnología ADSO (SENA), semillero de " +
       "investigación de la Universidad Surcolombiana, y proyectos de automatización en Python.",
     grafo: [
       persona(),
@@ -333,7 +349,7 @@ ${epigrafe()}`;
     titulo: "Formación académica de Jhon Steven Alvarez Ruiz — Economía UNAD, ADSO SENA, semillero USCO",
     descripcion:
       "Formación académica, investigación y certificaciones de Jhon Steven Alvarez Ruiz: pregrado en " +
-      "Economía (UNAD), Tecnólogo en Análisis y Desarrollo de Software (SENA), semillero de " +
+      "Economía (UNAD) y Tecnología en Análisis y Desarrollo de Software en curso (SENA), semillero de " +
       "investigación de la Universidad Surcolombiana y nueve certificaciones de IBM, MinTIC y SENA.",
     grafo: [
       persona(),
@@ -392,8 +408,8 @@ ${proyectosAutomaticos.map(fichaProyecto).join("\n") || "        <p class=\"pie-
     titulo: "Proyectos de Jhon Steven Alvarez Ruiz — Python, datos y sistemas multiagente",
     descripcion:
       "Proyectos de software de Jhon Steven Alvarez Ruiz: orquestación multiagente, automatización " +
-      "de procesos en Python, auditoría de entregables y desarrollo web sin dependencias. Código " +
-      "abierto en GitHub con pruebas y CI.",
+      "de procesos en Python, auditoría de entregables y desarrollo web sin dependencias. Selección " +
+      "de código público en GitHub; varios proyectos incluyen pruebas automatizadas y CI.",
     grafo: [
       persona(),
       migas([{ nombre: "Inicio", ruta: "/" }, { nombre: "Proyectos", ruta: "/proyectos/" }]),
@@ -450,7 +466,7 @@ ${p.detalles.map(([t, d]) => `        <article class="ficha revelar">
 ${franja(`      <div class="scrim columna revelar">
         <p class="micro topo">Autoría</p>
         <p class="lead">${esc(p.nombre)} es un proyecto de <b>Jhon Steven Alvarez Ruiz</b>,
-        economista y analista de datos en Neiva, Colombia. ${p.repo
+        analista de datos y desarrollador de automatización en Neiva, Colombia. ${p.repo
           ? `El repositorio forma parte del catálogo público de <a href="${PERSONA.github}" rel="me noopener" target="_blank">github.com/SirHegel</a>.`
           : "La ficha describe únicamente su arquitectura y propósito públicos; el código y los datos comerciales permanecen privados."}</p>
         <p class="sep-s"><a class="mas" href="/proyectos/">Los demás proyectos <i>→</i></a></p>
@@ -775,6 +791,139 @@ function admin() {
   });
 }
 
+/* ---------------------------------------------------------- hoja de vida */
+
+function hojaDeVida() {
+  const proyectosCv = HOJA_DE_VIDA.proyectos.map((proyecto) => {
+    const contenido = `
+          <h3>${esc(proyecto.nombre)}</h3>
+          <div class="etiquetas">${proyecto.tecnologias.split(" · ").map((t) => `<span>${esc(t)}</span>`).join("")}</div>
+          <p>${esc(proyecto.descripcion.trim())}</p>
+          <span class="mas">${proyecto.url ? "Ver proyecto" : esc(proyecto.visibilidad || "Proyecto privado")}${proyecto.url ? ' <i aria-hidden="true">→</i>' : ""}</span>`;
+    return proyecto.url
+      ? `        <a class="ficha revelar" href="${proyecto.url}" rel="noopener" target="_blank">${contenido}
+        </a>`
+      : `        <article class="ficha revelar">${contenido}
+        </article>`;
+  }).join("\n");
+
+  const cuerpo = `${franja(`      <div class="cv-portada">
+        <div class="scrim cv-presentacion revelar">
+          <p class="micro verde">Hoja de vida · ${esc(HOJA_DE_VIDA.actualizado)}</p>
+          <h1 class="titulo grande">Automatización, agentes y datos</h1>
+          <p class="lead">${esc(HOJA_DE_VIDA.titular)}</p>
+          ${HOJA_DE_VIDA.resumen.map((p) => `<p>${esc(p.trim())}</p>`).join("\n          ")}
+          <div class="cv-contacto" aria-label="Datos de contacto">
+            <a href="tel:${PERSONA.telefono.replace(/\s/g, "")}">${esc(PERSONA.telefono)}</a>
+            <a href="mailto:${PERSONA.email}">${esc(PERSONA.email)}</a>
+            <span>${esc(PERSONA.ciudad)}, ${esc(PERSONA.region)}, ${esc(PERSONA.pais)}</span>
+          </div>
+          <div class="acciones">
+            <a class="boton primario" href="${ARCHIVO_HOJA_DE_VIDA}" download="hoja-de-vida-jhon-steven-alvarez-ruiz.pdf" type="application/pdf"><span>Descargar PDF</span></a>
+            <a class="boton" href="${PERSONA.linkedin}" rel="me noopener" target="_blank"><span>LinkedIn</span></a>
+            <a class="boton" href="${PERSONA.github}" rel="me noopener" target="_blank"><span>GitHub</span></a>
+          </div>
+          <p class="pie-nota sep-s">PDF de 5 páginas, texto seleccionable, fuentes incorporadas y estructura lineal diseñada para facilitar su lectura por sistemas ATS.</p>
+        </div>
+        <figure class="cv-retrato revelar">
+          <img src="/activos/retrato-profesional.jpg" width="640" height="960"
+               alt="Retrato profesional de ${esc(PERSONA.nombre)} con traje oscuro y fondo neutro">
+          <figcaption>${esc(PERSONA.nombre)} · Disponible para trabajo remoto</figcaption>
+        </figure>
+      </div>`, "cv-hero")}
+
+${franja(`      <div class="scrim ancho revelar cv-cauce">
+        <div class="estado-linea">
+          <div>
+            <p class="micro verde">Proyecto diferencial</p>
+            <h2 class="titulo">${esc(HOJA_DE_VIDA.cauce.nombre)} · arquitectura multi-harness</h2>
+          </div>
+          <span class="estado-proyecto">Núcleo privado · presentación pública</span>
+        </div>
+        <p class="lead">${esc(HOJA_DE_VIDA.cauce.descripcion.trim())}</p>
+        <p>Co-creado con <a href="${HOJA_DE_VIDA.cauce.socioUrl}" rel="noopener" target="_blank"><b>${esc(HOJA_DE_VIDA.cauce.socio)}</b></a> para convertir harnesses y agentes dispersos en equipos gobernados, auditables y capaces de sostener trabajos multietapa.</p>
+        <ul class="cv-lista">
+${HOJA_DE_VIDA.cauce.puntos.map((p) => `          <li>${esc(p)}</li>`).join("\n")}
+        </ul>
+        <div class="acciones">
+          <a class="boton primario" href="${HOJA_DE_VIDA.cauce.url}" rel="noopener" target="_blank"><span>Abrir CAUCE V3</span></a>
+          <a class="boton" href="${HOJA_DE_VIDA.cauce.repositorioPublico}" rel="noopener" target="_blank"><span>Landing pública en GitHub</span></a>
+        </div>
+      </div>`)}
+
+${franja(`${rotulo("Perfil técnico", "Diferencial profesional")}
+      <div class="scrim medio revelar">
+        <ul class="cv-lista compacta">
+${HOJA_DE_VIDA.diferenciales.map((p) => `          <li>${esc(p)}</li>`).join("\n")}
+        </ul>
+      </div>`)}
+
+${franja(`${rotulo("Stack", "Competencias verificables", "verde")}
+      <div class="rejilla duo cv-competencias" data-escalonar>
+${HOJA_DE_VIDA.competencias.map((grupo) => `        <article class="ficha revelar">
+          <h3>${esc(grupo.nombre)}</h3>
+          <p>${esc(grupo.items)}</p>
+        </article>`).join("\n")}
+      </div>`)}
+
+${franja(`${rotulo("Experiencia", "Trayectoria profesional")}
+${lineaTiempo(EXPERIENCIA.map(hitoEmpleo).join("\n"))}`)}
+
+${franja(`${rotulo("Ingeniería", "Proyectos técnicos seleccionados", "verde")}
+      <div class="rejilla duo" data-escalonar>
+${proyectosCv}
+      </div>`)}
+
+${franja(`${rotulo("Formación", "Educación, investigación y credenciales")}
+${lineaTiempo(EDUCACION.map(hitoEstudio).join("\n"))}
+      <a class="ficha llamada-academica revelar sep-m" href="/academico/">
+        <span class="micro verde">Expediente académico</span>
+        <h3>Certificaciones e investigación</h3>
+        <p>Nueve credenciales verificadas y participación en el semillero de distribución de la tierra en Colombia.</p>
+        <span class="mas">Abrir formación completa <i aria-hidden="true">→</i></span>
+      </a>`)}
+
+${franja(`      <div class="scrim columna revelar cv-descarga-final">
+        <p class="micro">Versión para selección</p>
+        <h2 class="titulo">Descargar la hoja de vida completa</h2>
+        <p class="lead">Flujo principal lineal, encabezados estándar, enlaces reales, fotografía formal y texto totalmente extraíble. No contiene cédula, dirección residencial ni datos privados de terceros.</p>
+        <div class="acciones">
+          <a class="boton primario" href="${ARCHIVO_HOJA_DE_VIDA}" download="hoja-de-vida-jhon-steven-alvarez-ruiz.pdf" type="application/pdf"><span>Descargar PDF</span></a>
+          <a class="boton" href="mailto:${PERSONA.email}"><span>Contactar</span></a>
+        </div>
+      </div>`)}
+
+${epigrafe()}`;
+
+  return pagina({
+    ruta: "/hoja-de-vida/",
+    titulo: "Hoja de vida — Jhon Steven Alvarez Ruiz | Automatización y datos",
+    descripcion:
+      "Perfil y PDF descargable de Jhon Steven Alvarez Ruiz: CAUCE V3, arquitectura multi-harness, " +
+      "automatización, Python, JavaScript, SQL, Business Intelligence y auditoría.",
+    grafo: [
+      persona(),
+      migas([{ nombre: "Inicio", ruta: "/" }, { nombre: "Hoja de vida", ruta: "/hoja-de-vida/" }]),
+      {
+        "@type": "ProfilePage",
+        "@id": SITIO + "/hoja-de-vida/#pagina",
+        url: SITIO + "/hoja-de-vida/",
+        name: "Hoja de vida de " + PERSONA.nombre,
+        inLanguage: "es-CO",
+        isPartOf: { "@id": SITIO + "/#sitio" },
+        mainEntity: { "@id": SITIO + "/#persona" },
+        associatedMedia: {
+          "@type": "DigitalDocument",
+          name: "Hoja de vida de " + PERSONA.nombre + " en PDF",
+          encodingFormat: "application/pdf",
+          contentUrl: SITIO + ARCHIVO_HOJA_DE_VIDA,
+        },
+      },
+    ],
+    cuerpo,
+  });
+}
+
 /* ------------------------------------------------------------ trayectoria */
 
 function trayectoria() {
@@ -784,7 +933,9 @@ function trayectoria() {
         <p class="lead">Experiencia profesional de <b>Jhon Steven Alvarez Ruiz</b> en auditoría,
         análisis de datos, dirección de operación y desarrollo de software, entre 2024 y hoy.</p>
         <div class="acciones">
-          <a class="boton primario" href="${PERSONA.linkedin}" rel="me noopener" target="_blank"><span>Perfil de LinkedIn</span></a>
+          <a class="boton primario" href="${ARCHIVO_HOJA_DE_VIDA}" download="hoja-de-vida-jhon-steven-alvarez-ruiz.pdf" type="application/pdf"><span>Descargar hoja de vida</span></a>
+          <a class="boton" href="/hoja-de-vida/"><span>Ver hoja de vida</span></a>
+          <a class="boton" href="${PERSONA.linkedin}" rel="me noopener" target="_blank"><span>LinkedIn</span></a>
           <a class="boton" href="mailto:${PERSONA.email}"><span>Escribirme</span></a>
         </div>
       </div>`)}
@@ -794,7 +945,12 @@ ${lineaTiempo(EXPERIENCIA.map(hitoEmpleo).join("\n"))}`)}
 
 ${franja(`${rotulo("Formación", "Educación")}
 ${lineaTiempo(EDUCACION.map(hitoEstudio).join("\n"))}
-      <p class="sep-m"><a class="mas revelar" href="/academico/">Certificaciones e investigación <i>→</i></a></p>`)}
+      <a class="ficha llamada-academica revelar sep-m" href="/academico/">
+        <span class="micro verde">Perfil académico</span>
+        <h3>Certificaciones e investigación</h3>
+        <p>Consulta las credenciales verificadas, el trabajo de investigación y la formación académica completa.</p>
+        <span class="mas">Abrir formación académica <i aria-hidden="true">→</i></span>
+      </a>`)}
 
 ${epigrafe()}`;
 
@@ -803,8 +959,8 @@ ${epigrafe()}`;
     titulo: "Trayectoria profesional de Jhon Steven Alvarez Ruiz — analista de datos y auditor",
     descripcion:
       "Experiencia profesional de Jhon Steven Alvarez Ruiz: consultor en Polidinámica, director " +
-      "ejecutivo de Designter S.A.S, auditor y analista de datos financieros en Translegal Group " +
-      "Colombia y FUNDESPAC. Python, SQL, Power BI y automatización de procesos.",
+      "ejecutivo de Designter S.A.S, analista comercial en Translegal Group Colombia y auditor " +
+      "y auxiliar administrativo en FUNDESPAC. Python, SQL, Power BI y automatización de procesos.",
     grafo: [
       persona(),
       migas([{ nombre: "Inicio", ruta: "/" }, { nombre: "Trayectoria", ruta: "/trayectoria/" }]),
@@ -837,6 +993,7 @@ const RUTAS = [
   ["/proyectos/", indiceProyectos],
   ["/blog/", () => indiceBlog()],
   ["/actividad/", actividad],
+  ["/hoja-de-vida/", hojaDeVida],
   ["/trayectoria/", trayectoria],
   ["/privacidad/", privacidad],
   ["/admin/", admin, { sitemap: false }],

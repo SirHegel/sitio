@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "node construir.js",
+    "cv": "node herramientas/generar-hoja-de-vida.js",
     "test": "node --test pruebas/*.test.mjs",
     "sync": "npm run sync:github && npm run sync:activity",
     "sync:github": "node herramientas/sincronizar-github.js",
