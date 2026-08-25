@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-08-25T01:06:42.000Z",
+  "actualizadoEn": "2026-08-25T15:46:52.000Z",
   "total": 20,
   "repositorios": [
     {
@@ -661,7 +661,7 @@ export const REPOSITORIOS_GITHUB = {
     {
       "slug": "sitio",
       "nombre": "sitio",
-      "descripcion": "Sitio canónico de Jhon Steven Alvarez Ruiz — economista y analista de datos. Estático, generado, sin dependencias.",
+      "descripcion": "Sitio personal de Jhon Steven Alvarez Ruiz: datos, automatización, sistemas multiagente, proyectos, blog y hoja de vida.",
       "url": "https://github.com/SirHegel/sitio",
       "homepage": "https://jhonstevenalvarezruiz.vercel.app/",
       "lenguajes": [
@@ -688,9 +688,9 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-08-20T23:00:55.000Z",
-      "actualizadoEn": "2026-08-23T23:22:21.000Z",
-      "publicadoEn": "2026-08-23T23:22:09.000Z",
-      "extractoReadme": "Sitio de Jhon Steven Alvarez Ruiz\n\nSitio personal, blog y portafolio de Jhon Steven Alvarez Ruiz — economista,\nanalista de datos y desarrollador en Neiva, Colombia. El HTML público se genera\nsin dependencias; las funciones privadas de Vercel permiten publicar escritos y\nconsultar una auditoría anónima desde /admin/.\n\nArquitectura\n\n· Pieza · Responsabilidad ·\n\n· datos.js · Perfil, experiencia y proyectos seleccionados. ·\n· datos-github.js · Snapshot seguro de todos los repositorios públicos propios. ·\n· datos-actividad.js · Totales anónimos de tokens, llamadas, tareas y proveedores. ·\n· escritos/.md · Fuente editorial del blog. ·\n· plantilla.js · Cabecera, navegación, SEO y JSON-LD comunes. ·\n· construir.js · Blog, proyectos, actividad, feed, sitemap y HTML estático. ·\n· api/ y lib/ · Autenticación, CMS y auditoría en funciones de Vercel. ·\n· activos/animacion.js · Movimiento, audio…"
+      "actualizadoEn": "2026-08-25T15:46:52.000Z",
+      "publicadoEn": "2026-08-25T15:46:51.000Z",
+      "extractoReadme": "Sitio de Jhon Steven Alvarez Ruiz\n\nSitio personal, blog y portafolio de Jhon Steven Alvarez Ruiz — analista de\ndatos y desarrollador de automatización en Neiva, Colombia. El HTML público se genera\nsin dependencias; las funciones privadas de Vercel permiten publicar escritos y\nconsultar una auditoría anónima desde /admin/.\n\nArquitectura\n\n· Pieza · Responsabilidad ·\n\n· datos.js · Perfil, experiencia y proyectos seleccionados. ·\n· datos-github.js · Snapshot seguro de todos los repositorios públicos propios. ·\n· datos-actividad.js · Totales anónimos de tokens, llamadas, tareas y proveedores. ·\n· escritos/.md · Fuente editorial del blog. ·\n· plantilla.js · Cabecera, navegación, SEO y JSON-LD comunes. ·\n· construir.js · Blog, proyectos, actividad, feed, sitemap y HTML estático. ·\n· api/ y lib/ · Autenticación, CMS y auditoría en funciones de Vercel. ·\n· activos/animacion.js · Movimiento, audio…"
     }
   ]
 };
