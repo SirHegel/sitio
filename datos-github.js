@@ -3,8 +3,8 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-08-25T16:07:33.000Z",
-  "total": 20,
+  "actualizadoEn": "2026-08-27T19:13:15.000Z",
+  "total": 21,
   "repositorios": [
     {
       "slug": "automatizacion-evidencias-adso",
@@ -302,6 +302,40 @@ export const REPOSITORIOS_GITHUB = {
       "actualizadoEn": "2026-08-20T22:24:07.000Z",
       "publicadoEn": "2026-03-25T09:09:41.000Z",
       "extractoReadme": "🚀 Designter Financial Bot (Python + Google Sheets API)\n\nEste proyecto es un asistente inteligente de Telegram diseñado para automatizar la gestión financiera de mi agencia, Designter. Permite separar ingresos personales de empresariales mediante procesamiento de lenguaje natural.\n📊 ¿Qué resuelve este Bot?\nComo estudiante de Economía y Desarrollador, identifiqué la necesidad de tener un control de caja inmediato sin depender de hojas de cálculo manuales.\nCategorización Inteligente: Identifica montos y etiquetas (Jhon vs Designter) usando RegEx.\nAlertas de Salud Financiera: Notificaciones automáticas cuando los gastos alcanzan el 30%, 50%, 80% o 100% de los ingresos.\nIntegridad de Datos: Conexión directa con Google Sheets API para almacenamiento en la nube.\nGestión Mensual: Creación dinámica de pestañas por mes (ej. 03-2026).\n🛠️ Tecnologías\nLenguaje: Python 3.x\nAPIs: Telegram Bot API,…"
+    },
+    {
+      "slug": "hegelflow",
+      "nombre": "hegelflow",
+      "descripcion": "Gestión empresarial Scrum + Kanban con Next.js y PostgreSQL",
+      "url": "https://github.com/SirHegel/hegelflow",
+      "homepage": "https://hegelflow.vercel.app/",
+      "lenguajes": [
+        {
+          "nombre": "TypeScript",
+          "bytes": 478471
+        },
+        {
+          "nombre": "PLpgSQL",
+          "bytes": 32905
+        },
+        {
+          "nombre": "CSS",
+          "bytes": 2066
+        },
+        {
+          "nombre": "JavaScript",
+          "bytes": 559
+        }
+      ],
+      "temas": [],
+      "licencia": null,
+      "ramaPredeterminada": "main",
+      "estrellas": 0,
+      "forks": 0,
+      "creadoEn": "2026-08-25T15:35:17.000Z",
+      "actualizadoEn": "2026-08-27T19:13:15.000Z",
+      "publicadoEn": "2026-08-27T19:04:00.000Z",
+      "extractoReadme": "HegelFlow\n\nHegelFlow es una aplicación multiusuario para delegar, priorizar y seguir trabajo con Scrum y Kanban. El repositorio contiene una aplicación web funcional con autenticación propia, tableros, backlog, sprints, calendario, reportes, perfiles de trabajo y trazabilidad sobre PostgreSQL.\nProducción disponible en hegelflow.vercel.app, con Vercel Hobby y Neon Free. El despliegue conserva secretos únicamente en el entorno administrado, fuera del repositorio.\nQué funciona hoy\nInicio y cierre de sesión, sesiones revocables y cambio de contraseña.\nResumen ejecutivo de trabajo abierto, vencimientos, sprint y carga por persona.\nTablero Kanban con drag-and-drop, vista de lista, filtros y límites WIP.\nSincronización automática de cambios visibles entre navegadores, con actualización al recuperar el foco y revisión ligera cada cinco segundos.\nCreación, edición y archivo de tareas con tipo,…"
     },
     {
       "slug": "MULTIPLICADORA",
