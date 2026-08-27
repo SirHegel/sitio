@@ -2,17 +2,22 @@
   "name": "sitio-jhon-steven-alvarez-ruiz",
   "version": "1.0.0",
   "private": true,
-  "description": "Sitio personal de Jhon Steven Alvarez Ruiz. Estático, generado, sin dependencias.",
+  "description": "Sitio personal de Jhon Steven Alvarez Ruiz. Estático y sin dependencias de ejecución.",
   "type": "module",
   "scripts": {
     "build": "node construir.js",
     "cv": "node herramientas/generar-hoja-de-vida.js",
-    "test": "node --test pruebas/*.test.mjs",
+    "test": "node --test --test-concurrency=1 pruebas/*.test.mjs",
     "sync": "npm run sync:github && npm run sync:activity",
     "sync:github": "node herramientas/sincronizar-github.js",
     "sync:activity": "node herramientas/sincronizar-actividad.js",
     "servir": "node construir.js && node --run servir:solo",
     "servir:solo": "python3 -m http.server 8099 --directory publico"
   },
-  "engines": { "node": "24.x" }
+  "engines": {
+    "node": "24.x"
+  },
+  "devDependencies": {
+    "puppeteer-core": "25.8.0"
+  }
 }

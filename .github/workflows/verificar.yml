@@ -25,6 +25,9 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Instalar dependencias de prueba
+        run: npm ci
+
       - name: Ejecutar pruebas
         run: npm test
 
