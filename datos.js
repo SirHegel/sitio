@@ -194,9 +194,11 @@ export const INVESTIGACION = {
   institucion: "Universidad Surcolombiana (USCO)",
   sitio: "https://www.usco.edu.co/",
   fechas: "Junio 2025 — Actualidad",
-  nota: `Miembro activo. Línea de trabajo: <b>distribución de la tierra en Colombia</b>.
-         Coordinación de grupos de estudio y discusión metodológica sobre las fuentes
-         catastrales y su tratamiento estadístico.`,
+  nota: {
+    introduccion: "Miembro activo. Línea de trabajo:",
+    enfasis: "distribución de la tierra en Colombia",
+    detalle: "Coordinación de grupos de estudio y discusión metodológica sobre las fuentes catastrales y su tratamiento estadístico.",
+  },
 };
 
 export const LINEAS = [

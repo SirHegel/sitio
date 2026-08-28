@@ -15,6 +15,7 @@ import {
 } from "./datos.js";
 import { ARCHIVO_HOJA_DE_VIDA, HOJA_DE_VIDA } from "./datos-hoja-de-vida.js";
 import { cargarEscritos, categoriasDe, slugificar } from "./escritos.js";
+import { notaInvestigacionHtml } from "./herramientas/nota-investigacion.js";
 
 const raiz = dirname(fileURLToPath(import.meta.url));
 const salida = join(raiz, "publico");
@@ -320,7 +321,7 @@ ${franja(`      <div class="scrim columna revelar">
           <a href="${INVESTIGACION.sitio}" rel="noopener" target="_blank">${esc(INVESTIGACION.institucion)}</a>
           · <span class="tenue">${esc(INVESTIGACION.fechas)}</span>
         </p>
-        <p class="lead">${INVESTIGACION.nota.trim()}</p>
+        <p class="lead">${notaInvestigacionHtml(INVESTIGACION.nota)}</p>
       </div>`)}
 
 ${franja(`${rotulo("Líneas", "Qué investigo y por qué")}
