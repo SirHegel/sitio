@@ -19,7 +19,7 @@ npm run sync:activity     # actualiza el agregado del ledger local
 | Pieza | Responsabilidad |
 |---|---|
 | `datos.js` | Perfil, experiencia y proyectos seleccionados. |
-| `datos-github.js` | Snapshot seguro de todos los repositorios públicos propios. |
+| `datos-github.js` | Snapshot seguro de repositorios propios, inventarios, releases, PR externas, logros y métricas fijadas a revisión. |
 | `datos-actividad.js` | Totales anónimos de tokens, llamadas, tareas y proveedores. |
 | `escritos/*.md` | Fuente editorial del blog. |
 | `plantilla.js` | Cabecera, navegación, SEO y JSON-LD comunes. |
@@ -105,9 +105,17 @@ corporativa puede parecer un proxy.
 
 ## Sincronización automática
 
-`.github/workflows/sincronizar-portafolio.yml` consulta GitHub cada hora.
-Excluye forks y repositorios privados, sanea los README y solo crea un commit
-cuando cambia el catálogo.
+`.github/workflows/sincronizar-portafolio.yml` consulta GitHub cada hora con el
+token efímero del runner. Excluye forks y repositorios privados, sanea los README,
+inventaría cada árbol Git y recoge releases, PR externas y logros visibles. También
+valida `metricas/repositorios.json` del perfil: cada cifra queda vinculada a un SHA.
+
+La corrida de 22 repositorios usa 92 solicitudes API al corte actual. Su costo es
+`O(R + F + P)` tiempo y espacio, con `R` repositorios, `F` entradas de árbol y `P`
+pull requests. El modo enriquecido exige `GITHUB_TOKEN` o `GH_TOKEN`; 92 supera la
+cuota anónima de 60 solicitudes por hora. Una respuesta incompleta o un árbol
+truncado falla antes de reemplazar el snapshot anterior. El workflow instala con
+`npm ci`, prueba, construye y crea un commit únicamente cuando el catálogo cambió.
 
 La actividad de Orquesta IA nace en un ledger local que no debe subir a GitHub.
 `herramientas/sincronizar-actividad.js` publica únicamente agregados. El timer de

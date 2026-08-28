@@ -156,6 +156,76 @@ const parrafosEscapados = (texto) => String(texto || "")
   .map((p) => `<p class="lead">${esc(p)}</p>`)
   .join("\n        ");
 
+const metricasGithubPorNombre = new Map(
+  REPOSITORIOS_GITHUB.metricas.repositorios.map((item) => [item.nombre.toLowerCase(), item]),
+);
+
+const enumerar = (elementos, maximo = 14) => {
+  const visibles = elementos.slice(0, maximo);
+  const resto = elementos.length - visibles.length;
+  return visibles.length
+    ? `${visibles.join(", ")}${resto > 0 ? ` y ${resto} elementos adicionales` : ""}`
+    : "ninguno";
+};
+
+/**
+ * Invariante: una sola métrica por informe y un denominador siempre visible.
+ * Tiempo O(1), espacio O(1); el recorrido O(F) ocurrió durante la sincronización.
+ */
+function auditoriaProyecto(p) {
+  const github = p.github;
+  if (!github) {
+    return {
+      queHice: "Diseñé el alcance, el modelo de datos y las reglas operativas descritas en esta ficha. El código y los datos comerciales permanecen bajo acceso privado.",
+      contiene: "Proyecto privado. TODO(dato): publicar un inventario anonimizado de módulos, archivos y controles sin exponer información comercial.",
+      verificacion: "La ficha pública permite verificar propósito y arquitectura declarada. TODO(dato): falta una revisión técnica pública o un manifiesto firmado.",
+      formula: "M = leads priorizados con explicación / leads procesados",
+      variables: "M, proporción entre 0 y 1; cada lead es una unidad comercial. El denominador debe salir del registro operativo.",
+      base: "TODO(dato): falta exportar el total procesado y el total con explicación desde la base privada.",
+      umbral: "Umbral fijado para la primera corrida auditable: M ≥ 0,95.",
+      error: "σ = desconocida: todavía no existe una muestra pública anonimizada para estimar error de clasificación.",
+      sanidad: "Con cero leads el cociente no se calcula; con todos los leads explicados M = 1; ningún resultado válido puede exceder 1.",
+      limites: "El informe no atribuye cifras de rendimiento mientras el registro permanezca privado. TODO(dato): tasa de falsos positivos, periodo de medición y tamaño de muestra.",
+      costo: "Complejidad esperada O(N) para evaluar N leads. TODO(dato): horas ejecutadas, costo en pesos y consumo por proveedor.",
+      releases: [],
+    };
+  }
+
+  const inventario = github.inventario;
+  const medicion = metricasGithubPorNombre.get(github.nombre.toLowerCase());
+  const fuente = medicion?.fuente ?? inventario.archivosFuente;
+  const prueba = medicion?.prueba ?? inventario.archivosPrueba;
+  const denominador = Math.max(fuente, 1);
+  const razon = prueba / denominador;
+  const unidad = medicion ? "líneas de prueba por línea de fuente" : "archivos de prueba por archivo de fuente";
+  const simbolos = medicion
+    ? "Lp = líneas físicas de prueba; Lf = líneas físicas de fuente. Rangos: Lp,Lf ≥ 0."
+    : "Ap = archivos de prueba; Af = archivos de fuente reconocidos por extensión o ejecución. Rangos: Ap,Af ≥ 0.";
+  const formula = medicion ? "M = Lp / max(Lf, 1)" : "M = Ap / max(Af, 1)";
+  const revision = medicion?.revision || inventario.revision;
+  const enlaceRevision = revision ? `${github.url}/tree/${revision}` : github.url;
+  const metodo = medicion
+    ? `El manifiesto reproducible contó ${numeroHumano(fuente)} líneas de fuente y ${numeroHumano(prueba)} de prueba en la revisión fijada.`
+    : `El árbol Git contó ${numeroHumano(inventario.archivos)} archivos: ${numeroHumano(inventario.archivosFuente)} de fuente y ${numeroHumano(inventario.archivosPrueba)} de prueba por nombre y extensión.`;
+
+  return {
+    queHice: `Publiqué este trabajo en el repositorio propio ${github.nombre}, con código, historial y documentación consultables. La responsabilidad comprobable comprende el contenido fijado en la revisión enlazada; el informe evita adjudicar trabajo que el historial no muestre.`,
+    contiene: `${numeroHumano(inventario.archivos)} archivos y ${numeroHumano(inventario.bytesVersionados)} bytes versionados. Componentes de primer nivel: ${enumerar(inventario.componentes)}. Documentación detectada: ${numeroHumano(inventario.archivosDocumentacion)} archivos. Manifiestos: ${enumerar(inventario.manifiestos, 8)}.`,
+    verificacion: `${metodo} Hay ${numeroHumano(inventario.workflows)} workflows y ${github.releases.length} releases públicas. Revisión: <a href="${enlaceRevision}" rel="noopener" target="_blank"><code>${revision ? revision.slice(0, 12) : "repositorio vacío"}</code></a>.`,
+    formula,
+    variables: `${simbolos} Unidad objetivo: ${unidad}.`,
+    base: `Línea base observada: ${numeroHumano(prueba)} / ${numeroHumano(fuente)} = ${razon.toLocaleString("es-CO", { maximumFractionDigits: 4 })} ${unidad}.`,
+    umbral: "Umbral editorial fijado el 28 de agosto de 2026 para la próxima revisión: M ≥ 0,25. Esta primera medición funciona como línea base, no como victoria retroactiva.",
+    error: medicion
+      ? `El conteo es exacto para las extensiones y exclusiones del manifiesto en la revisión ${revision.slice(0, 12)}. σ_semántica = desconocida: la razón no mide cobertura ni calidad de las aserciones.`
+      : "El inventario es exacto para el árbol Git completo y la clasificación publicada. σ_semántica = desconocida: nombres de archivo y extensiones no demuestran cobertura.",
+    sanidad: `Con fuente = 0 el denominador vale 1 y evita división por cero; con prueba = 0, M = 0. El valor calculado de nuevo con ${numeroHumano(prueba)} y ${numeroHumano(fuente)} produce ${razon.toLocaleString("es-CO", { maximumFractionDigits: 4 })}.`,
+    limites: "La API no prueba autoría línea por línea, horas de trabajo ni comportamiento en producción. TODO(dato): cobertura ejecutada, tiempo de suite y costo operativo; deben salir del CI o de telemetría publicada.",
+    costo: `Inventariar el repositorio cuesta O(F) tiempo y O(F) espacio para F = ${numeroHumano(inventario.archivos)} entradas. La sincronización completa usó ${REPOSITORIOS_GITHUB.costoSincronizacion.solicitudesApi} solicitudes API para R = ${REPOSITORIOS_GITHUB.total} repositorios. TODO(dato): horas humanas y costo en pesos.`,
+    releases: github.releases,
+  };
+}
+
 const hitoEmpleo = (e) => `        <article class="hito revelar">
           <p class="fecha">${esc(e.fechas)}</p>
           <h3>${esc(e.cargo)}</h3>
@@ -386,6 +456,7 @@ function indiceProyectos() {
         ${REPOSITORIOS_GITHUB.total} repositorios públicos propios de GitHub. El catálogo se
         reconstruye automáticamente; los proyectos destacados conservan además una explicación
         editorial de las decisiones que les dieron forma.</p>
+        <div class="acciones"><a class="boton primario" href="/contribuciones/"><span>Releases y contribuciones</span></a></div>
       </div>`)}
 
 ${franja(`${rotulo("Selección", "Proyectos con contexto")}
@@ -438,6 +509,17 @@ function proyecto(p) {
   const razon = p.automatico
     ? parrafosEscapados(p.porQue)
     : `<p class="lead">${p.porQue.trim()}</p>`;
+  const auditoria = auditoriaProyecto(p);
+  const releases = auditoria.releases.length
+    ? `      <div class="rejilla sep-m" data-escalonar>
+${auditoria.releases.map((release) => `        <article class="ficha revelar">
+          <p class="micro verde">Release ${esc(release.etiqueta)}</p>
+          <h3>${esc(release.nombre)}</h3>
+          <p>${release.activos.length} activos descargables · publicada ${fechaHumana(release.publicadoEn)}${release.preliminar ? " · preliminar" : ""}.</p>
+          <a class="mas" href="${release.url}" rel="noopener" target="_blank">Ver release <i>→</i></a>
+        </article>`).join("\n")}
+      </div>`
+    : "";
   const cuerpo = `${franja(`      <div class="scrim columna revelar proyecto-cabecera">
         <p class="micro"><a class="heredado" href="/proyectos/">Proyectos</a> · ${esc(p.lenguajes[0])}</p>
         ${p.estado ? `<span class="estado-proyecto">${esc(p.estado)}</span>` : ""}
@@ -456,13 +538,44 @@ ${franja(`      <div class="scrim columna revelar proyecto-razon prosa-ancha">
         ${razon}
       </div>`)}
 
-${franja(`${rotulo("Decisiones", "Cómo está construido", "verde")}
+${franja(`${rotulo("Responsabilidad", "Qué hice", "verde")}
+      <div class="scrim columna revelar prosa-ancha">
+        <p class="lead">${esc(auditoria.queHice)}</p>
+      </div>`)}
+
+${franja(`${rotulo("Inventario", "Qué contiene")}
+      <div class="scrim columna revelar prosa-ancha">
+        <p class="lead">${esc(auditoria.contiene)}</p>
+      </div>
+${releases}`)}
+
+${franja(`${rotulo("Decisiones", "Arquitectura y flujo", "verde")}
       <div class="rejilla" data-escalonar>
 ${p.detalles.map(([t, d]) => `        <article class="ficha revelar">
           <h3>${esc(t)}</h3>
           <p>${esc(d)}</p>
         </article>`).join("\n")}
       </div>`)}
+
+${franja(`${rotulo("Evidencia", "Cómo se verificó")}
+      <div class="scrim columna revelar prosa-ancha">
+        <p class="lead">${auditoria.verificacion}</p>
+        <p>${esc(auditoria.error)}</p>
+      </div>`)}
+
+${franja(`${rotulo("Modelo", "Resultados medidos", "verde")}
+      <div class="rejilla" data-escalonar>
+        <article class="ficha revelar"><h3>Ecuación</h3><p><code>${esc(auditoria.formula)}</code></p><p>${esc(auditoria.variables)}</p></article>
+        <article class="ficha revelar"><h3>Línea base</h3><p>${esc(auditoria.base)}</p></article>
+        <article class="ficha revelar"><h3>Umbral</h3><p>${esc(auditoria.umbral)}</p></article>
+        <article class="ficha revelar"><h3>Prueba de sanidad</h3><p>${esc(auditoria.sanidad)}</p></article>
+      </div>`)}
+
+${franja(`${rotulo("Error", "Límites y pendientes")}
+      <div class="scrim columna revelar prosa-ancha"><p class="lead">${esc(auditoria.limites)}</p></div>`)}
+
+${franja(`${rotulo("Recursos", "Costo", "verde")}
+      <div class="scrim columna revelar prosa-ancha"><p class="lead">${esc(auditoria.costo)}</p></div>`)}
 
 ${franja(`      <div class="scrim columna revelar">
         <p class="micro topo">Autoría</p>
@@ -496,6 +609,109 @@ ${franja(`      <div class="scrim columna revelar">
         creator: { "@id": SITIO + "/#persona" },
         maintainer: { "@id": SITIO + "/#persona" },
         inLanguage: "es",
+      },
+    ],
+    cuerpo,
+  });
+}
+
+function contribuciones() {
+  const metricas = REPOSITORIOS_GITHUB.metricas;
+  const externas = REPOSITORIOS_GITHUB.contribucionesExternas;
+  const perfil = REPOSITORIOS_GITHUB.perfilGitHub;
+  const cuerpo = `${franja(`      <div class="scrim columna revelar">
+        <p class="micro verde">GitHub · evidencia pública</p>
+        <h1 class="titulo grande">Contribuciones</h1>
+        <p class="lead">El perfil visible reúne ${perfil.repositoriosPublicos} repositorios públicos:
+        ${perfil.repositoriosPropios} propios y ${perfil.forksPublicos} forks. El catálogo separa esas
+        superficies para que un fork no pase por obra propia y una contribución externa tampoco desaparezca.</p>
+      </div>`)}
+
+${franja(`      <div id="metricas" class="ancla-seccion"></div>
+${rotulo("Medición fijada a commit", "Métricas reproducibles", "verde")}
+      <div class="metricas revelar" data-escalonar>
+        <div class="metrica"><span class="cifra">${numeroHumano(metricas.totales.fuente)}</span><span class="etiqueta">líneas de fuente</span><span class="nota">${metricas.totales.repositorios} repositorios medidos</span></div>
+        <div class="metrica"><span class="cifra">${numeroHumano(metricas.totales.prueba)}</span><span class="etiqueta">líneas de prueba</span><span class="nota">denominador: ${numeroHumano(metricas.totales.fuente)} de fuente</span></div>
+        <div class="metrica"><span class="cifra">${String(metricas.totales.razonPruebaFuente).replace(".", ",")}</span><span class="etiqueta">prueba / fuente</span><span class="nota">9.903 / 25.216</span></div>
+        <div class="metrica"><span class="cifra">${numeroHumano(metricas.totales.commits)}</span><span class="etiqueta">commits alcanzables</span><span class="nota">${metricas.totales.pipelines} workflows</span></div>
+      </div>
+      <div class="scrim columna revelar sep-m">
+        <p>${esc(metricas.metodo)} Cada cifra enlaza una revisión completa; las exclusiones quedan dentro del manifiesto.</p>
+        <a class="mas" href="${metricas.fuente}" rel="noopener" target="_blank">Abrir el manifiesto <i>→</i></a>
+      </div>`)}
+
+${franja(`${rotulo("Versiones publicadas", "Releases")}
+      <div class="rejilla" data-escalonar>
+${REPOSITORIOS_GITHUB.releases.map((release) => `        <article class="ficha revelar">
+          <p class="micro verde">${esc(release.repositorio)} · ${esc(release.etiqueta)}</p>
+          <h3>${esc(release.nombre)}</h3>
+          <p>Publicada ${fechaHumana(release.publicadoEn)}. ${release.activos.length} activos descargables${release.preliminar ? "; versión preliminar" : ""}.</p>
+          <a class="mas" href="${release.url}" rel="noopener" target="_blank">Ver release <i>→</i></a>
+        </article>`).join("\n")}
+      </div>`)}
+
+${franja(`${rotulo("Código de terceros", "Forks públicos")}
+      <div class="scrim columna revelar">
+        <p class="lead">${REPOSITORIOS_GITHUB.forks.length} copias públicas vinculadas a trabajo externo.
+        Se publican aparte: conservar un fork en el perfil demuestra una relación de trabajo o seguimiento,
+        no convierte el repositorio original en obra propia.</p>
+      </div>
+      <div class="rejilla sep-m" data-escalonar>
+${REPOSITORIOS_GITHUB.forks.map((fork) => `        <article class="ficha revelar">
+          <p class="micro">Fork · ${esc(fork.lenguaje || "lenguaje no detectado")}</p>
+          <h3>${esc(fork.nombre)}</h3>
+          <p>${esc(fork.descripcion || "El fork no declara una descripción pública.")}</p>
+          <p class="cifras">Actualizado ${fechaHumana(fork.actualizadoEn)}.</p>
+          <a class="mas" href="${fork.url}" rel="noopener" target="_blank">Ver fork <i>→</i></a>
+        </article>`).join("\n")}
+      </div>`)}
+
+${franja(`${rotulo("Trabajo fuera de SirHegel", "Contribuciones externas", "verde")}
+      <div class="scrim columna revelar">
+        <p class="lead">${externas.totales.pullRequests} pull requests públicos en ${externas.totales.repositorios} repositorios ajenos al corte:
+        ${externas.totales.fusionadas} fusionados, ${externas.totales.abiertas} abiertos y ${externas.totales.cerradas} cerrados sin fusión.
+        El denominador externo es ${externas.totales.pullRequests}; el perfil registra ${externas.totales.pullRequestsPublicos} PR públicos en total y ${externas.totales.fusionadosPublicos} fusionados.</p>
+      </div>
+      <div class="rejilla sep-m" data-escalonar>
+${externas.pullRequests.map((pr) => `        <article class="ficha revelar">
+          <p class="micro ${pr.estado === "fusionada" ? "verde" : ""}">${esc(pr.repositorio)} · ${esc(pr.estado)}</p>
+          <h3>${esc(pr.titulo)}</h3>
+          <p>Creada ${fechaHumana(pr.creadoEn)} · actualización ${fechaHumana(pr.actualizadoEn)}.</p>
+          <a class="mas" href="${pr.url}" rel="noopener" target="_blank">Abrir pull request <i>→</i></a>
+        </article>`).join("\n")}
+      </div>`)}
+
+${franja(`${rotulo("Perfil renderizado", "Logros visibles")}
+      <div class="rejilla" data-escalonar>
+${REPOSITORIOS_GITHUB.logros.map((logro) => `        <article class="ficha revelar">
+          <p class="micro verde">GitHub Achievement</p><h3>${esc(logro.nombre)}</h3>
+          <p>Insignia visible en el HTML público del perfil. La presencia se informa; el criterio interno de concesión no se inventa.</p>
+          <a class="mas" href="${logro.url}" rel="noopener" target="_blank">Ver en GitHub <i>→</i></a>
+        </article>`).join("\n")}
+      </div>`)}
+
+${franja(`${rotulo("Costo y error", "Cómo se construyó este inventario", "verde")}
+      <div class="scrim columna revelar prosa-ancha">
+        <p class="lead">Modelo: T(R,F,P) = O(R + F + P), con R = ${REPOSITORIOS_GITHUB.total} repositorios,
+        F = entradas de los árboles Git y P = ${externas.totales.pullRequestsPublicos} pull requests públicos.
+        La corrida usó ${REPOSITORIOS_GITHUB.costoSincronizacion.solicitudesApi} solicitudes autenticadas.</p>
+        <p>Métrica objetivo: cobertura de repositorios propios = fichas publicadas / repositorios propios = ${REPOSITORIOS_GITHUB.total} / ${REPOSITORIOS_GITHUB.total} = 1. Umbral: 1. Si el denominador fuera cero, la sincronización falla y conserva el snapshot anterior.</p>
+        <p>Error: los conteos son exactos para respuestas públicas de GitHub al corte. σ temporal = desconocida porque PR, releases y visibilidad pueden cambiar después. TODO(dato): costo monetario y horas de revisión editorial.</p>
+      </div>`)}`;
+
+  return pagina({
+    ruta: "/contribuciones/",
+    titulo: `Contribuciones, releases y evidencia GitHub — ${PERSONA.nombre}`,
+    descripcion: `${REPOSITORIOS_GITHUB.total} repositorios propios, ${REPOSITORIOS_GITHUB.releases.length} releases y ${externas.totales.pullRequests} pull requests externos de ${PERSONA.nombre}, medidos desde GitHub.`,
+    grafo: [
+      persona(),
+      migas([{ nombre: "Inicio", ruta: "/" }, { nombre: "Contribuciones", ruta: "/contribuciones/" }]),
+      {
+        "@type": "CollectionPage",
+        "@id": SITIO + "/contribuciones/#pagina",
+        url: SITIO + "/contribuciones/",
+        name: "Contribuciones públicas de " + PERSONA.nombre,
+        about: { "@id": SITIO + "/#persona" },
       },
     ],
     cuerpo,
@@ -992,6 +1208,7 @@ const RUTAS = [
   ["/", inicio],
   ["/academico/", academico],
   ["/proyectos/", indiceProyectos],
+  ["/contribuciones/", contribuciones],
   ["/blog/", () => indiceBlog()],
   ["/actividad/", actividad],
   ["/hoja-de-vida/", hojaDeVida],

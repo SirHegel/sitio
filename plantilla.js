@@ -18,6 +18,7 @@ export const MENU = [
   { ruta: "/hoja-de-vida/", texto: "Hoja de vida" },
   { ruta: "/academico/", texto: "Académico" },
   { ruta: "/proyectos/", texto: "Proyectos" },
+  { ruta: "/contribuciones/", texto: "Contribuciones" },
   { ruta: "/blog/", texto: "Blog" },
   { ruta: "/trayectoria/", texto: "Trayectoria" },
 ];

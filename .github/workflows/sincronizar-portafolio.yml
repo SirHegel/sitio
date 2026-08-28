@@ -28,6 +28,9 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Instalar dependencias verificadas
+        run: npm ci
+
       - name: Consultar repositorios publicos
         env:
           GITHUB_TOKEN: ${{ github.token }}

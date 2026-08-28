@@ -5,6 +5,13 @@
   "framework": null,
   "trailingSlash": true,
   "cleanUrls": false,
+  "redirects": [
+    {
+      "source": "/proyectos/before-you-contribute/",
+      "destination": "/proyectos/gh-before-you-contribute/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

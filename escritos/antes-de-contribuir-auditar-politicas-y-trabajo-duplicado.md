@@ -8,7 +8,7 @@ etiquetas: GitHub, código abierto, GitHub CLI, automatización, IA, seguridad
 
 Contribuir a un proyecto ajeno debería comenzar antes de escribir código. Hay dos preguntas previas que parecen sencillas: si el proyecto admite trabajo asistido por IA y si otra persona ya está resolviendo el mismo problema. En GitHub, ninguna de las dos se responde de forma fiable mirando un solo campo.
 
-Construí [gh-before-you-contribute](https://github.com/SirHegel/gh-before-you-contribute) para reunir esas comprobaciones en una extensión de GitHub CLI y una Action reutilizable. La versión [v1.0.0](https://github.com/SirHegel/gh-before-you-contribute/releases/tag/v1.0.0) no decide si una contribución es buena. Hace una tarea más pequeña: consulta evidencia accesible a la sesión, muestra de dónde salió y detiene el trabajo automático cuando encuentra un bloqueo explícito.
+Construí [gh-before-you-contribute](https://github.com/SirHegel/gh-before-you-contribute) para reunir esas comprobaciones en una extensión de GitHub CLI y una Action reutilizable. La versión [v1.2.0](https://github.com/SirHegel/gh-before-you-contribute/releases/tag/v1.2.0) no decide si una contribución es buena. Hace una tarea más pequeña: consulta evidencia accesible a la sesión, muestra de dónde salió y detiene el trabajo automático cuando encuentra un bloqueo explícito.
 
 ## Las políticas no viven en un lugar único
 
@@ -61,7 +61,7 @@ El modo `--strict` formaliza el contrato de salida. El código `0` indica que la
 
 La extensión usa la autenticación ya administrada por `gh` y realiza consultas a la API de GitHub. No publica comentarios, no asigna incidencias, no crea pull requests y no envía telemetría. Tampoco guarda las respuestas de la API. Su trabajo termina al imprimir la evidencia y devolver un código de salida.
 
-La [política de seguridad](https://github.com/SirHegel/gh-before-you-contribute/blob/v1.0.0/SECURITY.md) documenta ese límite y el canal privado de reporte. En GitHub Actions conviene expresarlo también mediante permisos mínimos:
+La [política de seguridad](https://github.com/SirHegel/gh-before-you-contribute/blob/v1.2.0/SECURITY.md) documenta ese límite y el canal privado de reporte. En GitHub Actions conviene expresarlo también mediante permisos mínimos:
 
 ```yaml
 permissions:
@@ -70,7 +70,7 @@ permissions:
   pull-requests: read
 
 steps:
-  - uses: SirHegel/gh-before-you-contribute@v1.0.0
+  - uses: SirHegel/gh-before-you-contribute@v1.2.0
     with:
       repository: owner/repositorio
       issue: '123'
@@ -78,11 +78,13 @@ steps:
       strict: 'true'
 ```
 
-Fijar `@v1.0.0` hace reproducible esta configuración. Quien prefiera recibir correcciones compatibles de la versión mayor puede usar el alias `@v1` publicado por el proyecto.
+Fijar `@v1.2.0` hace reproducible esta configuración. Quien prefiera recibir correcciones compatibles de la versión mayor puede usar el alias `@v1` publicado por el proyecto.
 
-El repositorio valida los scripts con ShellCheck y usa un reemplazo determinista de `gh` durante las pruebas. Así puede comprobar escenarios permitidos y bloqueados sin consumir cuota de la API ni depender del estado cambiante de repositorios externos. Las reglas para ampliar los detectores están en [CONTRIBUTING.md](https://github.com/SirHegel/gh-before-you-contribute/blob/v1.0.0/CONTRIBUTING.md).
+La Action expone tres salidas escalares validadas: `verdict`, `policy_verdict` e `issue_verdict`. El informe completo y los fragmentos de evidencia quedan fuera de `GITHUB_OUTPUT`; un proceso posterior recibe enumeraciones, no documentos potencialmente sensibles. La versión 1.2.0 pasó 62 regresiones deterministas, ShellCheck, Actionlint, dos análisis de CodeQL y una ejecución real de la Action en un runner de GitHub.
 
-## Instalar exactamente la versión 1.0.0
+El repositorio usa un reemplazo determinista de `gh` durante las pruebas. Así puede comprobar escenarios permitidos y bloqueados sin consumir cuota de la API ni depender del estado cambiante de repositorios externos. Las reglas para ampliar los detectores están en [CONTRIBUTING.md](https://github.com/SirHegel/gh-before-you-contribute/blob/v1.2.0/CONTRIBUTING.md).
+
+## Instalar exactamente la versión 1.2.0
 
 La extensión requiere [GitHub CLI](https://cli.github.com/) con una sesión autenticada y `jq`. Antes de instalarla se pueden verificar ambas dependencias:
 
@@ -94,7 +96,7 @@ jq --version
 El parámetro `--pin` de GitHub CLI permite instalar la etiqueta concreta en vez de seguir automáticamente la versión más reciente:
 
 ```bash
-gh extension install SirHegel/gh-before-you-contribute --pin v1.0.0
+gh extension install SirHegel/gh-before-you-contribute --pin v1.2.0
 gh before-you-contribute --help
 ```
 
@@ -105,4 +107,4 @@ gh before-you-contribute owner/repositorio
 gh before-you-contribute owner/repositorio 123 --strict
 ```
 
-La [documentación completa de v1.0.0](https://github.com/SirHegel/gh-before-you-contribute/tree/v1.0.0) incluye los detectores individuales y la configuración de la Action. El resultado sigue necesitando criterio humano: la herramienta reduce la incertidumbre inicial y deja un rastro verificable, pero no suplanta las reglas del proyecto ni la conversación con sus mantenedores.
+La [documentación completa de v1.2.0](https://github.com/SirHegel/gh-before-you-contribute/tree/v1.2.0) incluye los detectores individuales, el contrato JSON y la configuración de la Action. El resultado sigue necesitando criterio humano: la herramienta reduce la incertidumbre inicial y deja un rastro verificable, pero no suplanta las reglas del proyecto ni la conversación con sus mantenedores.

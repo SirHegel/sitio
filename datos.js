@@ -86,11 +86,21 @@ const corteActividad = new Intl.DateTimeFormat("es-CO", {
   timeZone: "America/Bogota",
 }).format(new Date(ACTIVIDAD_IA.actualizadoEn));
 
+const metricasCodigo = REPOSITORIOS_GITHUB.metricas;
+const metricasPorRepositorio = new Map(
+  metricasCodigo.repositorios.map((item) => [item.nombre.toLowerCase(), item]),
+);
+const cifrasRepositorio = (nombre) => {
+  const item = metricasPorRepositorio.get(nombre.toLowerCase());
+  if (!item) return "TODO(dato): falta medición reproducible fijada a una revisión";
+  return `${item.fuente.toLocaleString("es-CO")} líneas de fuente · ${item.prueba.toLocaleString("es-CO")} de prueba · ${item.commits} commits alcanzables · revisión ${item.revision.slice(0, 7)}`;
+};
+
 export const METRICAS = [
   { valor: ACTIVIDAD_IA.totales.tokens, sufijo: "", etiqueta: "tokens contabilizados", nota: `${ACTIVIDAD_IA.totales.llamadas} llamadas · corte ${corteActividad}`, enlace: "/actividad/" },
-  { valor: REPOSITORIOS_GITHUB.total, sufijo: "", etiqueta: "repositorios públicos", nota: "sincronizados automáticamente desde GitHub", enlace: "/proyectos/#github" },
-  { valor: 61, sufijo: "%", etiqueta: "líneas de prueba por línea de código", nota: "en el repositorio con mayor disciplina" },
-  { valor: 385, sufijo: "", etiqueta: "casos de prueba declarados", nota: "en cinco proyectos técnicos seleccionados" },
+  { valor: REPOSITORIOS_GITHUB.total, sufijo: "", etiqueta: "repositorios públicos propios", nota: `${REPOSITORIOS_GITHUB.perfilGitHub.forksPublicos} forks separados del catálogo`, enlace: "/proyectos/#github" },
+  { valor: metricasCodigo.totales.fuente, sufijo: "", etiqueta: "líneas de fuente medidas", nota: `${metricasCodigo.totales.repositorios} repositorios fijados a revisión`, enlace: "/contribuciones/#metricas" },
+  { valor: metricasCodigo.totales.prueba, sufijo: "", etiqueta: "líneas de prueba medidas", nota: `${metricasCodigo.totales.prueba.toLocaleString("es-CO")} / ${metricasCodigo.totales.fuente.toLocaleString("es-CO")} = ${metricasCodigo.totales.razonPruebaFuente}`, enlace: "/contribuciones/#metricas" },
 ];
 
 export const EXPERIENCIA = [
@@ -273,7 +283,7 @@ export const PROYECTOS = [
     repo: "https://github.com/SirHegel/orquesta-ia",
     demo: "",
     lenguajes: ["Python", "SQLite", "systemd"],
-    cifras: "4.923 líneas de fuente · 2.882 de prueba · 96 casos",
+    cifras: cifrasRepositorio("orquesta-ia"),
     porQue: `El problema no es llamar a un modelo: es decidir cuál, con qué cuota restante, y qué
       hacer cuando el que estaba trabajando se queda sin ventana a mitad de tarea. Orquesta IA
       contabiliza el gasto por ventana de cuota, detecta el límite antes de chocarse con él y
@@ -292,7 +302,7 @@ export const PROYECTOS = [
     repo: "https://github.com/SirHegel/automatizacion-evidencias-adso",
     demo: "",
     lenguajes: ["Python", "GitHub Actions"],
-    cifras: "8.405 líneas de fuente · 341 de prueba · 13 casos · CI bloqueante",
+    cifras: cifrasRepositorio("automatizacion-evidencias-adso"),
     porQue: `Un entregable no está bien porque se vea bien. Este motor descomprime los documentos
       de ofimática y lee su XML, exporta los PDF y los verifica, y corre una auditoría de privacidad
       sobre cada parte extraída de cada archivo. Cuando encuentra un riesgo, la integración continua
@@ -310,8 +320,8 @@ export const PROYECTOS = [
     repo: "https://github.com/SirHegel/colmat-x-automation",
     demo: "",
     lenguajes: ["Python", "OAuth 1.0a", "SQLite", "Jinja"],
-    cifras: "2.112 líneas de fuente · 1.294 de prueba · 57 casos",
-    porQue: `La disciplina de prueba más alta del conjunto. Estado transaccional, OAuth 1.0a y tres
+    cifras: cifrasRepositorio("colmat-x-automation"),
+    porQue: `Estado transaccional, OAuth 1.0a y tres
       puertas contra la publicación accidental: aprobar un texto aprueba <i>ese</i> texto,
       porque la aprobación se ata al hash de lo revisado. Si el contenido cambia después de la
       revisión, la aprobación deja de valer.`,
@@ -328,7 +338,7 @@ export const PROYECTOS = [
     repo: "https://github.com/SirHegel/sincategorematico-bot",
     demo: "",
     lenguajes: ["Python", "SQLite", "systemd"],
-    cifras: "5.996 líneas de fuente · 3.366 de prueba · 153 casos",
+    cifras: cifrasRepositorio("sincategorematico-bot"),
     porQue: `Tres superficies sobre un mismo núcleo: bot de Telegram, tablero HTTP local y
       aplicación de escritorio. Protocolo de reclamación de propiedad con SHA-256 y caducidad;
       el token vive con permisos <code>0600</code> fuera del repositorio. Reserva en base de datos
@@ -343,18 +353,19 @@ export const PROYECTOS = [
   {
     slug: "bloquitos",
     nombre: "Bloquitos",
-    resumen: "Juego de bloques que caen con niveles infinitos, sin una sola dependencia externa, instalable como aplicación y jugable sin conexión.",
+    resumen: "Juego de bloques que caen con niveles infinitos: núcleo web sin dependencias de ejecución, aplicación instalable y modo sin conexión.",
     repo: "https://github.com/SirHegel/bloquitos",
     demo: "https://sirhegel.github.io/bloquitos/",
     lenguajes: ["JavaScript", "HTML", "CSS"],
-    cifras: "2.916 líneas de fuente · 885 de prueba · 66 casos",
+    cifras: cifrasRepositorio("bloquitos"),
     porQue: `La superficie de entrega más amplia del conjunto: navegador, aplicación instalable,
-      ejecutable de escritorio y base de datos local, sin una sola dependencia externa. La política
+      ejecutable de escritorio y base de datos local. El núcleo del navegador no incorpora dependencias
+      de ejecución; el empaquetado de escritorio usa Electron. La política
       de seguridad de contenido apunta entera a <code>'self'</code>: el juego no puede pedir un
       script, un estilo ni una tipografía a ningún servidor. Como no tiene dependencias, esa
       política no le quita nada y cierra la puerta a la inyección de código de terceros.`,
     detalles: [
-      ["Cero dependencias", "No hay cadena de suministro que auditar porque no hay cadena de suministro."],
+      ["Núcleo web sin dependencias", "El juego que corre en el navegador no descarga librerías de ejecución; el empaquetado de escritorio mantiene su cadena de Electron por separado."],
       ["CSP total a 'self'", "La política no es aspiracional: el juego funciona completo bajo ella."],
       ["Sin conexión", "Instalable como aplicación y jugable con la red caída."],
     ],

@@ -43,6 +43,7 @@ const sha256 = (contenido) => createHash("sha256").update(contenido).digest("hex
 
 const fuentesRelativas = [
   "datos.js",
+  "datos-github.js",
   "datos-hoja-de-vida.js",
   "herramientas/generar-hoja-de-vida.js",
   "herramientas/nota-investigacion.js",
@@ -224,11 +225,11 @@ const html = `<!doctype html>
 
     <section aria-labelledby="evidencia">
       <h2 id="evidencia">Evidencia técnica pública</h2>
-      <p>Inventario verificado al ${esc(EVIDENCIA_TECNICA.corte)}. Los cinco proyectos principales suman ${esc(EVIDENCIA_TECNICA.totales.fuente.toLocaleString("es-CO"))} líneas de fuente, ${esc(EVIDENCIA_TECNICA.totales.prueba.toLocaleString("es-CO"))} líneas de prueba y ${esc(EVIDENCIA_TECNICA.totales.casos.toLocaleString("es-CO"))} casos declarados.</p>
+      <p>Inventario verificado al ${esc(EVIDENCIA_TECNICA.corte)}. Seis repositorios fijados a revisiones completas suman ${esc(EVIDENCIA_TECNICA.totales.fuente.toLocaleString("es-CO"))} líneas de fuente, ${esc(EVIDENCIA_TECNICA.totales.prueba.toLocaleString("es-CO"))} líneas de prueba y ${esc(EVIDENCIA_TECNICA.totales.commits.toLocaleString("es-CO"))} commits alcanzables.</p>
       <ul class="evidencia">
         <li><strong>${esc(REPOSITORIOS_GITHUB.total)}</strong> repositorios públicos propios inventariados.</li>
-        <li><strong>${esc(EVIDENCIA_TECNICA.totales.prueba.toLocaleString("es-CO"))}</strong> líneas de prueba en cinco proyectos clave.</li>
-        <li><strong>${esc(EVIDENCIA_TECNICA.totales.casos.toLocaleString("es-CO"))}</strong> casos de prueba declarados.</li>
+        <li><strong>${esc(EVIDENCIA_TECNICA.totales.prueba.toLocaleString("es-CO"))}</strong> líneas de prueba; denominador: ${esc(EVIDENCIA_TECNICA.totales.fuente.toLocaleString("es-CO"))} líneas de fuente.</li>
+        <li><strong>${esc(EVIDENCIA_TECNICA.totales.pipelines.toLocaleString("es-CO"))}</strong> workflows medidos en el mismo manifiesto reproducible.</li>
       </ul>
       <p style="margin-top:3mm"><strong>Orquesta IA, corte ${esc(periodoActividad)}:</strong> ${esc(ACTIVIDAD_IA.totales.tokens.toLocaleString("es-CO"))} tokens contabilizados, ${esc(ACTIVIDAD_IA.totales.llamadas.toLocaleString("es-CO"))} llamadas, ${esc(ACTIVIDAD_IA.totales.exitos.toLocaleString("es-CO"))} exitosas y ${esc(ACTIVIDAD_IA.totales.tasaExito.toLocaleString("es-CO"))} % de éxito. Es una ventana auditada, no una estimación acumulada permanente.</p>
     </section>

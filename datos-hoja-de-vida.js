@@ -2,26 +2,44 @@
    La experiencia, educación y certificaciones siguen viviendo en datos.js;
    aquí solo está la capa profesional extensa que consumen la página y el PDF. */
 
+import { REPOSITORIOS_GITHUB } from "./datos-github.js";
+
 export const ARCHIVO_HOJA_DE_VIDA = "/activos/hoja-de-vida-jhon-steven-alvarez-ruiz.pdf";
 
-const PROYECTOS_EVIDENCIA = [
-  { nombre: "Orquesta IA", fuente: 4_923, prueba: 2_882, casos: 96 },
-  { nombre: "Automatización de evidencias ADSO", fuente: 8_405, prueba: 341, casos: 13 },
-  { nombre: "Colmat X Automation", fuente: 2_112, prueba: 1_294, casos: 57 },
-  { nombre: "Sincategoremático Bot", fuente: 5_996, prueba: 3_366, casos: 153 },
-  { nombre: "Bloquitos", fuente: 2_916, prueba: 885, casos: 66 },
-];
+const NOMBRES_PROYECTO = new Map([
+  ["automatizacion-evidencias-adso", "Automatización de evidencias ADSO"],
+  ["orquesta-ia", "Orquesta IA"],
+  ["colmat-x-automation", "Colmat X Automation"],
+  ["sincategorematico-bot", "Sincategoremático Bot"],
+  ["bloquitos", "Bloquitos"],
+  ["gh-achievement-audit", "GitHub Achievement Audit"],
+]);
+
+const PROYECTOS_EVIDENCIA = REPOSITORIOS_GITHUB.metricas.repositorios.map((item) => ({
+  nombre: NOMBRES_PROYECTO.get(item.nombre) || item.nombre,
+  repositorio: item.nombre,
+  url: item.url,
+  revision: item.revision,
+  fuente: item.fuente,
+  prueba: item.prueba,
+  commits: item.commits,
+  pipelines: item.pipelines,
+}));
 
 export const EVIDENCIA_TECNICA = {
-  corte: "25 de agosto de 2026",
+  corte: new Intl.DateTimeFormat("es-CO", { dateStyle: "long", timeZone: "America/Bogota" })
+    .format(new Date(REPOSITORIOS_GITHUB.actualizadoEn)),
+  fuente: REPOSITORIOS_GITHUB.metricas.fuente,
+  metodo: REPOSITORIOS_GITHUB.metricas.metodo,
   proyectos: PROYECTOS_EVIDENCIA,
   totales: PROYECTOS_EVIDENCIA.reduce(
     (total, proyecto) => ({
       fuente: total.fuente + proyecto.fuente,
       prueba: total.prueba + proyecto.prueba,
-      casos: total.casos + proyecto.casos,
+      commits: total.commits + proyecto.commits,
+      pipelines: total.pipelines + proyecto.pipelines,
     }),
-    { fuente: 0, prueba: 0, casos: 0 },
+    { fuente: 0, prueba: 0, commits: 0, pipelines: 0 },
   ),
 };
 

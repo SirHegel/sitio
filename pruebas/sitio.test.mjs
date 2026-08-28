@@ -19,7 +19,7 @@ import {
   REPOSITORIOS_GITHUB,
 } from "../datos.js";
 import { ARCHIVO_HOJA_DE_VIDA, EVIDENCIA_TECNICA, HOJA_DE_VIDA } from "../datos-hoja-de-vida.js";
-import { cargarEscritos } from "../escritos.js";
+import { cargarEscritos, slugificar } from "../escritos.js";
 
 const raiz = fileURLToPath(new URL("..", import.meta.url));
 const construido = fileURLToPath(new URL("../publico/", import.meta.url));
@@ -31,6 +31,7 @@ const hojaDeVidaManifiesto = fileURLToPath(new URL("../documentos/hoja-de-vida/m
 const sha256 = (contenido) => createHash("sha256").update(contenido).digest("hex");
 const fuentesHojaDeVida = [
   "datos.js",
+  "datos-github.js",
   "datos-hoja-de-vida.js",
   "herramientas/generar-hoja-de-vida.js",
   "herramientas/nota-investigacion.js",
@@ -91,7 +92,7 @@ test("todas las páginas tienen título, canónico único y marcado de persona",
 
 test("cada repositorio público de GitHub tiene un módulo de proyecto", () => {
   assert.equal(REPOSITORIOS_GITHUB.total, REPOSITORIOS_GITHUB.repositorios.length);
-  assert.ok(REPOSITORIOS_GITHUB.total >= 20);
+  assert.ok(REPOSITORIOS_GITHUB.total >= 22);
   const directorio = `${construido}proyectos/`;
   const entradas = readdirSync(directorio, { withFileTypes: true }).filter((entrada) => entrada.isDirectory());
   const html = entradas
@@ -100,8 +101,40 @@ test("cada repositorio público de GitHub tiene un módulo de proyecto", () => {
   for (const repo of REPOSITORIOS_GITHUB.repositorios) {
     assert.match(repo.url, /^https:\/\/github\.com\/SirHegel\//);
     assert.ok(html.includes(repo.url), `falta el repositorio ${repo.nombre}`);
+    assert.ok(repo.inventario && Number.isInteger(repo.inventario.archivos), `falta el inventario de ${repo.nombre}`);
+    if (repo.inventario.vacio) assert.equal(repo.inventario.revision, null);
+    else assert.match(repo.inventario.revision, /^[a-f0-9]{40}$/i, `falta la revisión de ${repo.nombre}`);
+    const informe = readFileSync(`${directorio}${slugificar(repo.slug)}/index.html`, "utf8");
+    for (const seccion of ["Qué hice", "Qué contiene", "Cómo se verificó", "Resultados medidos", "Límites y pendientes", "Costo"]) {
+      assert.ok(informe.includes(seccion), `${repo.nombre} no publica la sección ${seccion}`);
+    }
   }
   assert.ok(entradas.length >= PROYECTOS.length);
+});
+
+test("el perfil publica releases, contribuciones externas, logros y métricas reproducibles", () => {
+  assert.equal(REPOSITORIOS_GITHUB.metricas.schemaVersion, 1);
+  assert.equal(REPOSITORIOS_GITHUB.metricas.totales.repositorios, REPOSITORIOS_GITHUB.metricas.repositorios.length);
+  assert.equal(REPOSITORIOS_GITHUB.forks.length, REPOSITORIOS_GITHUB.perfilGitHub.forksPublicos);
+  assert.equal(REPOSITORIOS_GITHUB.total + REPOSITORIOS_GITHUB.forks.length, REPOSITORIOS_GITHUB.perfilGitHub.repositoriosPublicos);
+  assert.ok(REPOSITORIOS_GITHUB.releases.length >= 9);
+  assert.ok(REPOSITORIOS_GITHUB.contribucionesExternas.totales.pullRequests >= 20);
+  assert.ok(REPOSITORIOS_GITHUB.logros.some((logro) => logro.slug === "quickdraw"));
+  assert.ok(REPOSITORIOS_GITHUB.logros.some((logro) => logro.slug === "yolo"));
+  assert.ok(rutasPublicas.includes("/contribuciones/"));
+  const html = readFileSync(archivoRuta("/contribuciones/"), "utf8");
+  for (const texto of ["Releases", "Forks públicos", "Contribuciones externas", "Logros visibles", "25.216", "9.903"]) {
+    assert.ok(html.includes(texto), `contribuciones no publica ${texto}`);
+  }
+});
+
+test("el repositorio renombrado conserva una redirección permanente", () => {
+  const configuracion = JSON.parse(readFileSync(`${raiz}/vercel.json`, "utf8"));
+  assert.ok(configuracion.redirects.some((regla) => (
+    regla.source === "/proyectos/before-you-contribute/"
+    && regla.destination === "/proyectos/gh-before-you-contribute/"
+    && regla.permanent === true
+  )));
 });
 
 test("el blog genera artículos, temas y feed", async () => {
@@ -117,6 +150,10 @@ test("el blog genera artículos, temas y feed", async () => {
   for (const tema of ["derecho", "economia", "pensamientos", "analisis"]) {
     assert.ok(existsSync(archivoRuta(`/blog/tema/${tema}/`)), `falta el tema ${tema}`);
   }
+  assert.ok(
+    escritos.some((escrito) => escrito.slug === "abelardo-de-la-espriella-y-la-politica-de-drogas"),
+    "falta el análisis de la política de drogas de Abelardo de la Espriella",
+  );
 });
 
 test("el blog conserva tarjetas distinguibles en móvil", () => {
@@ -194,18 +231,16 @@ test("las métricas técnicas del dossier se suman y coinciden con los proyectos
     (total, proyecto) => ({
       fuente: total.fuente + proyecto.fuente,
       prueba: total.prueba + proyecto.prueba,
-      casos: total.casos + proyecto.casos,
+      commits: total.commits + proyecto.commits,
+      pipelines: total.pipelines + proyecto.pipelines,
     }),
-    { fuente: 0, prueba: 0, casos: 0 },
+    { fuente: 0, prueba: 0, commits: 0, pipelines: 0 },
   );
   assert.deepEqual(EVIDENCIA_TECNICA.totales, suma);
-  assert.deepEqual(suma, { fuente: 24_352, prueba: 8_768, casos: 385 });
+  assert.deepEqual(suma, { fuente: 25_216, prueba: 9_903, commits: 52, pipelines: 6 });
   for (const evidencia of EVIDENCIA_TECNICA.proyectos) {
-    const proyecto = PROYECTOS.find((item) => item.nombre === evidencia.nombre);
-    assert.ok(proyecto, `falta el proyecto medido ${evidencia.nombre}`);
-    for (const valor of [evidencia.fuente, evidencia.prueba, evidencia.casos]) {
-      assert.ok(proyecto.cifras.includes(valor.toLocaleString("es-CO")), `${evidencia.nombre} no publica ${valor}`);
-    }
+    assert.match(evidencia.revision, /^[a-f0-9]{40}$/);
+    assert.ok(REPOSITORIOS_GITHUB.repositorios.some((repo) => repo.nombre === evidencia.repositorio));
   }
 });
 

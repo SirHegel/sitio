@@ -3,8 +3,8 @@
 /**
  * Genera un snapshot publico y determinista de los repositorios de SirHegel.
  *
- * No necesita dependencias. GITHUB_TOKEN o GH_TOKEN son opcionales; cuando se
- * ejecuta en GitHub Actions se usa el token efimero del propio workflow.
+ * No necesita dependencias. El modo completo usa GITHUB_TOKEN o GH_TOKEN: con
+ * 22 repositorios consulta mas recursos que la cuota anonima permite por hora.
  */
 
 import { execFileSync } from "node:child_process";
@@ -15,11 +15,17 @@ import { fileURLToPath } from "node:url";
 const PROPIETARIO = "SirHegel";
 const API = "https://api.github.com";
 const VERSION_API = "2022-11-28";
-const MAXIMO_EXTRACTO = 900;
+const MAXIMO_EXTRACTO = 3_000;
 const RAIZ = dirname(dirname(fileURLToPath(import.meta.url)));
 const DESTINO = join(RAIZ, "datos-github.js");
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
 const COMMIT_AUTOMATICO = "Sincronizar proyectos publicos de GitHub";
+const EXTENSION_CODIGO = /\.(?:bash|c|cc|cpp|css|go|h|html?|java|js|jsx|mjs|cjs|php|py|rb|rs|sh|sql|svelte|ts|tsx|vue)$/i;
+const RUTA_PRUEBA = /(?:^|\/)(?:tests?|pruebas?|specs?)(?:\/|$)|(?:^|\/)(?:test_|spec_).+|(?:\.test|\.spec|_test)\.[^/]+$/i;
+const RUTA_DOCUMENTACION = /(?:^|\/)(?:docs?|documentacion)(?:\/|$)|(?:^|\/)(?:readme|contributing|code_of_conduct|security|support)(?:\.[^/]+)?$|\.(?:md|rst)$/i;
+const RUTA_WORKFLOW = /^\.github\/workflows\/[^/]+\.ya?ml$/i;
+const NOMBRE_MANIFIESTO = /^(?:package(?:-lock)?\.json|pyproject\.toml|requirements[^/]*\.txt|composer\.json|cargo\.toml|go\.mod|pom\.xml|dockerfile|vercel\.json)$/i;
+let solicitudesApi = 0;
 
 const CABECERAS = {
   Accept: "application/vnd.github+json",
@@ -91,9 +97,10 @@ function detalleLimite(respuesta) {
   return ` Se alcanzo el limite de la API; vuelve a intentar despues de ${cuando} o define GITHUB_TOKEN/GH_TOKEN.`;
 }
 
-async function pedir(ruta, { aceptar = CABECERAS.Accept, permitir404 = false } = {}) {
+async function pedir(ruta, { aceptar = CABECERAS.Accept, permitir404 = false, permitir409 = false } = {}) {
   let respuesta;
   try {
+    solicitudesApi += 1;
     respuesta = await fetch(`${API}${ruta}`, {
       headers: { ...CABECERAS, Accept: aceptar },
       signal: AbortSignal.timeout(30_000),
@@ -102,7 +109,7 @@ async function pedir(ruta, { aceptar = CABECERAS.Accept, permitir404 = false } =
     throw new Error(`No se pudo conectar con GitHub para ${ruta}: ${mensajeSeguro(error.message)}`);
   }
 
-  if (permitir404 && respuesta.status === 404) return null;
+  if ((permitir404 && respuesta.status === 404) || (permitir409 && respuesta.status === 409)) return null;
   if (!respuesta.ok) {
     let detalle = "";
     try {
@@ -137,7 +144,7 @@ async function listarRepositorios() {
 
   for (let pagina = 1; ; pagina += 1) {
     const lote = await pedirJson(
-      `/users/${encodeURIComponent(PROPIETARIO)}/repos?type=owner&sort=full_name&direction=asc&per_page=100&page=${pagina}`,
+      `/users/${encodeURIComponent(PROPIETARIO)}/repos?type=all&sort=full_name&direction=asc&per_page=100&page=${pagina}`,
     );
     if (!Array.isArray(lote)) throw new Error("GitHub devolvio una lista de repositorios invalida.");
     encontrados.push(...lote);
@@ -154,7 +161,22 @@ async function listarRepositorios() {
     throw new Error(`GitHub no devolvio repositorios publicos propios de ${PROPIETARIO}; se conserva el snapshot anterior.`);
   }
 
-  return propios.sort((a, b) => compararTexto(a.name.toLowerCase(), b.name.toLowerCase()) || compararTexto(a.name, b.name));
+  const forks = encontrados
+    .filter((repo) => repo?.owner?.login === PROPIETARIO && repo.private === false && repo.fork === true)
+    .map((repo) => ({
+      nombre: sanearTextoPlano(repo.name, 180),
+      nombreCompleto: sanearTextoPlano(repo.full_name, 260),
+      descripcion: sanearTextoPlano(repo.description),
+      url: `https://github.com/${PROPIETARIO}/${encodeURIComponent(repo.name)}`,
+      lenguaje: sanearTextoPlano(repo.language, 80),
+      actualizadoEn: fechaIso(repo.updated_at, "updated_at", repo.name),
+    }))
+    .sort((a, b) => compararTexto(a.nombre.toLowerCase(), b.nombre.toLowerCase()) || compararTexto(a.nombre, b.nombre));
+
+  return {
+    propios: propios.sort((a, b) => compararTexto(a.name.toLowerCase(), b.name.toLowerCase()) || compararTexto(a.name, b.name)),
+    forks,
+  };
 }
 
 function decodificarEntidades(texto) {
@@ -276,20 +298,246 @@ function homepageSegura(valor) {
   }
 }
 
+function enteroNoNegativo(valor, campo) {
+  if (!Number.isSafeInteger(valor) || valor < 0) throw new Error(`El informe de metricas contiene ${campo} invalido.`);
+  return valor;
+}
+
+/**
+ * Invariante: cada blob cuenta una vez y las pruebas quedan fuera de fuente.
+ * Tiempo O(F), espacio O(F), con F = entradas del arbol Git.
+ */
+function inventariarArbol(arbol, repo) {
+  if (arbol === null) {
+    return {
+      revision: null,
+      vacio: true,
+      completo: true,
+      archivos: 0,
+      bytesVersionados: 0,
+      archivosFuente: 0,
+      archivosPrueba: 0,
+      archivosDocumentacion: 0,
+      workflows: 0,
+      manifiestos: [],
+      componentes: [],
+    };
+  }
+  if (!arbol || !Array.isArray(arbol.tree) || !/^[a-f0-9]{40}$/i.test(arbol.sha || "")) {
+    throw new Error(`GitHub devolvio un arbol invalido para ${repo}.`);
+  }
+  if (arbol.truncated) throw new Error(`El arbol de ${repo} llego truncado; se conserva el snapshot anterior.`);
+
+  const blobs = arbol.tree.filter((entrada) => entrada?.type === "blob" && typeof entrada.path === "string");
+  const rutasCodigo = blobs.filter((entrada) => (
+    EXTENSION_CODIGO.test(entrada.path)
+    || (entrada.mode === "100755" && !RUTA_DOCUMENTACION.test(entrada.path))
+  ));
+  const pruebas = rutasCodigo.filter((entrada) => RUTA_PRUEBA.test(entrada.path));
+  const fuentes = rutasCodigo.filter((entrada) => !RUTA_PRUEBA.test(entrada.path));
+  const manifiestos = blobs
+    .map((entrada) => entrada.path)
+    .filter((ruta) => NOMBRE_MANIFIESTO.test(ruta.split("/").at(-1)))
+    .sort(compararTexto);
+  const componentes = [...new Set(blobs.map((entrada) => entrada.path.split("/")[0]).filter(Boolean))]
+    .sort(compararTexto);
+
+  return {
+    revision: arbol.sha.toLowerCase(),
+    vacio: blobs.length === 0,
+    completo: true,
+    archivos: blobs.length,
+    bytesVersionados: blobs.reduce((total, entrada) => total + (Number.isSafeInteger(entrada.size) ? entrada.size : 0), 0),
+    archivosFuente: fuentes.length,
+    archivosPrueba: pruebas.length,
+    archivosDocumentacion: blobs.filter((entrada) => RUTA_DOCUMENTACION.test(entrada.path)).length,
+    workflows: blobs.filter((entrada) => RUTA_WORKFLOW.test(entrada.path)).length,
+    manifiestos,
+    componentes,
+  };
+}
+
+function normalizarRelease(release, repo) {
+  if (!release || release.draft || !release.html_url || !release.tag_name) return null;
+  return {
+    repositorio: repo,
+    etiqueta: sanearTextoPlano(release.tag_name, 120),
+    nombre: sanearTextoPlano(release.name || release.tag_name, 180),
+    url: homepageSegura(release.html_url),
+    publicadoEn: fechaIso(release.published_at || release.created_at, "published_at", `${repo}/${release.tag_name}`),
+    preliminar: Boolean(release.prerelease),
+    activos: Array.isArray(release.assets)
+      ? release.assets.slice(0, 30).map((activo) => ({
+          nombre: sanearTextoPlano(activo?.name, 180),
+          url: homepageSegura(activo?.browser_download_url),
+          bytes: Number.isSafeInteger(activo?.size) ? activo.size : 0,
+          descargas: Number.isSafeInteger(activo?.download_count) ? activo.download_count : 0,
+        })).filter((activo) => activo.nombre && activo.url)
+      : [],
+  };
+}
+
+/**
+ * Invariante: los totales publicados son la suma del mismo arreglo fijado a SHA.
+ * Tiempo O(R), espacio O(R), con R = repositorios medidos.
+ */
+function normalizarMetricas(manifiesto) {
+  if (!manifiesto || manifiesto.schema_version !== 1 || !Array.isArray(manifiesto.repositories)) {
+    throw new Error("El informe metricas/repositorios.json no cumple el esquema 1.");
+  }
+  const repositorios = manifiesto.repositories.map((item) => {
+    if (!item || typeof item.name !== "string" || !/^[a-f0-9]{40}$/i.test(item.revision || "")) {
+      throw new Error("El informe de metricas contiene un repositorio o SHA invalido.");
+    }
+    const esperado = item.expected || {};
+    return {
+      nombre: item.name,
+      url: homepageSegura(item.url),
+      revision: item.revision.toLowerCase(),
+      exclusiones: Array.isArray(item.exclude_paths) ? item.exclude_paths.map((ruta) => sanearTextoPlano(ruta, 300)) : [],
+      fuente: enteroNoNegativo(esperado.source?.lines, `${item.name}.source.lines`),
+      prueba: enteroNoNegativo(esperado.test?.lines, `${item.name}.test.lines`),
+      commits: enteroNoNegativo(esperado.commits, `${item.name}.commits`),
+      pipelines: enteroNoNegativo(esperado.pipelines, `${item.name}.pipelines`),
+      lenguajesFuente: esperado.source?.languages || {},
+      lenguajesPrueba: esperado.test?.languages || {},
+    };
+  }).sort((a, b) => compararTexto(a.nombre, b.nombre));
+
+  const totales = repositorios.reduce((suma, item) => ({
+    repositorios: suma.repositorios + 1,
+    fuente: suma.fuente + item.fuente,
+    prueba: suma.prueba + item.prueba,
+    commits: suma.commits + item.commits,
+    pipelines: suma.pipelines + item.pipelines,
+  }), { repositorios: 0, fuente: 0, prueba: 0, commits: 0, pipelines: 0 });
+  const declarados = manifiesto.expected_totals || {};
+  for (const [campo, valor] of [
+    ["repositories", totales.repositorios],
+    ["source.lines", totales.fuente],
+    ["test.lines", totales.prueba],
+    ["commits", totales.commits],
+    ["pipelines", totales.pipelines],
+  ]) {
+    const observado = campo.split(".").reduce((objeto, parte) => objeto?.[parte], declarados);
+    if (observado !== valor) throw new Error(`El total ${campo} del informe de metricas no cuadra con sus repositorios.`);
+  }
+
+  return {
+    schemaVersion: 1,
+    metodo: "Conteo reproducible de lineas fisicas, commits alcanzables y workflows, fijado a una revision por repositorio.",
+    fuente: "https://github.com/SirHegel/SirHegel/blob/main/metricas/repositorios.json",
+    totales: {
+      ...totales,
+      razonPruebaFuente: Number((totales.prueba / Math.max(totales.fuente, 1)).toFixed(4)),
+    },
+    repositorios,
+  };
+}
+
+async function cargarMetricas() {
+  const respuesta = await pedir("/repos/SirHegel/SirHegel/contents/metricas/repositorios.json", {
+    aceptar: "application/vnd.github.raw+json",
+  });
+  let manifiesto;
+  try {
+    manifiesto = JSON.parse(await respuesta.text());
+  } catch (error) {
+    throw new Error(`GitHub devolvio metricas invalidas: ${mensajeSeguro(error.message)}`);
+  }
+  return normalizarMetricas(manifiesto);
+}
+
+/** Tiempo O(P), espacio O(P), con P = pull requests publicos recuperados. */
+async function listarContribucionesExternas() {
+  const encontrados = [];
+  let totalGitHub = null;
+  for (let pagina = 1; ; pagina += 1) {
+    const resultado = await pedirJson(`/search/issues?q=is%3Apr%20author%3A${encodeURIComponent(PROPIETARIO)}&sort=created&order=desc&per_page=100&page=${pagina}`);
+    if (!resultado || !Array.isArray(resultado.items) || !Number.isSafeInteger(resultado.total_count)) {
+      throw new Error("GitHub devolvio una busqueda de pull requests invalida.");
+    }
+    if (totalGitHub === null) totalGitHub = resultado.total_count;
+    encontrados.push(...resultado.items);
+    if (resultado.items.length < 100 || encontrados.length >= Math.min(totalGitHub, 1_000)) break;
+  }
+
+  const normalizados = encontrados.map((item) => {
+    let url;
+    try { url = new URL(item.html_url); } catch { return null; }
+    const partes = url.pathname.split("/").filter(Boolean);
+    if (url.hostname !== "github.com" || partes.length < 4 || partes[2] !== "pull" || !/^\d+$/.test(partes[3])) return null;
+    return {
+      repositorio: `${partes[0]}/${partes[1]}`,
+      titulo: sanearTextoPlano(item.title, 240),
+      estado: item.state === "open" ? "abierta" : item.pull_request?.merged_at ? "fusionada" : "cerrada",
+      url: url.href,
+      creadoEn: fechaIso(item.created_at, "created_at", item.html_url),
+      actualizadoEn: fechaIso(item.updated_at, "updated_at", item.html_url),
+    };
+  }).filter(Boolean);
+  const externas = normalizados.filter((item) => item.repositorio.split("/")[0].toLowerCase() !== PROPIETARIO.toLowerCase());
+  const contar = (lista, estado) => lista.filter((item) => item.estado === estado).length;
+  return {
+    totales: {
+      pullRequestsPublicos: normalizados.length,
+      fusionadosPublicos: contar(normalizados, "fusionada"),
+      pullRequests: externas.length,
+      repositorios: new Set(externas.map((item) => item.repositorio.toLowerCase())).size,
+      fusionadas: contar(externas, "fusionada"),
+      abiertas: contar(externas, "abierta"),
+      cerradas: contar(externas, "cerrada"),
+    },
+    pullRequests: externas,
+  };
+}
+
+async function listarLogros() {
+  let respuesta;
+  try {
+    respuesta = await fetch(`https://github.com/${encodeURIComponent(PROPIETARIO)}?tab=achievements`, {
+      headers: { "User-Agent": CABECERAS["User-Agent"] },
+      signal: AbortSignal.timeout(30_000),
+    });
+  } catch (error) {
+    throw new Error(`No se pudo leer el perfil publico para verificar logros: ${mensajeSeguro(error.message)}`);
+  }
+  if (!respuesta.ok) throw new Error(`GitHub respondio ${respuesta.status} al verificar logros visibles.`);
+  const html = await respuesta.text();
+  const logros = new Map();
+  for (const coincidencia of html.matchAll(/data-achievement-slug="([a-z0-9-]+)"[\s\S]{0,700}?alt="Achievement:\s*([^"]+)"/gi)) {
+    const slug = coincidencia[1].toLowerCase();
+    const nombre = sanearTextoPlano(decodificarEntidades(coincidencia[2]), 100);
+    if (slug && nombre) logros.set(slug, {
+      slug,
+      nombre,
+      url: `https://github.com/${PROPIETARIO}?achievement=${encodeURIComponent(slug)}&tab=achievements`,
+    });
+  }
+  if (html.includes('data-hovercard-type="achievement"') && logros.size === 0) {
+    throw new Error("El HTML del perfil anuncia logros, pero el extractor no pudo verificarlos.");
+  }
+  return [...logros.values()].sort((a, b) => compararTexto(a.nombre, b.nombre));
+}
+
 async function enriquecerRepositorio(repo) {
   const nombreCodificado = encodeURIComponent(repo.name);
   const base = `/repos/${encodeURIComponent(PROPIETARIO)}/${nombreCodificado}`;
-  const [estadisticasLenguajes, respuestaReadme] = await Promise.all([
+  const ramaCodificada = encodeURIComponent(repo.default_branch || "main");
+  const [estadisticasLenguajes, respuestaReadme, arbol, releasesCrudos] = await Promise.all([
     pedirJson(`${base}/languages`),
     pedir(`${base}/readme`, {
       aceptar: "application/vnd.github.raw+json",
       permitir404: true,
     }),
+    pedirJson(`${base}/git/trees/${ramaCodificada}?recursive=1`, { permitir409: true }),
+    pedirJson(`${base}/releases?per_page=100`),
   ]);
 
   if (!estadisticasLenguajes || Array.isArray(estadisticasLenguajes) || typeof estadisticasLenguajes !== "object") {
     throw new Error(`GitHub devolvio lenguajes invalidos para ${repo.name}.`);
   }
+  if (!Array.isArray(releasesCrudos)) throw new Error(`GitHub devolvio releases invalidas para ${repo.name}.`);
 
   const readme = respuestaReadme ? await respuestaReadme.text() : "";
   const lenguajes = Object.entries(estadisticasLenguajes)
@@ -305,6 +553,11 @@ async function enriquecerRepositorio(repo) {
   const actualizadoEn = fechaIso(repo.updated_at, "updated_at", repo.name);
   // GitHub devuelve pushed_at=null en repositorios recien creados y vacios.
   const publicadoEn = fechaIsoOpcional(repo.pushed_at, "pushed_at", repo.name);
+  const inventario = inventariarArbol(arbol, repo.name);
+  const releases = releasesCrudos
+    .map((release) => normalizarRelease(release, repo.name))
+    .filter(Boolean)
+    .sort((a, b) => compararTexto(b.publicadoEn, a.publicadoEn) || compararTexto(a.etiqueta, b.etiqueta));
 
   return {
     slug: repo.name,
@@ -327,19 +580,41 @@ async function enriquecerRepositorio(repo) {
     actualizadoEn,
     publicadoEn,
     extractoReadme: sanearMarkdown(readme),
+    inventario,
+    releases,
   };
 }
 
-function serializar(repositorios) {
+function serializar({ repositorios, forks, metricas, contribucionesExternas, logros, perfilGitHub }) {
   const fechas = repositorios
-    .flatMap((repo) => [repo.actualizadoEn, repo.publicadoEn])
+    .flatMap((repo) => [
+      repo.actualizadoEn,
+      repo.publicadoEn,
+      ...repo.releases.map((release) => release.publicadoEn),
+    ])
+    .concat(contribucionesExternas.pullRequests.map((item) => item.actualizadoEn))
     .filter(Boolean);
   const actualizadoEn = fechas.sort(compararTexto).at(-1);
+  const releases = repositorios
+    .flatMap((repo) => repo.releases)
+    .sort((a, b) => compararTexto(b.publicadoEn, a.publicadoEn) || compararTexto(a.repositorio, b.repositorio));
   const snapshot = {
     propietario: PROPIETARIO,
     perfil: `https://github.com/${PROPIETARIO}`,
     actualizadoEn,
     total: repositorios.length,
+    perfilGitHub,
+    forks,
+    metricas,
+    releases,
+    contribucionesExternas,
+    logros,
+    costoSincronizacion: {
+      solicitudesApi,
+      complejidadTemporal: "O(R + F + P)",
+      complejidadEspacial: "O(R + F + P)",
+      variables: "R repositorios, F archivos versionados y P pull requests publicos.",
+    },
     repositorios,
   };
 
@@ -367,9 +642,23 @@ async function principal() {
   if (!Number.isInteger(versionMayor) || versionMayor < 20) {
     throw new Error(`Se requiere Node.js 20 o posterior; version detectada: ${process.versions.node}.`);
   }
+  if (!TOKEN) {
+    throw new Error("La sincronizacion completa requiere GITHUB_TOKEN o GH_TOKEN para no exceder la cuota anonima de la API.");
+  }
 
   const anterior = await snapshotAnterior();
-  const repositoriosBase = await listarRepositorios();
+  const [catalogoRepositorios, metricas, contribucionesExternas, logros, perfilCrudo] = await Promise.all([
+    listarRepositorios(),
+    cargarMetricas(),
+    listarContribucionesExternas(),
+    listarLogros(),
+    pedirJson(`/users/${encodeURIComponent(PROPIETARIO)}`),
+  ]);
+  if (!perfilCrudo || !Number.isSafeInteger(perfilCrudo.public_repos)) {
+    throw new Error("GitHub devolvio un perfil publico invalido.");
+  }
+  const repositoriosBase = catalogoRepositorios.propios;
+  const forks = catalogoRepositorios.forks;
   const repositorios = [];
 
   // Se procesa en serie para no disparar rafagas contra la API y para que los
@@ -380,8 +669,18 @@ async function principal() {
 
   estabilizarRepositorioDelSitio(repositorios, anterior);
 
-  await guardarAtomico(serializar(repositorios));
-  console.log(`Snapshot actualizado: ${repositorios.length} repositorios publicos propios de ${PROPIETARIO}.`);
+  const perfilGitHub = {
+    repositoriosPublicos: perfilCrudo.public_repos,
+    repositoriosPropios: repositorios.length,
+    forksPublicos: forks.length,
+    seguidores: enteroNoNegativo(perfilCrudo.followers, "perfil.followers"),
+    seguidos: enteroNoNegativo(perfilCrudo.following, "perfil.following"),
+  };
+  if (perfilGitHub.repositoriosPublicos !== perfilGitHub.repositoriosPropios + perfilGitHub.forksPublicos) {
+    throw new Error("El total del perfil no cuadra con repositorios propios y forks; se conserva el snapshot anterior.");
+  }
+  await guardarAtomico(serializar({ repositorios, forks, metricas, contribucionesExternas, logros, perfilGitHub }));
+  console.log(`Snapshot actualizado: ${repositorios.length} repositorios propios, ${contribucionesExternas.totales.pullRequests} PR externas y ${logros.length} logros visibles.`);
 }
 
 principal().catch((error) => {
