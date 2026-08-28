@@ -33,6 +33,7 @@ const fuentesHojaDeVida = [
   "datos.js",
   "datos-hoja-de-vida.js",
   "herramientas/generar-hoja-de-vida.js",
+  "herramientas/nota-investigacion.js",
   "activos/retrato-profesional.jpg",
 ];
 
@@ -161,6 +162,14 @@ test("la hoja de vida pública ofrece un PDF ATS y datos de contacto coherentes"
   for (const texto of [PERSONA.nombre, PERSONA.telefono, PERSONA.email, "Perfil profesional", "Experiencia profesional", "Educación", "Certificaciones"]) {
     assert.ok(fuente.includes(texto), `la fuente ATS no incluye ${texto}`);
   }
+  assert.ok(
+    fuente.includes("Línea de trabajo: distribución de la tierra en Colombia."),
+    "la fuente ATS perdió el texto plano de investigación",
+  );
+  assert.ok(
+    !fuente.includes("<b>distribución de la tierra en Colombia</b>"),
+    "la fuente ATS no debe conservar marcado HTML dentro de la nota",
+  );
   const telefonosPublicados = [...`${html}\n${fuente}`.matchAll(/(?<!\d)3(?:[ .-]?\d){9}(?!\d)/g)]
     .map((coincidencia) => coincidencia[0].replace(/\D/g, ""));
   assert.deepEqual(new Set(telefonosPublicados), new Set([PERSONA.telefono.replace(/\D/g, "").slice(-10)]));
@@ -214,6 +223,11 @@ test("el perfil público no presenta como terminados los estudios que siguen en 
   }
   const academico = readFileSync(archivoRuta("/academico/"), "utf8");
   assert.ok(academico.includes("(en curso)"));
+  assert.ok(
+    academico.includes("Línea de trabajo: <b>distribución de la tierra en Colombia</b>"),
+    "la página académica perdió el énfasis semántico de la investigación",
+  );
+  assert.ok(!academico.includes("[object Object]"), "la nota estructurada se renderizó como objeto");
 });
 
 test("la actividad publicada cuadra y no expone el ledger", () => {

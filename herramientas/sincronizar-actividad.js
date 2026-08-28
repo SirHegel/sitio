@@ -8,17 +8,22 @@
  * pueden mostrarse públicamente.
  */
 
-import { readFile, rename, writeFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { randomUUID } from "node:crypto";
+import { readFile, rename, unlink, writeFile } from "node:fs/promises";
+import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { archivoRegularDentro, salidaRegularExacta } from "./seguridad.js";
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ledgerPredeterminado = resolve(raiz, "../../ia/orquesta/state/ledger.jsonl");
+const carpetaLedger = dirname(ledgerPredeterminado);
+const salidaPredeterminada = join(raiz, "datos-actividad.js");
 
 function argumentos(argv) {
   const opciones = {
     ledger: process.env.ORQUESTA_LEDGER || ledgerPredeterminado,
-    salida: join(raiz, "datos-actividad.js"),
+    salida: salidaPredeterminada,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -33,6 +38,15 @@ function argumentos(argv) {
   }
 
   return opciones;
+}
+
+function rutaLedgerPermitida(configurada) {
+  switch (resolve(configurada)) {
+    case ledgerPredeterminado:
+      return ledgerPredeterminado;
+    default:
+      throw new Error(`El ledger solo puede leerse desde ${ledgerPredeterminado}`);
+  }
 }
 
 const numero = (valor) => Number.isFinite(Number(valor)) ? Number(valor) : 0;
@@ -131,14 +145,26 @@ function agregar(lineas) {
 
 async function main() {
   const opciones = argumentos(process.argv.slice(2));
-  const bruto = await readFile(opciones.ledger, "utf8");
+  const ledger = archivoRegularDentro(
+    carpetaLedger,
+    rutaLedgerPermitida(opciones.ledger),
+    "El ledger",
+  );
+  const salida = salidaRegularExacta(salidaPredeterminada, opciones.salida, "La salida pública");
+  const bruto = await readFile(ledger, "utf8");
   const actividad = agregar(bruto.split(/\r?\n/));
   const modulo = `// Generado por herramientas/sincronizar-actividad.js. No editar a mano.\n` +
     `// El ledger privado nunca forma parte de este archivo.\n\n` +
     `export const ACTIVIDAD_IA = ${JSON.stringify(actividad, null, 2)};\n`;
-  const temporal = opciones.salida + ".tmp";
-  await writeFile(temporal, modulo, { encoding: "utf8", mode: 0o644 });
-  await rename(temporal, opciones.salida);
+  const temporal = join(dirname(salida), `.${basename(salida)}.${process.pid}.${randomUUID()}.tmp`);
+  try {
+    await writeFile(temporal, modulo, { encoding: "utf8", mode: 0o644, flag: "wx" });
+    await rename(temporal, salida);
+  } finally {
+    await unlink(temporal).catch((error) => {
+      if (error.code !== "ENOENT") throw error;
+    });
+  }
   console.log(`Actividad agregada: ${actividad.totales.tokens.toLocaleString("es-CO")} tokens en ${actividad.totales.llamadas} llamadas.`);
 }
 

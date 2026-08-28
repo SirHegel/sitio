@@ -10,6 +10,7 @@ import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import puppeteer from "puppeteer-core";
+import { ejecutableChrome } from "./chrome.mjs";
 
 const raiz = fileURLToPath(new URL("..", import.meta.url));
 const construido = resolve(raiz, "publico");
@@ -34,17 +35,6 @@ const tipos = new Map([
   [".pdf", "application/pdf"],
   [".xml", "application/xml; charset=utf-8"],
 ]);
-
-function ejecutableChrome() {
-  const candidatos = [
-    process.env.PUPPETEER_EXECUTABLE_PATH,
-    "/usr/bin/google-chrome",
-    "/usr/bin/google-chrome-stable",
-    "/usr/bin/chromium",
-    "/usr/bin/chromium-browser",
-  ].filter(Boolean);
-  return candidatos.find((ruta) => existsSync(ruta));
-}
 
 async function servirPublico() {
   const servidor = createServer((peticion, respuesta) => {

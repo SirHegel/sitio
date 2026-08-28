@@ -22,6 +22,7 @@ import {
   SITIO,
 } from "../datos.js";
 import { ARCHIVO_HOJA_DE_VIDA, EVIDENCIA_TECNICA, HOJA_DE_VIDA } from "../datos-hoja-de-vida.js";
+import { notaInvestigacionTexto } from "./nota-investigacion.js";
 
 const raiz = dirname(dirname(fileURLToPath(import.meta.url)));
 const carpeta = join(raiz, "documentos", "hoja-de-vida");
@@ -44,6 +45,7 @@ const fuentesRelativas = [
   "datos.js",
   "datos-hoja-de-vida.js",
   "herramientas/generar-hoja-de-vida.js",
+  "herramientas/nota-investigacion.js",
   "activos/retrato-profesional.jpg",
 ];
 const huellaFuentes = createHash("sha256");
@@ -240,7 +242,7 @@ const html = `<!doctype html>
       <h2 id="investigacion">Investigación académica</h2>
       <h3>${esc(INVESTIGACION.titulo)} · ${esc(INVESTIGACION.institucion)}</h3>
       <p class="entidad">${esc(INVESTIGACION.fechas)}</p>
-      <p>${esc(limpio(INVESTIGACION.nota.replace(/<[^>]*>/g, "")))}</p>
+      <p>${esc(notaInvestigacionTexto(INVESTIGACION.nota))}</p>
     </section>
 
     <section aria-labelledby="certificaciones">
