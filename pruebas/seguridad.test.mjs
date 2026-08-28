@@ -96,5 +96,5 @@ test("el sincronizador no lee un ledger indicado fuera de su directorio privado"
     { cwd: raiz, encoding: "utf8", env: { ...process.env, ORQUESTA_LEDGER: "" } },
   );
   assert.notEqual(ejecucion.status, 0);
-  assert.match(ejecucion.stderr, /El ledger debe permanecer dentro/);
+  assert.match(ejecucion.stderr, /El ledger solo puede leerse desde/);
 });

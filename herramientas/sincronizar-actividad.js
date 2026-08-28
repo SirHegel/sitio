@@ -40,6 +40,15 @@ function argumentos(argv) {
   return opciones;
 }
 
+function rutaLedgerPermitida(configurada) {
+  switch (resolve(configurada)) {
+    case ledgerPredeterminado:
+      return ledgerPredeterminado;
+    default:
+      throw new Error(`El ledger solo puede leerse desde ${ledgerPredeterminado}`);
+  }
+}
+
 const numero = (valor) => Number.isFinite(Number(valor)) ? Number(valor) : 0;
 
 function fechaValida(valor) {
@@ -136,7 +145,11 @@ function agregar(lineas) {
 
 async function main() {
   const opciones = argumentos(process.argv.slice(2));
-  const ledger = archivoRegularDentro(carpetaLedger, opciones.ledger, "El ledger");
+  const ledger = archivoRegularDentro(
+    carpetaLedger,
+    rutaLedgerPermitida(opciones.ledger),
+    "El ledger",
+  );
   const salida = salidaRegularExacta(salidaPredeterminada, opciones.salida, "La salida pública");
   const bruto = await readFile(ledger, "utf8");
   const actividad = agregar(bruto.split(/\r?\n/));
