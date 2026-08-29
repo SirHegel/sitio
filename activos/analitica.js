@@ -14,7 +14,15 @@ function rutaSegura(valor) {
   try {
     const url = new URL(valor || location.href, location.href);
     if (url.origin !== location.origin) return "";
-    return url.pathname.slice(0, 300) || "/";
+    const segura = new URL(url.pathname.slice(0, 300) || "/", location.origin);
+    /* Conserva únicamente dimensiones de atribución documentadas. El resto
+       de la consulta puede contener búsquedas, correos o datos privados y se
+       elimina antes de salir del navegador. Complejidad O(P), P parámetros. */
+    for (const nombre of ["via", "utm_source", "utm_medium", "utm_campaign"]) {
+      const valorPermitido = url.searchParams.get(nombre);
+      if (valorPermitido) segura.searchParams.set(nombre, valorPermitido.slice(0, 64));
+    }
+    return `${segura.pathname}${segura.search}`;
   } catch {
     return "";
   }

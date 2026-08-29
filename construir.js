@@ -932,6 +932,10 @@ ${franja(`${rotulo("Ingreso", "Ciudad y estimación de red", "verde")}
         <p>En el primer ingreso de cada sesión, el servidor conserva de forma privada: hora,
         primera ruta, dominio referente, país, región, ciudad, tipo de dispositivo, sistema,
         navegador y una clasificación estimada de VPN, proxy, Tor o centro de datos.</p>
+        <p>Los enlaces creados para compartir pueden incluir un canal declarado —WhatsApp,
+        Telegram, LinkedIn u otro de una lista cerrada— y un identificador aleatorio. El dato
+        acredita el enlace de origen; no identifica a quien lo abrió ni demuestra quién lo
+        reenvió. Nombres, correos y etiquetas libres son rechazados.</p>
         <p>Para obtener esa clasificación, la IP que ya acompaña la conexión se consulta
         transitoriamente en <a href="https://ipapi.is/" rel="noopener" target="_blank">ipapi.is</a>.
         El código del sitio no la escribe en el repositorio, no la convierte en hash, no la muestra
@@ -945,6 +949,9 @@ ${franja(`${rotulo("Alcance", "Lo que la auditoría no puede prometer")}
         <p>Una ciudad derivada de red es aproximada. Una VPN residencial, un proxy nuevo o una red
         móvil pueden eludir la clasificación; una salida corporativa puede parecer una VPN. El
         sistema nunca pretende descubrir la ubicación real escondida detrás de una VPN.</p>
+        <p>El navegador permite clasificar familias generales como iPhone, teléfono Android,
+        PC Windows o Mac. El modelo físico exacto suele estar oculto o reducido y el sitio no usa
+        fingerprinting para reconstruirlo.</p>
         <p>La muestra privada se protege con límite de solicitudes en el firewall. La rama activa y
         el panel muestran una ventana máxima de 90 días; Git puede conservar versiones anteriores
         en su historial de commits. Las cifras agregadas de Vercel son la fuente principal para

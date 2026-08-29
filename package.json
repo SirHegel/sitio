@@ -11,6 +11,7 @@
     "sync": "npm run sync:github && npm run sync:activity",
     "sync:github": "node herramientas/sincronizar-github.js",
     "sync:activity": "node herramientas/sincronizar-actividad.js",
+    "link:share": "node herramientas/generar-enlace-compartido.mjs",
     "servir": "node construir.js && node --run servir:solo",
     "servir:solo": "python3 -m http.server 8099 --directory publico"
   },
