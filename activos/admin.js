@@ -323,6 +323,7 @@ function renderAuditoria(contenido, datos) {
     tablaDimension("Qué leyeron", resumen.porRuta),
     tablaDimension("De dónde vinieron", resumen.porReferente),
     tablaDimension("Enlace compartido", resumen.porCampana),
+    tablaDimension("Identificador de enlace", resumen.porEnlace),
     tablaDimension("Equipo", resumen.porDispositivo),
     tablaDimension("Red privada o VPN", resumen.porVpn),
   );
@@ -341,13 +342,16 @@ function renderAuditoria(contenido, datos) {
     if (visita.campana && visita.campana !== "Sin etiqueta") {
       etiquetas.append(elemento("span", { class: "etq canal", text: `via ${visita.campana}` }));
     }
+    if (visita.enlace && visita.enlace !== "Sin identificador") {
+      etiquetas.append(elemento("span", { class: "etq canal", text: visita.enlace }));
+    }
     lista.append(elemento(
       "article",
       { class: "admin-ingreso" },
       elemento("time", { class: "admin-ingreso-hora", text: fechaHora(visita.hora) }),
       elemento("p", { class: "admin-ingreso-ruta", text: visita.ruta }),
       elemento("p", { class: "admin-ingreso-lugar", text: `${visita.ciudad}, ${visita.pais}` }),
-      elemento("p", { class: "admin-ingreso-equipo", text: `${visita.dispositivo} · ${visita.sistema} · ${visita.navegador}` }),
+      elemento("p", { class: "admin-ingreso-equipo", text: `${visita.familia || visita.dispositivo} · ${visita.sistema} · ${visita.navegador}` }),
       elemento("p", { class: "admin-ingreso-ref", text: `Llegó desde: ${visita.referente}` }),
       etiquetas,
     ));

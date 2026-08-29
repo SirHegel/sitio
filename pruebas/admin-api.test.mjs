@@ -124,6 +124,7 @@ test("la visita descarta consultas, credenciales y detalles de User-Agent", () =
     path: "/blog/",
     referrer: "buscador.test",
     campana: "",
+    enlace: "",
   });
   assert.equal(validateVisitInput({ path: "/hoja-de-vida/", referrer: "" }).path, "/hoja-de-vida/");
   assert.throws(() => validateVisitInput({ path: "/", ip: "192.0.2.1" }), { code: "campo_no_permitido" });
@@ -131,6 +132,7 @@ test("la visita descarta consultas, credenciales y detalles de User-Agent", () =
   assert.throws(() => validateVisitInput({ path: "/ruta-inventada/", referrer: "" }), { code: "ruta_no_publica" });
   assert.deepEqual(parseUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 18_0) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1"), {
     dispositivo: "Móvil",
+    familia: "iPhone",
     sistema: "iOS / iPadOS",
     navegador: "Safari",
   });
@@ -196,18 +198,20 @@ test("los eventos agregados nunca conservan IP, hash ni User-Agent bruto", () =>
   assert.ok(!serialized.includes("detalle bruto"));
 });
 
-test("la etiqueta de canal se conserva y se limpia, y nunca admite datos personales", () => {
+test("la etiqueta de canal usa una lista cerrada y nunca admite datos personales", () => {
   // Un rótulo normal sobrevive y la ruta sigue quedando sin consulta.
   assert.deepEqual(validateVisitInput({ path: "/blog/?via=linkedin", referrer: "" }, "https://ejemplo.test"), {
     path: "/blog/",
     referrer: "Directo",
     campana: "linkedin",
+    enlace: "",
   });
 
-  // Se recorta a minúsculas y a un alfabeto corto: si alguien intenta
-  // colar un correo o un nombre por el enlace, no queda nada utilizable
-  // para identificar a una persona.
-  assert.equal(validateVisitInput({ path: "/blog/?via=Juan.Perez@gmail.com", referrer: "" }, "https://ejemplo.test").campana, "juanperezgmailcom");
-  assert.equal(validateVisitInput({ path: "/blog/?via=" + "x".repeat(80), referrer: "" }, "https://ejemplo.test").campana.length, 32);
+  assert.equal(validateVisitInput({ path: "/blog/?via=Juan.Perez@gmail.com", referrer: "" }, "https://ejemplo.test").campana, "");
+  assert.equal(validateVisitInput({ path: "/blog/?via=" + "x".repeat(80), referrer: "" }, "https://ejemplo.test").campana, "");
+  assert.equal(validateVisitInput({ path: "/blog/?utm_source=telegram&utm_medium=share", referrer: "" }, "https://ejemplo.test").campana, "telegram");
+  assert.equal(validateVisitInput({ path: "/blog/", referrer: "https://t.me/canal/123" }, "https://ejemplo.test").campana, "telegram");
+  assert.equal(validateVisitInput({ path: "/blog/?utm_campaign=s-a1b2c3d4e5f6", referrer: "" }, "https://ejemplo.test").enlace, "s-a1b2c3d4e5f6");
+  assert.equal(validateVisitInput({ path: "/blog/?utm_campaign=nombre-persona", referrer: "" }, "https://ejemplo.test").enlace, "");
   assert.equal(validateVisitInput({ path: "/blog/", referrer: "" }, "https://ejemplo.test").campana, "");
 });
