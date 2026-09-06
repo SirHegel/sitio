@@ -1169,8 +1169,8 @@ function hojaDeVida() {
           <p class="pie-nota sep-s">PDF de 5 páginas, texto seleccionable, fuentes incorporadas y estructura lineal diseñada para facilitar su lectura por sistemas ATS.</p>
         </div>
         <figure class="cv-retrato revelar">
-          <img src="/activos/retrato-profesional.jpg" width="640" height="960"
-               alt="Retrato profesional de ${esc(PERSONA.nombre)} con traje oscuro y fondo neutro">
+          <div class="cv-retrato-imagen"><img src="/activos/retrato-profesional.jpg" width="640" height="960"
+               alt="Retrato profesional de ${esc(PERSONA.nombre)} con traje oscuro y fondo neutro"></div>
           <figcaption>${esc(PERSONA.nombre)} · Disponible para trabajo remoto</figcaption>
         </figure>
       </div>`, "cv-hero")}

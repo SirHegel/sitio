@@ -1,5 +1,10 @@
 # Dirección cinematográfica · 6 de septiembre de 2026
 
+Nota de continuidad: este documento registra la segunda iteración. El encargo
+posterior de movimiento integral retira la suspensión fuera de portada y añade
+movimiento e interacción durante todo el recorrido público. Estado vigente en
+`memoria/movimiento-integral-20260906.md`.
+
 Referencias solicitadas e inspeccionadas: [zaddyfi](https://x.com/zaddyfi/status/2096025187946791249), vídeo de 25,418 s; [Ryorugg](https://x.com/Ryorugg/status/2095907124756812180), vídeo de 21 min 22 s. Medios públicos recuperados con la sindicación de X. El primero recorre un portal y varios escenarios; el segundo muestra escenarios a pantalla completa y esculturas animadas, con tipografía de gran escala. No se identificó su implementación a partir del vídeo.
 
 Aplicación: tres escenarios originales; profundidad aparente mediante reproyección WebGL de imágenes (2.5D, sin afirmar geometría 3D modelada); acercamiento al umbral de 1,8 s; navegación por barrido de 920 ms. La música y los mandos permanecen entre páginas. El recorrido de 9 s por acto sólo empieza al pulsar su botón. Hay pausa persistente, movimiento reducido y fondo estático si falta la GPU.

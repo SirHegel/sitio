@@ -36,3 +36,11 @@ y prompts en `memoria/direccion-cinematografica-20260906.md`.
 La IP se cifra con AES-256-GCM; el panel limita su consulta a siete días. Git
 conserva versiones cifradas históricas. Los mapas se rotulan como aproximaciones
 de red, sin inferir dirección, barrio ni identidad personal.
+
+La ampliación posterior del encargo retira la suspensión del fondo al salir de
+portada. Se anima todo el recorrido público y se reservan las transformaciones
+de interacción a tarjetas e imágenes. El mando de pausa ahora gobierna el
+conjunto visual. Se conserva el límite de 360.000 píxeles en software, 30
+cuadros/s y la exclusión del panel administrativo. La nueva regresión midió
+cero dibujos fuera de portada antes de este cambio; se documenta su sustitución
+en `memoria/movimiento-integral-20260906.md`.

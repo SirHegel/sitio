@@ -149,6 +149,7 @@ ${ruta === "/" ? `<meta property="profile:first_name" content="Jhon Steven">
 <link rel="stylesheet" href="/activos/cinematografia.css">
 <link rel="stylesheet" href="/activos/direccion-arte.css">
 <link rel="stylesheet" href="/activos/transiciones.css">
+<link rel="stylesheet" href="/activos/movimiento.css">
 ${!ruta.startsWith("/admin/") ? `<link rel="preload" as="image" href="/activos/escenas/${escenaInicial}.webp" media="(min-width: 769px)">
 <link rel="preload" as="image" href="/activos/escenas/${escenaInicial}-movil.webp" media="(max-width: 768px)">` : ""}
 
@@ -221,7 +222,7 @@ ${cuerpo}
 ${ruta.startsWith("/admin/") ? "" : `<div class="direccion-escena" aria-label="Ambiente visual">
   <span class="escena-indice" aria-hidden="true">01</span>
   <button id="cambiar-escena" type="button" aria-label="Cambiar ambiente visual: Terciopelo">Terciopelo <span aria-hidden="true">↗</span></button>
-  <button id="pausar-escena" type="button" aria-pressed="false" aria-label="Pausar animación de fondo"><span aria-hidden="true">Ⅱ</span></button>
+  <button id="pausar-escena" type="button" aria-pressed="false" aria-label="Pausar movimiento del sitio"><span aria-hidden="true">Ⅱ</span></button>
 </div>
 
 <button id="mando" type="button" aria-pressed="false"

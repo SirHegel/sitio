@@ -33,8 +33,8 @@ con techo de 30 cuadros por segundo y pausa en pestañas ocultas.
 
 Se inspeccionaron los dos vídeos solicitados y se reemplazó el fondo anterior
 con tres escenografías originales. El motor aplica profundidad aparente 2.5D,
-cámara de 1,8 s y barrido de navegación de 920 ms. La portada se suspende fuera
-de pantalla; conserva pausa, reducción de movimiento y respaldo sin WebGL.
+cámara de 1,8 s y barrido de navegación de 920 ms. Esta iteración suspendía la
+portada fuera de pantalla; la ampliación posterior retira ese límite.
 
 Verificación local: 79/79 pruebas, cero omisiones; duración 169,7 s. La batería
 responsive recorre el sitemap en trece anchos de 280 a 1.440 px. Axe no detectó
@@ -48,3 +48,12 @@ reproducen navegación, descarga tardía, desmontaje y regreso. La regresión de
 entrada falló antes del arreglo y pasó después. Las capturas internas WebGL
 no se usan para inferir pausa: su framebuffer puede descartarse sin dibujar;
 las pruebas cuentan llamadas reales a la GPU.
+
+## Movimiento integral, 6 de septiembre de 2026
+
+El nuevo encargo extiende los fondos animados a todo el recorrido público,
+incluidos contenido de inicio y pie. Se mantienen pausa, reducción de movimiento
+y respaldo sin WebGL. Se añaden lluvia, haces móviles, deriva de cámara,
+decoraciones por sección e interacción limitada en tarjetas y fotografías.
+La regresión del fondo detenido después del hero falló antes del cambio.
+Modelo y presupuestos en `memoria/movimiento-integral-20260906.md`.

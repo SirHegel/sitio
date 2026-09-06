@@ -7,11 +7,14 @@
 import { MusicaPersistente } from "./musica.js";
 import { iniciarCinematografia } from "./cinematografia.js";
 import { iniciarLecturaAccesible } from "./lectura-accesible.js";
+import { iniciarMovimientoInterfaz } from "./movimiento-interfaz.js";
 import "./cargar-mapa-oro.js";
 
 const preferenciaMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)");
 let quieto = preferenciaMovimiento.matches;
 let detenerTransiciones = () => {};
+const movimientoQuieto = () => quieto || document.body.classList.contains("escena-pausada")
+  || document.body.classList.contains("pagina-admin");
 preferenciaMovimiento.addEventListener("change", (evento) => {
   quieto = evento.matches;
   if (quieto) detenerTransiciones();
@@ -21,6 +24,11 @@ let vigiaRevelado = null;
 let vigiaContadores = null;
 let versionContenido = 0;
 let actualizarAvance = () => {};
+addEventListener("sitio:movimiento", () => {
+  if (!movimientoQuieto()) return;
+  detenerTransiciones();
+  reiniciarContenido();
+});
 
 /* -------------------------------------------------- el nombre, letra a letra */
 
@@ -65,7 +73,7 @@ function revelado() {
   const piezas = document.querySelectorAll(".revelar, .regla");
   if (!piezas.length) return;
 
-  if (quieto || !("IntersectionObserver" in window)) {
+  if (movimientoQuieto() || !("IntersectionObserver" in window)) {
     piezas.forEach((p) => p.classList.add("visible"));
     return;
   }
@@ -123,7 +131,7 @@ function contadores(version = versionContenido) {
     el.textContent = Math.round(v).toLocaleString("es-CO") + sufijo;
   };
 
-  if (quieto || !("IntersectionObserver" in window)) {
+  if (movimientoQuieto() || !("IntersectionObserver" in window)) {
     cifras.forEach((el) => pintar(el, Number(el.dataset.hasta)));
     return;
   }
@@ -293,7 +301,7 @@ const SELECTORES_CABEZA = [
 function reiniciarContenido({ entrada = false } = {}) {
   versionContenido++;
   const principal = document.getElementById("principal");
-  principal?.classList.toggle("entrada-cine", entrada && !quieto);
+  principal?.classList.toggle("entrada-cine", entrada && !movimientoQuieto());
   componerNombre();
   revelado();
   contadores(versionContenido);
@@ -340,7 +348,7 @@ function navegacion() {
   };
 
   function animar(elemento, cuadros, opciones) {
-    if (quieto || !elemento?.animate) return Promise.resolve();
+    if (movimientoQuieto() || !elemento?.animate) return Promise.resolve();
     const animacion = elemento.animate(cuadros, opciones);
     animaciones.add(animacion);
     return animacion.finished.catch(() => {}).finally(() => {
@@ -524,7 +532,7 @@ function navegacion() {
         }));
       };
 
-      if (quieto) {
+      if (movimientoQuieto()) {
         aplicar();
       } else {
         document.documentElement.dataset.transicion = historial === "pop" ? "regreso" : "avance";
@@ -621,6 +629,8 @@ function navegacion() {
 
 reiniciarContenido({ entrada: true });
 iniciarCinematografia();
+if (movimientoQuieto()) reiniciarContenido();
+iniciarMovimientoInterfaz();
 avance();
 audio();
 navegacion();

@@ -1,7 +1,7 @@
 import { crearSalaWebGL } from "./sala-webgl.js";
 
-/* Cámara y controles: un solo rAF, máximo 30 fps. Pausa, movimiento reducido,
-   pestaña oculta, portada fuera de vista y administración detienen el bucle.
+/* Cámara y controles: un solo rAF, máximo 30 fps, en todas las rutas públicas.
+   Pausa, movimiento reducido, pestaña oculta y administración detienen el bucle.
    Escena [0,2], cambio 1.8 s,
    recorrido voluntario 9 s por escena. O(1) por cuadro de control; O(W·H) GPU.
    El scroll sigue siendo nativo; ningún evento bloquea el contenido. */
@@ -29,14 +29,12 @@ export function iniciarCinematografia() {
   let transicion = null;
   let versionEscena = 0;
   let observador = null;
-  let limitePortada = Infinity;
-  let salaEnVista = true;
   let paginaActiva = true;
   const puntero = { x: 0, y: 0, destinoX: 0, destinoY: 0 };
   try { pausaManual = localStorage.getItem("jsar:escena-pausa") === "1"; } catch {}
 
   function administrativa() { return cuerpo.classList.contains("pagina-admin"); }
-  function corriendo() { return paginaActiva && salaEnVista && !administrativa() && !pausaManual && !reduccion.matches && !document.hidden; }
+  function corriendo() { return paginaActiva && !administrativa() && !pausaManual && !reduccion.matches && !document.hidden; }
 
   function reflejar() {
     const nombre = escenas[indice];
@@ -169,7 +167,7 @@ export function iniciarCinematografia() {
     cancelAnimationFrame(cuadro);
     cuadro = 0;
     const pausado = administrativa() || pausaManual || reduccion.matches;
-    const oculta = document.hidden || !salaEnVista || !paginaActiva;
+    const oculta = document.hidden || !paginaActiva;
     cuerpo.classList.toggle("escena-pausada", pausado);
     cuerpo.classList.toggle("escena-oculta", oculta);
     if (pausado || oculta) detenerRecorrido();
@@ -181,7 +179,7 @@ export function iniciarCinematografia() {
     const pausar = document.getElementById("pausar-escena");
     if (pausar) {
       pausar.setAttribute("aria-pressed", String(pausado));
-      pausar.setAttribute("aria-label", reduccion.matches ? "Movimiento reducido activado en tu dispositivo" : pausado ? "Reanudar animación de fondo" : "Pausar animación de fondo");
+      pausar.setAttribute("aria-label", reduccion.matches ? "Movimiento reducido activado en tu dispositivo" : pausado ? "Reanudar movimiento del sitio" : "Pausar movimiento del sitio");
       pausar.disabled = reduccion.matches;
       if (pausar.firstElementChild) pausar.firstElementChild.textContent = pausado ? "▷" : "Ⅱ";
     }
@@ -192,23 +190,7 @@ export function iniciarCinematografia() {
     }
   }
 
-  function medirPortada() {
-    const portada = (cuerpo.dataset.ruta || location.pathname) === "/" ? document.querySelector(".portada") : null;
-    limitePortada = portada ? scrollY + portada.getBoundingClientRect().bottom : Infinity;
-    salaEnVista = scrollY < limitePortada;
-  }
-
-  function medir() { medirPortada(); sala?.medir(); dibujar(); estado(); }
-
-  function desplazar() {
-    detenerRecorrido();
-    // O(1), sin medir layout ni programar otro rAF. El trabajo de estado sólo
-    // ocurre al cruzar el borde que se midió al navegar o cambiar de tamaño.
-    const visible = scrollY < limitePortada;
-    if (visible === salaEnVista) return;
-    salaEnVista = visible;
-    estado();
-  }
+  function medir() { sala?.medir(); dibujar(); estado(); }
 
   function observarEscenas() {
     observador?.disconnect();
@@ -268,14 +250,14 @@ export function iniciarCinematografia() {
   }, { passive: true });
   addEventListener("wheel", detenerRecorrido, { passive: true });
   addEventListener("touchmove", detenerRecorrido, { passive: true });
-  addEventListener("scroll", desplazar, { passive: true });
+  addEventListener("scroll", detenerRecorrido, { passive: true });
   addEventListener("resize", medir, { passive: true });
   document.addEventListener("visibilitychange", estado);
   reduccion.addEventListener("change", estado);
   addEventListener("pagehide", () => { paginaActiva = false; estado(); });
-  addEventListener("pageshow", () => { paginaActiva = true; medirPortada(); estado(); });
+  addEventListener("pageshow", () => { paginaActiva = true; estado(); });
   addEventListener("sitio:transicion", () => { detenerRecorrido(); menu(false); });
-  addEventListener("sitio:navegacion", () => { menu(false); medirPortada(); observarEscenas(); dibujar(); estado(); });
+  addEventListener("sitio:navegacion", () => { menu(false); observarEscenas(); dibujar(); estado(); });
 
   documento.classList.add("js-cine");
   const puerta = document.getElementById("puerta");

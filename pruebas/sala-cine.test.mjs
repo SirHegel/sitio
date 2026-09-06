@@ -37,10 +37,13 @@ before(async () => {
   await new Promise((resolver) => servidor.listen(0, "127.0.0.1", resolver));
   origen = `http://127.0.0.1:${servidor.address().port}`;
   navegador = await puppeteer.launch({
-    executablePath: ejecutableChrome(), headless: true,
+    executablePath: ejecutableChrome(), headless: true, defaultViewport: null,
     // Backend idéntico en equipos locales y CI sin GPU física:
     // https://chromium.googlesource.com/chromium/src/+/main/docs/gpu/swiftshader.md
-    args: ["--no-sandbox", "--disable-dev-shm-usage", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
+    // Tipos de puntero/hover declarados por Chromium (fine=4, hover=2):
+    // https://chromium.googlesource.com/chromium/src/+/HEAD/ui/base/pointer/pointer_device.h
+    args: ["--no-sandbox", "--disable-dev-shm-usage", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader",
+      "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4"],
   });
 });
 
@@ -68,7 +71,13 @@ async function nuevaPagina(t, { ancho = 390, sinWebGL = false, sinTransicionNati
     };
   }
   await pagina.bringToFront();
-  await pagina.setViewport({ width: ancho, height: ancho < 768 ? 844 : 900, deviceScaleFactor: ancho < 768 ? 2 : 1 });
+  // setViewport también cambia la emulación táctil y borra las capacidades
+  // del ratón en Chrome headless. CDP conserva aquí tanto CSS como matchMedia.
+  const sesionViewport = await pagina.createCDPSession();
+  await sesionViewport.send("Emulation.setDeviceMetricsOverride", {
+    width: ancho, height: ancho < 768 ? 844 : 900,
+    deviceScaleFactor: ancho < 768 ? 2 : 1, mobile: false,
+  });
   const solicitudes = [];
   const errores = [];
   let confirmarBlog;
@@ -132,6 +141,37 @@ async function cargar(pagina) {
 
 async function reposar(pagina) {
   await pagina.waitForFunction(() => !document.body.classList.contains("escena-cambiando") && !document.documentElement.classList.contains("navegando"));
+}
+
+// Ventana fija con duración real medida: O(1) tiempo de muestreo y memoria.
+// Cuenta envíos a WebGL; no interpreta un framebuffer que Chrome puede vaciar.
+async function medirDibujos(pagina) {
+  return pagina.evaluate(async () => {
+    const inicio = performance.now();
+    const antes = window.__qaSala.dibujados;
+    await new Promise((resolver) => setTimeout(resolver, 350));
+    return { cantidad: window.__qaSala.dibujados - antes, duracion: performance.now() - inicio };
+  });
+}
+
+async function comprobarFondoAnimado(pagina, lugar) {
+  const muestra = await medirDibujos(pagina);
+  assert.ok(muestra.cantidad > 0, `${lugar}: el fondo sigue dibujando`);
+  assert.ok(muestra.cantidad <= Math.ceil(muestra.duracion * 30 / 1000) + 2, `${lugar}: conserva el techo de 30 fps, tolerancia de dos dibujos de sincronización`);
+  assert.equal(await pagina.$eval("body", (e) => e.classList.contains("escena-oculta")), false, `${lugar}: la escena permanece visible`);
+}
+
+async function prepararGestoTarjeta(pagina, selector) {
+  await pagina.$eval(selector, (e) => e.scrollIntoView({ block: "center", behavior: "instant" }));
+  await pagina.waitForFunction((destino) => document.querySelector(destino).classList.contains("visible"), {}, selector);
+  await pagina.$eval(selector, async (e) => {
+    await Promise.all(e.getAnimations({ subtree: true })
+      .filter((a) => a.effect?.getTiming().iterations !== Infinity)
+      .map((a) => a.finished.catch(() => {})));
+    // Entrega el scroll, que suelta el gesto anterior, antes del mousemove.
+    await new Promise((resolver) => requestAnimationFrame(resolver));
+  });
+  return pagina.$eval(selector, (e) => e.getBoundingClientRect().toJSON());
 }
 
 test("las escenas publicadas conservan seis imágenes locales bajo 200 kB cada una", () => {
@@ -210,7 +250,7 @@ test("el recorrido voluntario se detiene al pausar o pedir movimiento reducido",
   } finally { await pagina.close(); }
 });
 
-test("el motor deja de dibujar fuera de portada, vuelve al entrar y conserva la pausa elegida", { timeout: 20_000 }, async (t) => {
+test("el fondo sigue animado en contenido, blog, proyectos y pie, y respeta la pausa global", { timeout: 20_000 }, async (t) => {
   const { pagina, errores } = await nuevaPagina(t, { ancho: 1440 });
   try {
     await cargar(pagina);
@@ -223,26 +263,117 @@ test("el motor deja de dibujar fuera de portada, vuelve al entrar y conserva la 
       const finalPortada = scrollY + document.querySelector(".portada").getBoundingClientRect().bottom;
       scrollTo({ top: finalPortada + 8, behavior: "instant" });
     });
-    await pagina.waitForFunction(() => document.body.classList.contains("escena-oculta"));
-    const fuera = await pagina.evaluate(() => window.__qaSala.dibujados);
-    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 300)));
-    assert.equal(await pagina.evaluate(() => window.__qaSala.dibujados), fuera, "el fondo tapado no consume nuevos dibujos");
-    assert.equal(await pagina.$eval("#pausar-escena", (e) => e.getAttribute("aria-pressed")), "false", "salir de portada no cambia la preferencia manual");
-    await pagina.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
-    await pagina.waitForFunction((cuadros) => !document.body.classList.contains("escena-oculta") && window.__qaSala.dibujados > cuadros, {}, fuera);
+    await comprobarFondoAnimado(pagina, "contenido después de portada");
+    await pagina.$eval(".pie", (e) => e.scrollIntoView({ block: "start", behavior: "instant" }));
+    await comprobarFondoAnimado(pagina, "pie de inicio");
+    assert.equal(await pagina.$eval("#pausar-escena", (e) => e.getAttribute("aria-pressed")), "false", "desplazarse no modifica la preferencia manual");
+    for (const ruta of ["/blog/", "/proyectos/"]) {
+      await pagina.evaluate((destino) => document.querySelector(`nav.menu a[href="${destino}"]`).click(), ruta);
+      await pagina.waitForFunction((destino) => document.body.dataset.ruta === destino, {}, ruta);
+      await reposar(pagina);
+      await comprobarFondoAnimado(pagina, ruta);
+    }
+    const proyecto = await pagina.$eval('a.ficha[href^="/proyectos/"]', (e) => { const ruta = e.pathname; e.click(); return ruta; });
+    await pagina.waitForFunction((ruta) => document.body.dataset.ruta === ruta, {}, proyecto);
+    await reposar(pagina);
+    await comprobarFondoAnimado(pagina, "ficha de proyecto");
+    await pagina.$eval(".pie", (e) => e.scrollIntoView({ block: "start", behavior: "instant" }));
+    await comprobarFondoAnimado(pagina, "pie de proyecto");
     await pagina.click("#pausar-escena");
     assert.equal(await pagina.$eval("#pausar-escena", (e) => e.getAttribute("aria-pressed")), "true");
-    const pausados = await pagina.evaluate(() => window.__qaSala.dibujados);
-    await pagina.evaluate(() => {
-      const finalPortada = scrollY + document.querySelector(".portada").getBoundingClientRect().bottom;
-      scrollTo({ top: finalPortada + 8, behavior: "instant" });
-    });
-    await pagina.waitForFunction(() => document.body.classList.contains("escena-oculta"));
+    assert.equal((await medirDibujos(pagina)).cantidad, 0, "la pausa detiene el fondo en el pie");
     await pagina.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
-    await pagina.waitForFunction(() => !document.body.classList.contains("escena-oculta"));
-    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 300)));
-    assert.equal(await pagina.evaluate(() => window.__qaSala.dibujados), pausados, "volver a portada respeta la pausa manual");
+    assert.equal((await medirDibujos(pagina)).cantidad, 0, "volver al encabezado conserva la pausa");
     assert.equal(await pagina.$eval("#pausar-escena", (e) => e.getAttribute("aria-pressed")), "true");
+    assert.deepEqual(errores, []);
+  } finally {
+    if (!pagina.isClosed()) await pagina.evaluate(() => localStorage.removeItem("jsar:escena-pausa"));
+    await pagina.close();
+  }
+});
+
+test("los ornamentos visibles se animan por defecto y la pausa o movimiento reducido los detienen", { timeout: 25_000 }, async (t) => {
+  for (const ancho of [390, 1440]) {
+    const { pagina, errores } = await nuevaPagina(t, { ancho });
+    try {
+      await cargar(pagina);
+      await pagina.$eval(".contenido-editorial .rotulo", (e) => {
+        window.__qaSeccion = e.closest(".franja");
+        window.__qaSeccion.scrollIntoView({ block: "center", behavior: "instant" });
+      });
+      await pagina.waitForFunction(() => window.__qaSeccion.classList.contains("movimiento-en-vista"));
+      const estado = () => pagina.evaluate(() => [window.__qaSeccion, window.__qaSeccion.querySelector(".rotulo")]
+        .map((e, i) => {
+          const estilo = getComputedStyle(e, i ? "::after" : "::before");
+          return { animacion: estilo.animationName, estado: estilo.animationPlayState, transformacion: estilo.transform };
+        }));
+      const inicial = await estado();
+      assert.ok(inicial.every((e) => e.animacion !== "none" && e.estado === "running"), `haz y filete se animan a ${ancho}px`);
+      await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 300)));
+      const posterior = await estado();
+      assert.ok(posterior.every((e, i) => e.transformacion !== inicial[i].transformacion), "ambos adornos producen movimiento real");
+
+      await pagina.click("#pausar-escena");
+      await pagina.waitForFunction(() => document.body.classList.contains("escena-pausada"));
+      const congelados = await estado();
+      await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 250)));
+      assert.deepEqual(await estado(), congelados, "la pausa congela las transformaciones decorativas");
+      assert.ok(await pagina.evaluate(() => document.getAnimations().filter((a) => a.effect?.getTiming().iterations === Infinity)
+        .every((a) => a.playState === "paused")), "ninguna animación CSS infinita continúa tras pausar");
+      await pagina.click("#pausar-escena");
+      await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+      await pagina.waitForFunction(() => document.getElementById("pausar-escena").disabled);
+      assert.ok((await estado()).every((e) => e.animacion === "none" || e.estado === "paused"));
+      assert.equal((await medirDibujos(pagina)).cantidad, 0, "reducir movimiento detiene también el fondo");
+      assert.deepEqual(await pagina.evaluate(() => window.__qaSala.bloqueos), []);
+      assert.deepEqual(errores, []);
+    } finally {
+      if (!pagina.isClosed()) await pagina.evaluate(() => localStorage.removeItem("jsar:escena-pausa"));
+      await pagina.close();
+    }
+  }
+});
+
+test("las tarjetas responden a puntero y teclado, se neutralizan al pausar y se renuevan tras navegar", { timeout: 25_000 }, async (t) => {
+  const { pagina, errores } = await nuevaPagina(t, { ancho: 1440 });
+  const tarjeta = 'a.ficha.tarjeta-interactiva[href^="/proyectos/"]';
+  try {
+    await cargar(pagina);
+    assert.equal(await pagina.evaluate(() => matchMedia("(hover: hover) and (pointer: fine)").matches), true, "el navegador de la prueba ofrece un ratón con hover real");
+    await pagina.waitForSelector(tarjeta);
+    await pagina.$eval(tarjeta, (e) => { window.__qaTarjetaAnterior = e; });
+    const caja = await prepararGestoTarjeta(pagina, tarjeta);
+    await pagina.mouse.move(caja.left + caja.width * .8, caja.top + caja.height * .25);
+    await pagina.waitForFunction((selector) => Math.abs(parseFloat(document.querySelector(selector).style.getPropertyValue("--tarjeta-ry"))) > .2, {}, tarjeta);
+    const inclinacion = await pagina.$eval(tarjeta, (e) => ["--tarjeta-rx", "--tarjeta-ry"].map((p) => parseFloat(e.style.getPropertyValue(p))));
+    assert.ok(inclinacion.every((valor) => Math.abs(valor) <= 1.6), "la inclinación conserva su límite angular");
+    assert.notEqual(await pagina.$eval(tarjeta, (e) => getComputedStyle(e).transform), "none");
+    await pagina.mouse.move(1, 1);
+    await pagina.waitForFunction((selector) => ["--tarjeta-rx", "--tarjeta-ry", "--tarjeta-luz"]
+      .every((p) => Number.parseFloat(document.querySelector(selector).style.getPropertyValue(p)) === 0), {}, tarjeta);
+
+    await pagina.keyboard.press("Tab");
+    await pagina.focus(tarjeta);
+    await pagina.waitForFunction((selector) => parseFloat(document.querySelector(selector).style.getPropertyValue("--tarjeta-luz")) > .4, {}, tarjeta);
+    assert.deepEqual(await pagina.$eval(tarjeta, (e) => ["--tarjeta-rx", "--tarjeta-ry"].map((p) => parseFloat(e.style.getPropertyValue(p)))), [0, 0], "el teclado ilumina sin inclinar la lectura");
+    await pagina.click("#pausar-escena");
+    await pagina.waitForFunction((selector) => parseFloat(document.querySelector(selector).style.getPropertyValue("--tarjeta-luz")) === 0, {}, tarjeta);
+    assert.deepEqual(await pagina.$eval(tarjeta, (e) => ["--tarjeta-rx", "--tarjeta-ry"].map((p) => parseFloat(e.style.getPropertyValue(p)))), [0, 0]);
+    await pagina.click("#pausar-escena");
+    await pagina.evaluate(() => document.querySelector('nav.menu a[href="/blog/"]').click());
+    await pagina.waitForFunction(() => document.body.dataset.ruta === "/blog/");
+    await reposar(pagina);
+    await pagina.waitForSelector(".escrito-card.tarjeta-interactiva");
+    assert.equal(await pagina.evaluate(() => window.__qaTarjetaAnterior.isConnected), false);
+    assert.equal(await pagina.evaluate(() => window.__qaTarjetaAnterior.classList.contains("tarjeta-interactiva")), false, "el registro deja de conservar la tarjeta reemplazada");
+    const nuevaCaja = await prepararGestoTarjeta(pagina, ".escrito-card.tarjeta-interactiva");
+    await pagina.mouse.move(nuevaCaja.left + nuevaCaja.width * .75, nuevaCaja.top + nuevaCaja.height * .3);
+    await pagina.waitForFunction(() => parseFloat(document.querySelector(".escrito-card.tarjeta-interactiva").style.getPropertyValue("--tarjeta-luz")) > .4);
+    await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+    await pagina.waitForFunction(() => parseFloat(document.querySelector(".escrito-card.tarjeta-interactiva").style.getPropertyValue("--tarjeta-luz")) === 0);
+    assert.equal(await pagina.$eval(".escrito-card.tarjeta-interactiva", (e) => getComputedStyle(e).transform), "none");
+    assert.ok(await pagina.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2));
+    assert.deepEqual(await pagina.evaluate(() => window.__qaSala.bloqueos), []);
     assert.deepEqual(errores, []);
   } finally {
     if (!pagina.isClosed()) await pagina.evaluate(() => localStorage.removeItem("jsar:escena-pausa"));

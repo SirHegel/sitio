@@ -1,0 +1,145 @@
+/* Movimiento en todo el recorrido. Capas decorativas, texto estable.
+   Las superficies sólo animan en vista; pausa y reducción prevalecen.
+   Sin filtros animados ni bibliotecas: transform/opacity en capas acotadas. */
+body:not(.pagina-admin) { --scrim: rgb(13 12 13 / .93); --luz-escena: 201 124 78; }
+body[data-escena="nocturno"] { --luz-escena: 115 174 198; }
+body[data-escena="celuloide"] { --luz-escena: 225 182 111; }
+
+/* La fotografía viva acompaña también los proyectos, artículos y el pie. */
+body:not(.pagina-admin) .contenido-editorial { background: rgb(12 10 11 / .76); }
+body:not(.pagina-admin):not([data-ruta="/"]) #principal {
+  background: linear-gradient(rgb(12 11 12 / .48), rgb(12 11 12 / .78) 36rem, rgb(12 11 12 / .72));
+}
+body:not(.pagina-admin) footer.pie { position: relative; isolation: isolate; background: rgb(9 9 10 / .88); backdrop-filter: none; }
+body:not(.pagina-admin) .ficha, body:not(.pagina-admin) .escrito-card { background: rgb(22 21 22 / .93); backdrop-filter: none; }
+body:not(.pagina-admin) .scrim, body:not(.pagina-admin) .metrica { backdrop-filter: none; -webkit-backdrop-filter: none; }
+body:not(.pagina-admin) .rotulo { text-shadow: 0 2px 16px #000b; }
+
+/* Sin WebGL sigue existiendo movimiento, incluido en dispositivos modestos. */
+.js-cine .ambiente { transform-origin: 68% 48%; animation: deriva-fotograma 18s ease-in-out infinite alternate; }
+body.sala-lista .ambiente { animation-play-state: paused; }
+@keyframes deriva-fotograma {
+  from { transform: scale(1.025) translate3d(-.35%, -.3%, 0); }
+  to { transform: scale(1.085) translate3d(.65%, .35%, 0); }
+}
+
+/* Haces de luz por sección: se desplazan detrás del contenido, sin medir ni
+   redibujar la geometría de artículos largos. Cada haz mide como máximo 32rem. */
+body:not(.pagina-admin) .franja { position: relative; isolation: isolate; }
+body:not(.pagina-admin) :is(.franja, .pie)::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  width: 68%; height: min(32rem, 80%); right: 10%; top: 4%;
+  background: radial-gradient(ellipse at 60% 42%, rgb(var(--luz-escena) / .16), transparent 68%);
+  transform-origin: 60% 50%; opacity: .6;
+}
+.js-cine body:not(.pagina-admin) :is(.franja, .pie)::before {
+  animation: luz-en-superficie 12s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+.js-cine body:not(.pagina-admin) :is(.franja, .pie).movimiento-en-vista::before { animation-play-state: running; }
+body:not(.pagina-admin) .franja:nth-of-type(even)::before { animation-delay: -6s; transform-origin: 25% 70%; }
+@keyframes luz-en-superficie {
+  from { transform: translate3d(-12%, 2%, 0) rotate(-8deg) scale(.86); opacity: .45; }
+  to { transform: translate3d(9%, 10%, 0) rotate(9deg) scale(1.07); opacity: 1; }
+}
+
+/* Un filete que se proyecta de un extremo al otro da continuidad entre actos. */
+body:not(.pagina-admin) .rotulo { position: relative; overflow: hidden; }
+body:not(.pagina-admin) .rotulo::after {
+  content: ""; position: absolute; inset: auto auto 0 0; width: 26%; height: 1px;
+  background: linear-gradient(90deg, transparent, #eedabd, transparent);
+  opacity: .8; pointer-events: none;
+}
+.js-cine body:not(.pagina-admin) .rotulo::after { animation: filete-en-viaje 7s ease-in-out infinite; animation-play-state: paused; }
+.js-cine body:not(.pagina-admin) .movimiento-en-vista .rotulo::after { animation-play-state: running; }
+@keyframes filete-en-viaje {
+  0% { transform: translateX(-105%); opacity: 0; }
+  15%, 75% { opacity: .85; }
+  100% { transform: translateX(395%); opacity: 0; }
+}
+.js-cine body:not(.pagina-admin) .cinta-oficios i { display: inline-block; animation: giro-montaje 18s linear infinite; }
+.js-cine body:not(.pagina-admin) .cinta-oficios i:nth-of-type(even) { animation-direction: reverse; }
+@keyframes giro-montaje { to { transform: rotate(1turn); } }
+.js-cine .portada-continuar > span:first-child { animation: indicar-recorrido 2.6s ease-in-out infinite; }
+@keyframes indicar-recorrido { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(4px); } }
+.js-cine .marca-sello .h { display: inline-block; transform-origin: 50% 80%; animation: compas-marca 9s ease-in-out infinite alternate; }
+@keyframes compas-marca { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+
+/* Movimiento de imagen sin trasladar su pie ni deformar el retrato. */
+.cv-retrato-imagen { overflow: hidden; }
+.imagen-profundidad { transform: translate3d(0, var(--imagen-y, 0px), 0) scale(var(--imagen-escala, 1)); }
+.sala-imaginaria .imagen-profundidad, .sala-imaginaria:hover .imagen-profundidad,
+.retrato-cine .fotograma-imagen .imagen-profundidad,
+.retrato-cine:hover .fotograma-imagen .imagen-profundidad, .cv-retrato .imagen-profundidad {
+  transform: translate3d(0, var(--imagen-y, 0px), 0) scale(var(--imagen-escala, 1)); transition: none;
+}
+.sala-imaginaria { overflow: hidden; }
+.sala-imaginaria::before {
+  content: ""; position: absolute; z-index: 1; inset: 0;
+  background: linear-gradient(105deg, transparent 30%, #c6e5f017 48%, transparent 64%);
+  pointer-events: none; transform: translateX(-35%);
+}
+.js-cine .sala-imaginaria::before { animation: luz-de-intermedio 10s ease-in-out infinite alternate; animation-play-state: paused; }
+.js-cine .movimiento-en-vista .sala-imaginaria::before { animation-play-state: running; }
+@keyframes luz-de-intermedio { to { transform: translateX(35%); } }
+
+/* La luz responde al puntero. La inclinación es limitada a ±1.6° y queda
+   reservada a tarjetas; artículos, tablas y mapas mantienen su plano. */
+.tarjeta-interactiva { position: relative; isolation: isolate; }
+.tarjeta-interactiva.visible { transition-delay: 0s; }
+.tarjeta-interactiva::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at var(--luz-x, 50%) var(--luz-y, 50%), rgb(var(--luz-escena) / .18), transparent 65%);
+  opacity: var(--tarjeta-luz, 0);
+}
+.tarjeta-interactiva.tarjeta-activa { border-color: #ccb28a80; }
+@media (hover: hover) and (pointer: fine) {
+  body:not(.escena-pausada):not(.escena-oculta) .tarjeta-interactiva.tarjeta-activa.visible,
+  body:not(.escena-pausada):not(.escena-oculta) .tarjeta-interactiva.tarjeta-activa:not(.revelar) {
+    transform: perspective(1100px) rotateX(var(--tarjeta-rx, 0deg)) rotateY(var(--tarjeta-ry, 0deg));
+  }
+  .tarjeta-interactiva.tarjeta-activa { transition-duration: 140ms; }
+}
+
+/* Interacciones de navegación: subrayado que se abre y flechas que avanzan. */
+body:not(.pagina-admin) :is(nav.menu a, .pie a, .mas) { position: relative; }
+body:not(.pagina-admin) :is(nav.menu a, .pie a, .mas)::after {
+  content: ""; position: absolute; height: 1px; left: 0; right: 0; bottom: 0;
+  background: currentColor; transform: scaleX(0); transform-origin: right;
+  transition: transform .55s cubic-bezier(.16, 1, .3, 1); pointer-events: none;
+}
+body:not(.pagina-admin) :is(nav.menu a, .pie a, .mas):is(:hover, :focus-visible)::after { transform: scaleX(1); transform-origin: left; }
+body:not(.pagina-admin) .boton > [aria-hidden="true"] { transition: transform .6s cubic-bezier(.16, 1, .3, 1); }
+body:not(.pagina-admin) .boton:is(:hover, :focus-visible) > [aria-hidden="true"] { transform: translate3d(4px, -2px, 0); }
+body:not(.pagina-admin) .filtro-blog { transition: background .35s ease, border-color .35s ease, color .35s ease, transform .35s ease; }
+body:not(.pagina-admin) .filtro-blog:is(:hover, :focus-visible) { transform: translateY(-2px); }
+
+/* La pausa visible gobierna también los ornamentos y las interacciones,
+   no solamente el lienzo. Ninguna pausa oculta contenido pendiente. */
+body:is(.escena-pausada, .escena-oculta, .pagina-admin) *,
+body:is(.escena-pausada, .escena-oculta, .pagina-admin) *::before,
+body:is(.escena-pausada, .escena-oculta, .pagina-admin) *::after { animation-play-state: paused !important; }
+body.escena-pausada #principal .revelar { opacity: 1; transform: none; transition: none; }
+body.escena-pausada #puerta { display: none; }
+body.escena-pausada :is(.boton, .boton span, .ficha, .escrito-card, .filtro-blog, .mas i, .pie a) { transition: none; transform: none; }
+body.escena-pausada :is(nav.menu a, .pie a, .mas)::after { transition: none; }
+body.escena-pausada .tarjeta-interactiva::after { opacity: 0; }
+body.escena-pausada .entrada-cine h1,
+body.escena-pausada .entrada-cine .portada-sinopsis > p,
+body.escena-pausada .entrada-cine .acciones { animation: none; clip-path: none; opacity: 1; transform: none; }
+html:not(.js-cine) .ambiente { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ambiente, .marca-sello .h, .portada-continuar > span:first-child,
+  .cinta-oficios i, .franja::before, .pie::before, .rotulo::after, .sala-imaginaria::before { animation: none !important; }
+  .imagen-profundidad, .tarjeta-interactiva, .boton > [aria-hidden="true"] { transform: none !important; }
+}
+@media (max-width: 48rem) {
+  body:not(.pagina-admin) :is(.franja, .pie)::before { width: 72%; right: 12%; }
+  .tarjeta-interactiva::after { background-size: 100% 100%; }
+}
+@media (max-width: 48rem) { .js-cine .cinta-oficios i:last-of-type { display: none; } }
+@media print {
+  .franja::before, .pie::before, .rotulo::after, .sala-imaginaria::before, .tarjeta-interactiva::after { display: none !important; }
+  body:not(.pagina-admin) #principal, body:not(.pagina-admin) .contenido-editorial, body:not(.pagina-admin) footer.pie { background: white; }
+}

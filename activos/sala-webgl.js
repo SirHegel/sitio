@@ -19,6 +19,8 @@ uniform vec2 recorte;
 uniform vec2 origen;
 uniform vec2 foco;
 uniform vec2 puntero;
+uniform vec2 deriva;
+uniform vec4 pulso;
 uniform vec2 resolucion;
 uniform float tiempo;
 uniform float acercamiento;
@@ -26,39 +28,70 @@ uniform float encuadre;
 uniform float paso;
 uniform float viajando;
 uniform float escena;
-float azar(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float azar(vec2 p) {
+  vec3 semilla = fract(vec3(p.xyx) * .1031);
+  semilla += dot(semilla, semilla.yzx + 33.33);
+  return fract((semilla.x + semilla.y) * semilla.z);
+}
 void main() {
-  // El suelo y los laterales avanzan más que el umbral del plano de fondo.
+  // Deriva de cámara y planos de profundidad; el encuadre conserva un margen.
   float suelo = smoothstep(.43, 1., uv.y);
-  float lateral = pow(abs(uv.x - foco.x), 1.7);
+  float lateral = uv.x - foco.x;
+  lateral *= lateral;
   float profundidad = .18 + suelo * .55 + lateral * .75;
   vec2 centroCamara = mix(foco, vec2(.5, .48), encuadre);
   vec2 p = foco + (uv - centroCamara) / acercamiento;
-  p += puntero * (.004 + profundidad * .011);
-  p.y += sin(tiempo * .16) * .00065 * profundidad;
+  p += (puntero * .022 + deriva) * (.35 + profundidad * .65);
+  if (escena < .5) {
+    float cortina = (1. - smoothstep(.56, .73, p.y)) * smoothstep(.075, .20, abs(p.x - foco.x));
+    p.x += sin(p.y * 8. + tiempo * .55) * .0014 * cortina;
+  }
   vec2 imagenUV = p * recorte + origen;
   vec3 color = texture2D(imagen, clamp(imagenUV, .001, .999)).rgb;
 
-  // Niebla baja y luz suspendida, conservando el detalle del escenario.
-  float bruma = sin(uv.x * 8. + tiempo * .11) * sin(uv.y * 4. - tiempo * .07);
-  float haz = exp(-abs(uv.x - foco.x + (uv.y - foco.y) * .20) * 7.);
-  vec3 luz = mix(vec3(.46, .26, .14), vec3(.22, .32, .40), step(.5, escena));
-  luz = mix(luz, vec3(.42, .32, .21), step(1.5, escena));
-  color += luz * (bruma * .009 + .013 * haz) * smoothstep(.32, 1., uv.y);
+  // Haces con barrido lento y bruma desplazada; nunca destellos o blancos plenos.
+  float bruma = .5 + .5 * sin(uv.x * 7. + uv.y * 3. + tiempo * .28);
+  float eje = foco.x + (uv.y - foco.y) * (.25 + pulso.x * .14) + pulso.y * .025;
+  float haz = 1. - smoothstep(.016, .11 + suelo * .30, abs(uv.x - eje));
+  vec3 luz = vec3(.78, .46, .25);
+  if (escena > .5 && escena < 1.5) luz = vec3(.38, .49, .60);
+  if (escena > 1.5) {
+    luz = vec3(.85, .65, .36);
+    float distanciaHaz = clamp((.64 - imagenUV.x) / .48, 0., 1.);
+    float ejeProyector = .61 - distanciaHaz * .20 + pulso.x * .028 * distanciaHaz;
+    haz = (1. - smoothstep(.012, .03 + distanciaHaz * .17, abs(imagenUV.y - ejeProyector)));
+    haz *= smoothstep(.12, .28, imagenUV.x) * (1. - smoothstep(.63, .67, imagenUV.x));
+    color += luz * haz * (.055 + (.5 + .5 * pulso.z) * .045);
+  } else {
+    color += luz * haz * (.025 + (.5 + .5 * pulso.z) * .03) * smoothstep(.25, .95, uv.y);
+  }
+  color = mix(color, luz * .44, bruma * .047 * smoothstep(.40, 1., uv.y));
 
-  // Polvo disperso: coste constante sin un bucle por partícula.
-  vec2 celdaUV = uv * vec2(29., 21.) + vec2(tiempo * .012, -tiempo * .026);
-  vec2 celda = floor(celdaUV);
-  vec2 part = fract(celdaUV) - vec2(azar(celda), azar(celda + 13.));
-  float polvo = (1. - smoothstep(.005, .028, length(part))) * step(.967, azar(celda + 5.));
-  color += vec3(.68, .57, .42) * polvo * .16;
+  if (escena > .5 && escena < 1.5) {
+    // Lluvia fina en planos diagonales; las fachadas y el suelo quedan rígidos.
+    float columnas = resolucion.x < resolucion.y ? 30. : 58.;
+    vec2 lluviaUV = vec2(uv.x * columnas + uv.y * 9. + tiempo * .20, uv.y * 9. - tiempo * 8.);
+    float semilla = azar(vec2(floor(lluviaUV.x), 7.));
+    float trazo = (1. - smoothstep(.015, .065, abs(fract(lluviaUV.x) - .5)));
+    trazo *= (1. - smoothstep(.10, .40, fract(lluviaUV.y + semilla))) * step(.36, semilla);
+    color += vec3(.64, .74, .83) * trazo * .13 * smoothstep(.02, .25, uv.y);
+    float reflejo = (.5 + .5 * sin(uv.y * 82. + tiempo * .75)) * (.5 + .5 * pulso.z);
+    color += vec3(.36, .43, .48) * reflejo * .04 * smoothstep(.62, .96, uv.y);
+  } else {
+    // Polvo iluminado en movimiento: coste constante, sin bucle por partícula.
+    vec2 celdaUV = uv * vec2(23., 16.) + vec2(tiempo * .12, -tiempo * .44);
+    vec2 celda = floor(celdaUV);
+    vec2 part = fract(celdaUV) - vec2(azar(celda), azar(celda + 13.));
+    float polvo = (1. - smoothstep(.010, .055, length(part))) * step(.92, azar(celda + 5.));
+    color += luz * polvo * (.16 + haz * .34);
+  }
 
   // Acercarse, atravesar el umbral y abrir el nuevo plano, sin destellos blancos.
   float cierre = smoothstep(.34, .50, paso) * (1. - smoothstep(.54, .81, paso)) * viajando;
   vec2 portal = (uv - foco) * vec2(resolucion.x / resolucion.y, 1.);
   float distancia = length(portal);
   color *= 1. - cierre * (.975 + smoothstep(.02, .8, distancia) * .02);
-  float anillo = exp(-abs(distancia - (.10 + fract(paso * 2.4) * 1.25)) * 55.);
+  float anillo = 1. - smoothstep(.005, .05, abs(distancia - (.10 + fract(paso * 2.4) * 1.25)));
   color += vec3(.20, .085, .040) * anillo * cierre * .19;
   float vineta = smoothstep(.3, 1.05, length((uv - .5) * vec2(1., .85)));
   color *= 1. - vineta * .12;
@@ -116,7 +149,7 @@ export function crearSalaWebGL(lienzo, alCambiar = () => {}) {
     const posicion = gl.getAttribLocation(programa, "posicion");
     gl.enableVertexAttribArray(posicion);
     gl.vertexAttribPointer(posicion, 2, gl.FLOAT, false, 0, 0);
-    ubicaciones = Object.fromEntries(["imagen", "recorte", "origen", "foco", "puntero", "resolucion", "tiempo", "acercamiento", "encuadre", "paso", "viajando", "escena"]
+    ubicaciones = Object.fromEntries(["imagen", "recorte", "origen", "foco", "puntero", "deriva", "pulso", "resolucion", "tiempo", "acercamiento", "encuadre", "paso", "viajando", "escena"]
       .map((nombre) => [nombre, gl.getUniformLocation(programa, nombre)]));
     gl.uniform1i(ubicaciones.imagen, 0);
     gl.disable(gl.DEPTH_TEST);
@@ -210,9 +243,13 @@ export function crearSalaWebGL(lienzo, alCambiar = () => {}) {
     gl.uniform2f(ubicaciones.origen, origenX, origenY);
     gl.uniform2f(ubicaciones.foco, (focoImagen - origenX) / recorteX, (.48 - origenY) / recorteY);
     gl.uniform2f(ubicaciones.puntero, movimiento ? x : 0, movimiento ? y : 0);
+    // Oscilaciones O(1) por cuadro en CPU, compartidas por todos los píxeles.
+    const instante = movimiento ? tiempo : 0;
+    gl.uniform2f(ubicaciones.deriva, Math.sin(instante * .32) * .011, (Math.cos(instante * .27) - 1) * .0055);
+    gl.uniform4f(ubicaciones.pulso, Math.sin(instante * .38), Math.cos(instante * .29), Math.sin(instante * .52), Math.sin(instante * .65));
     gl.uniform2f(ubicaciones.resolucion, ancho, alto);
-    gl.uniform1f(ubicaciones.tiempo, tiempo);
-    gl.uniform1f(ubicaciones.acercamiento, zoom * (1.035 + (movimiento ? avance * .025 : 0)));
+    gl.uniform1f(ubicaciones.tiempo, instante);
+    gl.uniform1f(ubicaciones.acercamiento, zoom * (1.075 + (movimiento ? avance * .025 + (.5 + .5 * Math.sin(instante * .27)) * .018 : 0)));
     gl.uniform1f(ubicaciones.encuadre, !transicion ? 0 : progreso < .5 ? salida * salida * (3 - 2 * salida) : Math.pow(1 - entrada, 3));
     gl.uniform1f(ubicaciones.paso, progreso);
     gl.uniform1f(ubicaciones.viajando, transicion ? 1 : 0);
