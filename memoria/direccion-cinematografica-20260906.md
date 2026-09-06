@@ -8,6 +8,8 @@ Presupuesto fijado antes de verificar: cada WebP < 200.000 bytes; desbordamiento
 
 Complejidad: un triángulo por cuadro O(W·H); memoria O(W·H + I), I ≤ 3 imágenes. Bucle de control O(1), limitado a 30 cuadros/s; DPR ≤ 1,25 en móvil y ≤ 1,5 en escritorio. El bucle se detiene cuando la portada queda fuera de pantalla. El CSS conserva la misma composición y punto de recorte si falla WebGL.
 
+La ejecución CI de `master` del primer commit alcanzó el límite de 180 s de la matriz responsive; la ejecución del mismo commit en la rama de trabajo aprobó. Se eliminó la apertura innecesaria de WebGL cuando el dispositivo pide movimiento reducido desde el inicio, manteniendo habilitación posterior. La regresión nueva observó un contexto antes del arreglo y cero después. Se conserva el límite de 180 s y todas las medidas geométricas; una cancelación ahora cierra Chrome. Otra prueba usaba una demora fija de 350 ms para dos clics y llegó a actuar sobre un menú sustituido: se reemplazó esa demora por una barrera de red. El caso repitió 6/6 recorridos con CPU ralentizada ×4.
+
 ## Activos y procedencia
 
 Verificación integrada: 79/79 pruebas aprobadas, cero omisiones, 169,7 s en Chrome local. La auditoría de la salida estática aprobó 93 archivos sin hallazgos privados. Axe: cero infracciones WCAG A/AA en inicio a 320/390/1440 px y blog a 390/1440 px. La matriz responsive recorre el sitemap en trece anchos de 280 a 1440 px.

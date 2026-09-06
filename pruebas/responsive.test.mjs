@@ -30,6 +30,7 @@ const tipos = new Map([
   [".html", "text/html; charset=utf-8"],
   [".js", "text/javascript; charset=utf-8"],
   [".jpg", "image/jpeg"],
+  [".webp", "image/webp"],
   [".png", "image/png"],
   [".svg", "image/svg+xml"],
   [".pdf", "application/pdf"],
@@ -69,7 +70,7 @@ async function servirPublico() {
   };
 }
 
-test("ningún contenido público abandona su caja en móvil ni al cambiar de breakpoint", { timeout: 180_000 }, async () => {
+test("ningún contenido público abandona su caja en móvil ni al cambiar de breakpoint", { timeout: 180_000 }, async (t) => {
   const chrome = ejecutableChrome();
   assert.ok(chrome, "la auditoría responsive necesita Chrome; define PUPPETEER_EXECUTABLE_PATH");
 
@@ -87,6 +88,12 @@ test("ningún contenido público abandona su caja en móvil ni al cambiar de bre
   });
   const pagina = await navegador.newPage();
   const fallos = [];
+  let cierre = null;
+  const cerrarNavegador = () => (cierre ||= navegador.close());
+  // Una cancelación del runner debe liberar Chrome antes de la siguiente
+  // prueba; dejar la matriz corriendo en paralelo alteraba sus temporizadores.
+  const alAbortar = () => { void cerrarNavegador().catch(() => {}); };
+  t.signal.addEventListener("abort", alAbortar, { once: true });
 
   try {
     await pagina.setRequestInterception(true);
@@ -102,6 +109,7 @@ test("ningún contenido público abandona su caja en móvil ni al cambiar de bre
     await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
 
     for (const ancho of ANCHOS) {
+      const inicioAncho = performance.now();
       const movil = ancho <= 430;
       await pagina.setViewport({
         width: ancho,
@@ -112,6 +120,7 @@ test("ningún contenido público abandona su caja en móvil ni al cambiar de bre
       });
 
       for (const ruta of rutas) {
+        t.signal.throwIfAborted();
         const respuesta = await pagina.goto(servidor.origen + ruta, { waitUntil: "domcontentloaded" });
         assert.equal(respuesta?.status(), 200, `${ruta} no cargó durante la auditoría responsive`);
         await pagina.evaluate(async () => {
@@ -229,10 +238,11 @@ test("ningún contenido público abandona su caja en móvil ni al cambiar de bre
 
         if (resultado.length) fallos.push({ ancho, ruta, problemas: resultado });
       }
+      t.diagnostic(`${ancho}px: ${rutas.length} rutas, ${Math.round(performance.now() - inicioAncho)} ms`);
     }
   } finally {
-    await pagina.close();
-    await navegador.close();
+    t.signal.removeEventListener("abort", alAbortar);
+    await cerrarNavegador();
     await servidor.cerrar();
   }
 

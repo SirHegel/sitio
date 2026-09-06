@@ -17,6 +17,7 @@ export function iniciarCinematografia() {
   const actos = ["Acto I / El umbral", "Acto II / La ciudad", "Acto III / El montaje"];
   const lienzo = document.getElementById("lienzo");
   let sala = null;
+  let salaIntentada = false;
   let pausaManual = false;
   let eleccionManual = false;
   let indice = 0;
@@ -143,7 +144,28 @@ export function iniciarCinematografia() {
     cuadro = requestAnimationFrame(animar);
   }
 
+  function iniciarSala() {
+    // La lectura estática usa la fotografía CSS sin abrir un contexto GPU.
+    // Un cambio posterior de preferencia habilita un único intento de creación.
+    if (salaIntentada || administrativa() || reduccion.matches || !paginaActiva || document.hidden) return;
+    salaIntentada = true;
+    sala = crearSalaWebGL(lienzo, () => {
+      if (!sala?.disponible(escenas[indice])) {
+        transicion = null;
+        cuerpo.classList.remove("escena-cambiando");
+        detenerRecorrido();
+      }
+      dibujar(); estado();
+    });
+    // La primera imagen manda; las demás se precargan sin frenar el texto.
+    sala?.preparar(escenas[indice]).then(() => {
+      dibujar(); estado();
+      escenas.filter((nombre) => nombre !== escenas[indice]).forEach((nombre) => { sala.preparar(nombre); });
+    });
+  }
+
   function estado() {
+    iniciarSala();
     cancelAnimationFrame(cuadro);
     cuadro = 0;
     const pausado = administrativa() || pausaManual || reduccion.matches;
@@ -261,19 +283,6 @@ export function iniciarCinematografia() {
   try { visto = sessionStorage.getItem("jsar:entrado") === "1"; sessionStorage.setItem("jsar:entrado", "1"); } catch {}
   if (visto || reduccion.matches) puerta?.remove();
   else setTimeout(() => puerta?.remove(), 1800);
-  if (!administrativa()) sala = crearSalaWebGL(lienzo, () => {
-    if (!sala?.disponible(escenas[indice])) {
-      transicion = null;
-      cuerpo.classList.remove("escena-cambiando");
-      detenerRecorrido();
-    }
-    dibujar(); estado();
-  });
   observarEscenas();
-  // La primera imagen manda; las demás se precargan sin frenar el texto.
-  sala?.preparar(escenas[indice]).then(() => {
-    dibujar(); estado();
-    escenas.filter((nombre) => nombre !== escenas[indice]).forEach((nombre) => { sala.preparar(nombre); });
-  });
   medir(); estado();
 }

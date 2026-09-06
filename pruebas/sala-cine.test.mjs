@@ -46,11 +46,15 @@ after(async () => {
   if (servidor) await new Promise((resolver) => servidor.close(resolver));
 });
 
-async function nuevaPagina({ ancho = 390, sinWebGL = false, sinTransicionNativa = false, demoraBlog = 0 } = {}) {
+async function nuevaPagina({ ancho = 390, sinWebGL = false, sinTransicionNativa = false, retenerBlog = false } = {}) {
   const pagina = await navegador.newPage();
   await pagina.setViewport({ width: ancho, height: ancho < 768 ? 844 : 900, deviceScaleFactor: ancho < 768 ? 2 : 1 });
   const solicitudes = [];
   const errores = [];
+  let confirmarBlog;
+  let liberarBlog;
+  const blogRetenido = new Promise((resolver) => { confirmarBlog = resolver; });
+  const permisoBlog = new Promise((resolver) => { liberarBlog = resolver; });
   pagina.on("pageerror", (error) => errores.push(error.message));
   await pagina.setRequestInterception(true);
   pagina.on("request", async (peticion) => {
@@ -59,10 +63,11 @@ async function nuevaPagina({ ancho = 390, sinWebGL = false, sinTransicionNativa 
       await peticion.abort();
       return;
     }
-    if (demoraBlog && peticion.resourceType() === "fetch" && new URL(peticion.url()).pathname === "/blog/") {
-      await new Promise((resolver) => setTimeout(resolver, demoraBlog));
+    if (retenerBlog && peticion.resourceType() === "fetch" && new URL(peticion.url()).pathname === "/blog/") {
+      confirmarBlog();
+      await permisoBlog;
     }
-    if (!peticion.isInterceptResolutionHandled()) await peticion.continue();
+    if (!peticion.isInterceptResolutionHandled() && !peticion.failure()) await peticion.continue();
   });
   await pagina.evaluateOnNewDocument(({ sinWebGL, sinTransicionNativa }) => {
     window.__qaSala = { dibujados: 0, bloqueos: [], navegaciones: [] };
@@ -87,7 +92,7 @@ async function nuevaPagina({ ancho = 390, sinWebGL = false, sinTransicionNativa 
       }
     }
   }, { sinWebGL, sinTransicionNativa });
-  return { pagina, solicitudes, errores };
+  return { pagina, solicitudes, errores, blogRetenido, liberarBlog };
 }
 
 async function cargar(pagina) {
@@ -241,12 +246,21 @@ test("perder el contexto gráfico recupera el fondo y mantiene utilizables los c
 
 test("dos navegaciones rápidas conservan el último destino con y sin View Transitions", { timeout: 30_000 }, async () => {
   for (const sinTransicionNativa of [false, true]) {
-    const { pagina, errores } = await nuevaPagina({ ancho: 1440, sinTransicionNativa, demoraBlog: 350 });
+    const { pagina, errores, blogRetenido, liberarBlog } = await nuevaPagina({ ancho: 1440, sinTransicionNativa, retenerBlog: true });
     try {
+      // Diagnóstico reproducible: CINE_QA_CPU=4 repite el caso con CPU lenta.
+      if (process.env.CINE_QA_CPU === "4") {
+        const sesion = await pagina.createCDPSession();
+        await sesion.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+      }
       await cargar(pagina);
       await pagina.evaluate(() => { window.__qaDocumento = document; window.__qaAudio = document.querySelector("audio"); });
-      await pagina.click('nav.menu a[href="/blog/"]');
-      await pagina.click('nav.menu a[href="/proyectos/"]');
+      await pagina.evaluate(() => document.querySelector('nav.menu a[href="/blog/"]').click());
+      await blogRetenido;
+      // El primer fetch no puede sustituir el menú durante el segundo clic.
+      // La barrera prueba la cancelación sin depender del tiempo de la GPU.
+      await pagina.evaluate(() => document.querySelector('nav.menu a[href="/proyectos/"]').click());
+      liberarBlog();
       await pagina.waitForFunction(() => document.body.dataset.ruta === "/proyectos/");
       await reposar(pagina);
       assert.equal(new URL(pagina.url()).pathname, "/proyectos/");
@@ -258,7 +272,7 @@ test("dos navegaciones rápidas conservan el último destino con y sin View Tran
       await pagina.waitForFunction(() => document.body.dataset.ruta === "/");
       await reposar(pagina);
       assert.deepEqual(errores, []);
-    } finally { await pagina.close(); }
+    } finally { liberarBlog(); await pagina.close(); }
   }
 });
 

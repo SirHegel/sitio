@@ -165,6 +165,40 @@ test("una escena elegida permanece durante la navegación y el fondo obedece pau
   } finally { await pagina.close(); }
 });
 
+test("movimiento reducido inicial usa imágenes y solicita WebGL sólo al habilitar movimiento", { timeout: 20_000 }, async () => {
+  const pagina = await nuevaPagina(1440);
+  try {
+    await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+    await pagina.evaluateOnNewDocument(() => {
+      window.solicitudesSala = 0;
+      const contexto = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (tipo, ...opciones) {
+        if (this.id === "lienzo" && /^(webgl2?|experimental-webgl)$/.test(tipo)) window.solicitudesSala++;
+        return contexto.call(this, tipo, ...opciones);
+      };
+    });
+    await cargar(pagina);
+    assert.equal(await pagina.evaluate(() => window.solicitudesSala), 0, "la lectura estática no solicita un contexto GPU");
+    assert.equal(await pagina.$eval("#lienzo", (e) => e.dataset.motor), "imagen");
+    assert.equal(await pagina.$eval("#pausar-escena", (e) => e.disabled), true);
+    await pagina.click("#cambiar-escena");
+    assert.equal(await pagina.$eval("body", (e) => e.dataset.escena), "nocturno");
+    assert.equal(await pagina.$eval(".ambiente-nocturno", (e) => getComputedStyle(e).opacity), "1", "el respaldo fotográfico permite cambiar de escena");
+    assert.equal(await pagina.evaluate(() => window.solicitudesSala), 0, "cambiar la imagen tampoco abre la GPU");
+
+    await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "no-preference" }]);
+    await pagina.waitForFunction(() => window.solicitudesSala === 1 && !document.getElementById("pausar-escena").disabled);
+    assert.equal(await pagina.$eval("body", (e) => e.dataset.escena), "nocturno", "la sala arranca en la escena elegida");
+    await pagina.click("#pausar-escena");
+    await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+    await pagina.waitForFunction(() => document.getElementById("pausar-escena").disabled);
+    await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "no-preference" }]);
+    await pagina.waitForFunction(() => !document.getElementById("pausar-escena").disabled);
+    assert.equal(await pagina.evaluate(() => window.solicitudesSala), 1, "el contexto existente no se recrea al cambiar preferencias");
+    assert.equal(await pagina.$eval("#pausar-escena", (e) => e.getAttribute("aria-pressed")), "true", "el cambio de preferencias conserva la pausa manual");
+  } finally { await pagina.close(); }
+});
+
 test("sin JavaScript se pueden leer inicio y blog, usar navegación y omitir la entrada", { timeout: 15_000 }, async () => {
   const pagina = await nuevaPagina();
   try {
