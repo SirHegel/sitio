@@ -1,0 +1,792 @@
+{
+  "capas": [
+    {
+      "archivo": "legal.geojson",
+      "color": "#d49a39",
+      "derechosGeometria": "ODbL 1.0; © OpenStreetMap contributors",
+      "descarga": {
+        "alcance": "enlace_de_descarga_en_la_interfaz",
+        "habilitada": true,
+        "motivo": "anclas OSM bajo ODbL 1.0; no incluye perímetros ANM/Nexus"
+      },
+      "disponibilidadHttp": true,
+      "enlaceFuente": "https://www.openstreetmap.org/copyright",
+      "entidades": 5,
+      "estadoDatos": "anclas_osm_publicables;dos_perimetros_anm_publicados",
+      "familia": "legal",
+      "fecha": "2026-08-29",
+      "fuente": "ANM y OpenStreetMap",
+      "fuentes": [
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/montecristo-703209601.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "f5ba21805a347daa949b861ea6ffc415017bf2635fa5fe778d17fb08d5571edf",
+          "tamano_bytes": 669,
+          "url": "https://www.openstreetmap.org/node/703209601"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/la-paz-703169171.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d476639d4c23ed08d40d0383ba13c897fde597fd649c5d0d0b9bfc21bd9b6d66",
+          "tamano_bytes": 825,
+          "url": "https://www.openstreetmap.org/node/703169171"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/crucitas-6225740676.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d9130391b00dfd042f1b7f1fbb5790618d6fe87b7b561dd17b2339223db3e7aa",
+          "tamano_bytes": 858,
+          "url": "https://www.openstreetmap.org/node/6225740676"
+        }
+      ],
+      "geometria": "fill",
+      "id": "oro-legal",
+      "licencia": "Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ",
+      "licenciaMaterialPropio": "CC BY 4.0 para estructura, textos, cálculos y metadatos originales; el código conserva todos sus derechos salvo archivo de licencia separado",
+      "nombre": "Perímetros ANM y contexto OSM",
+      "sha256": "7e28db6cfc920d0df3aceca0dd32d9829554f299a0d1b24dfd623df15292d191",
+      "tamano_bytes": 7336,
+      "url": "/data/oro/legal.geojson",
+      "vista": "ambas"
+    },
+    {
+      "archivo": "huella-estado.geojson",
+      "color": "#9d5a3a",
+      "derechosGeometria": "ODbL 1.0; © OpenStreetMap contributors",
+      "descarga": {
+        "alcance": "enlace_de_descarga_en_la_interfaz",
+        "habilitada": true,
+        "motivo": "anclas OSM bajo ODbL 1.0; no incluye perímetros ANM/Nexus"
+      },
+      "disponibilidadHttp": true,
+      "enlaceFuente": "https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879",
+      "entidades": 4,
+      "estadoDatos": "fichas_publicables;_geometria_de_huella_no_publicable",
+      "familia": "huella",
+      "fecha": "2026-08-29",
+      "fuente": "Validación propia y DGM",
+      "fuentes": [
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/montecristo-703209601.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "f5ba21805a347daa949b861ea6ffc415017bf2635fa5fe778d17fb08d5571edf",
+          "tamano_bytes": 669,
+          "url": "https://www.openstreetmap.org/node/703209601"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/la-paz-703169171.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d476639d4c23ed08d40d0383ba13c897fde597fd649c5d0d0b9bfc21bd9b6d66",
+          "tamano_bytes": 825,
+          "url": "https://www.openstreetmap.org/node/703169171"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/crucitas-6225740676.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d9130391b00dfd042f1b7f1fbb5790618d6fe87b7b561dd17b2339223db3e7aa",
+          "tamano_bytes": 858,
+          "url": "https://www.openstreetmap.org/node/6225740676"
+        },
+        {
+          "archivo": "datos/geo/resultados-huellas-colombia.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "a75cabdf4413b33f0d17b6423f6ad57166e090b28a8ea341719bcf60e805dea2",
+          "tamano_bytes": 19837,
+          "url": "https://geo.anm.gov.co/webgis/rest/services/ANM/ServiciosANM/MapServer/4?f=pjson"
+        },
+        {
+          "archivo": "datos/geo/resultados-validacion-crucitas.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "3276e2dcdcab603883617fbc7a067fbbc1548c17d9d9ad10d9e8f5a6b16ad53f",
+          "tamano_bytes": 5752,
+          "url": "https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879"
+        },
+        {
+          "archivo": "datos/geo/delta-documentado-crucitas.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "86e9edf43b5648414eb3ae1b2a129ec1320388019026c3287a35c8148e42fe04",
+          "tamano_bytes": 3869,
+          "url": "https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879"
+        }
+      ],
+      "geometria": "circle",
+      "id": "oro-huella",
+      "licencia": "Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ",
+      "licenciaMaterialPropio": "CC BY 4.0 para estructura, textos, cálculos y metadatos originales; el código conserva todos sus derechos salvo archivo de licencia separado",
+      "nombre": "Disponibilidad de huella · puntos de ficha",
+      "sha256": "fccc84dd607db78dfe629c411569f28c4b7cbc131f9c48b908b7e303400e7398",
+      "tamano_bytes": 7910,
+      "temporal": {
+        "campo": "anio",
+        "maximo": 2026,
+        "minimo": 2018,
+        "valores": [
+          2018,
+          2026
+        ]
+      },
+      "url": "/data/oro/huella-estado.geojson",
+      "vista": "ambas"
+    },
+    {
+      "archivo": "delta-estado.geojson",
+      "color": "#a8232a",
+      "derechosGeometria": "ODbL 1.0; © OpenStreetMap contributors",
+      "descarga": {
+        "alcance": "enlace_de_descarga_en_la_interfaz",
+        "habilitada": true,
+        "motivo": "anclas OSM bajo ODbL 1.0; no incluye perímetros ANM/Nexus"
+      },
+      "disponibilidadHttp": true,
+      "enlaceFuente": "https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879",
+      "entidades": 3,
+      "estadoDatos": "tres_deltas_no_estimables;una_area_dgm_reportada",
+      "familia": "delta",
+      "fecha": "2026-08-29",
+      "fuente": "Cálculo propio sobre decisiones judiciales",
+      "fuentes": [
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/montecristo-703209601.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "f5ba21805a347daa949b861ea6ffc415017bf2635fa5fe778d17fb08d5571edf",
+          "tamano_bytes": 669,
+          "url": "https://www.openstreetmap.org/node/703209601"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/la-paz-703169171.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d476639d4c23ed08d40d0383ba13c897fde597fd649c5d0d0b9bfc21bd9b6d66",
+          "tamano_bytes": 825,
+          "url": "https://www.openstreetmap.org/node/703169171"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/crucitas-6225740676.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d9130391b00dfd042f1b7f1fbb5790618d6fe87b7b561dd17b2339223db3e7aa",
+          "tamano_bytes": 858,
+          "url": "https://www.openstreetmap.org/node/6225740676"
+        },
+        {
+          "archivo": "datos/geo/delta-documentado-crucitas.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "86e9edf43b5648414eb3ae1b2a129ec1320388019026c3287a35c8148e42fe04",
+          "tamano_bytes": 3869,
+          "url": "https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879"
+        },
+        {
+          "archivo": "datos/geo/resultados-huellas-colombia.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "a75cabdf4413b33f0d17b6423f6ad57166e090b28a8ea341719bcf60e805dea2",
+          "tamano_bytes": 19837,
+          "url": "https://geo.anm.gov.co/webgis/rest/services/ANM/ServiciosANM/MapServer/4?f=pjson"
+        }
+      ],
+      "geometria": "circle",
+      "id": "oro-delta",
+      "licencia": "Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ",
+      "licenciaMaterialPropio": "CC BY 4.0 para estructura, textos, cálculos y metadatos originales; el código conserva todos sus derechos salvo archivo de licencia separado",
+      "nombre": "Delta pendiente · puntos de ficha",
+      "sha256": "402a97af11c63b37688a65355dff173aa68218bf9970b5928c4466bfdb56f794",
+      "tamano_bytes": 6381,
+      "url": "/data/oro/delta-estado.geojson",
+      "vista": "ambas"
+    },
+    {
+      "archivo": "proteccion-estado.geojson",
+      "color": "#2f6b50",
+      "derechosGeometria": "ODbL 1.0; © OpenStreetMap contributors",
+      "descarga": {
+        "alcance": "enlace_de_descarga_en_la_interfaz",
+        "habilitada": true,
+        "motivo": "anclas OSM bajo ODbL 1.0; no incluye perímetros ANM/Nexus"
+      },
+      "disponibilidadHttp": true,
+      "enlaceFuente": "https://storage.googleapis.com/pnn_geodatabase/runap/latest.zip",
+      "entidades": 3,
+      "estadoDatos": "runap_calculado_colombia;sinac_y_otras_figuras_pendientes",
+      "familia": "proteccion",
+      "fecha": "2026-08-29",
+      "fuente": "RUNAP y SINAC",
+      "fuentes": [
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/montecristo-703209601.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "f5ba21805a347daa949b861ea6ffc415017bf2635fa5fe778d17fb08d5571edf",
+          "tamano_bytes": 669,
+          "url": "https://www.openstreetmap.org/node/703209601"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/la-paz-703169171.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d476639d4c23ed08d40d0383ba13c897fde597fd649c5d0d0b9bfc21bd9b6d66",
+          "tamano_bytes": 825,
+          "url": "https://www.openstreetmap.org/node/703169171"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/crucitas-6225740676.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d9130391b00dfd042f1b7f1fbb5790618d6fe87b7b561dd17b2339223db3e7aa",
+          "tamano_bytes": 858,
+          "url": "https://www.openstreetmap.org/node/6225740676"
+        },
+        {
+          "archivo": "fuentes/runap/geoservicio-iteminfo.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Metadato oficial PNNC; licencia no declarada en itemInfo",
+          "sha256": "d5885ae81c5f8a4a77ca6ccf442cb8a89be61cd5b92dc66fdc50ac0c68cecc25",
+          "tamano_bytes": 1023,
+          "url": "https://mapas.parquesnacionales.gov.co/arcgis/rest/services/pnn/runap/FeatureServer/info/iteminfo?f=pjson"
+        },
+        {
+          "archivo": "datos/geo/fuentes-oficiales-crucitas.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "fb9dac25f59b73590d86bc4b022e77af41c26cd283ac22803d94bde3ef00615c",
+          "tamano_bytes": 3505,
+          "url": "https://www.sirefor.go.cr/GeoserviciosSIREFOR/wfs?service=WFS&request=GetCapabilities&version=2.0.0"
+        },
+        {
+          "archivo": "datos/geo/fuentes/runap/manifiesto.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Metadato propio sobre paquete oficial; polígonos no redistribuidos",
+          "sha256": "f8dd2a1de5ca9b8d9a63df0067c12d141b0fd492878ad26d18e6468b9099bfea",
+          "tamano_bytes": 1572,
+          "url": "https://storage.googleapis.com/pnn_geodatabase/runap/latest.zip"
+        },
+        {
+          "archivo": "datos/geo/resultados-runap.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "bf43fd4b0aff722f973ee177131f71601d0993558c2217fbb91583cd8bad867a",
+          "tamano_bytes": 3703,
+          "url": "https://storage.googleapis.com/pnn_geodatabase/runap/latest.zip"
+        }
+      ],
+      "geometria": "circle",
+      "id": "oro-proteccion",
+      "licencia": "Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ",
+      "licenciaMaterialPropio": "CC BY 4.0 para estructura, textos, cálculos y metadatos originales; el código conserva todos sus derechos salvo archivo de licencia separado",
+      "nombre": "Protección · cruce RUNAP y pendientes",
+      "sha256": "4cb5127a243a87e62ea963a3906b6e8e114fe0f3685f1e0c5b5570248cfa68e5",
+      "tamano_bytes": 7844,
+      "url": "/data/oro/proteccion-estado.geojson",
+      "vista": "ambas"
+    },
+    {
+      "archivo": "agua-estado.geojson",
+      "color": "#2c6e9b",
+      "derechosGeometria": "ODbL 1.0; © OpenStreetMap contributors",
+      "descarga": {
+        "alcance": "enlace_de_descarga_en_la_interfaz",
+        "habilitada": true,
+        "motivo": "anclas OSM bajo ODbL 1.0; no incluye perímetros ANM/Nexus"
+      },
+      "disponibilidadHttp": true,
+      "enlaceFuente": "https://revistaraya.com/empresarios-del-carbon-de-mercenarios-y-socios-de-narcos-amenazan-el-agua-de-la-paz-santander.html",
+      "entidades": 2,
+      "estadoDatos": "fichas_publicables;red_y_captaciones_no_publicadas",
+      "familia": "agua",
+      "fecha": "2026-08-29",
+      "fuente": "RAYA y MINAE/Dirección de Agua",
+      "fuentes": [
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/la-paz-703169171.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d476639d4c23ed08d40d0383ba13c897fde597fd649c5d0d0b9bfc21bd9b6d66",
+          "tamano_bytes": 825,
+          "url": "https://www.openstreetmap.org/node/703169171"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/crucitas-6225740676.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d9130391b00dfd042f1b7f1fbb5790618d6fe87b7b561dd17b2339223db3e7aa",
+          "tamano_bytes": 858,
+          "url": "https://www.openstreetmap.org/node/6225740676"
+        },
+        {
+          "archivo": "datos/geo/bloqueado.md",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "1283cb8d2dace7d7536635c01232ab3e7cca6bdddbc42fb5c97c751d07ba4121",
+          "tamano_bytes": 9717,
+          "url": "https://revistaraya.com/empresarios-del-carbon-de-mercenarios-y-socios-de-narcos-amenazan-el-agua-de-la-paz-santander.html"
+        },
+        {
+          "archivo": "datos/geo/fuentes-oficiales-crucitas.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "fb9dac25f59b73590d86bc4b022e77af41c26cd283ac22803d94bde3ef00615c",
+          "tamano_bytes": 3505,
+          "url": "https://mapas.da.go.cr/geopc.php?service=WMS&request=GetCapabilities&version=1.1.1"
+        }
+      ],
+      "geometria": "circle",
+      "id": "oro-agua",
+      "licencia": "Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ",
+      "licenciaMaterialPropio": "CC BY 4.0 para estructura, textos, cálculos y metadatos originales; el código conserva todos sus derechos salvo archivo de licencia separado",
+      "nombre": "Agua · estado del inventario",
+      "sha256": "6764cd890fa1d08dd04d658d1422b7edcab2fee05fa9a15ff394de8a0f311de7",
+      "tamano_bytes": 4471,
+      "url": "/data/oro/agua-estado.geojson",
+      "vista": "ambas"
+    },
+    {
+      "archivo": "tension-no-calculable.geojson",
+      "color": "#8f4b55",
+      "derechosGeometria": "colección vacía y esquema propios; no incorpora geometría de terceros",
+      "descarga": {
+        "alcance": "enlace_de_descarga_en_la_interfaz",
+        "habilitada": true,
+        "motivo": "base jurídica, procedencia y atribución verificadas"
+      },
+      "disponibilidadHttp": true,
+      "enlaceFuente": "https://mapas.parquesnacionales.gov.co/arcgis/rest/services/pnn/runap/FeatureServer/info/iteminfo?f=pjson",
+      "entidades": 0,
+      "escenariosPesos": [
+        {
+          "alcance": "sensibilidad declarada; resultado nulo hasta obtener las cinco variables",
+          "id": "bajo",
+          "nombre": "Violencia y desplazamiento",
+          "pesos": {
+            "w1": 0.3,
+            "w2": 0.3,
+            "w3": 0.15,
+            "w4": 0.1,
+            "w5": 0.15
+          }
+        },
+        {
+          "alcance": "escenario base; resultado nulo hasta obtener las cinco variables",
+          "id": "base",
+          "nombre": "Pesos iguales",
+          "pesos": {
+            "w1": 0.2,
+            "w2": 0.2,
+            "w3": 0.2,
+            "w4": 0.2,
+            "w5": 0.2
+          }
+        },
+        {
+          "alcance": "sensibilidad declarada; resultado nulo hasta obtener las cinco variables",
+          "id": "alto",
+          "nombre": "Agua y protección",
+          "pesos": {
+            "w1": 0.1,
+            "w2": 0.1,
+            "w3": 0.35,
+            "w4": 0.35,
+            "w5": 0.1
+          }
+        }
+      ],
+      "estadoDatos": "indice_no_calculable",
+      "familia": "tension",
+      "fecha": "2026-08-29",
+      "fuente": "Auditoría de disponibilidad del estudio",
+      "fuentes": [
+        {
+          "archivo": "datos/geo/resultados-huellas-colombia.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "a75cabdf4413b33f0d17b6423f6ad57166e090b28a8ea341719bcf60e805dea2",
+          "tamano_bytes": 19837,
+          "url": "https://geo.anm.gov.co/webgis/rest/services/ANM/ServiciosANM/MapServer/4?f=pjson"
+        },
+        {
+          "archivo": "fuentes/runap/geoservicio-iteminfo.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Metadato oficial PNNC; licencia no declarada en itemInfo",
+          "sha256": "d5885ae81c5f8a4a77ca6ccf442cb8a89be61cd5b92dc66fdc50ac0c68cecc25",
+          "tamano_bytes": 1023,
+          "url": "https://mapas.parquesnacionales.gov.co/arcgis/rest/services/pnn/runap/FeatureServer/info/iteminfo?f=pjson"
+        },
+        {
+          "archivo": "datos/geo/bloqueado.md",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "1283cb8d2dace7d7536635c01232ab3e7cca6bdddbc42fb5c97c751d07ba4121",
+          "tamano_bytes": 9717,
+          "url": "https://revistaraya.com/empresarios-del-carbon-de-mercenarios-y-socios-de-narcos-amenazan-el-agua-de-la-paz-santander.html"
+        }
+      ],
+      "geometria": "fill",
+      "id": "oro-tension",
+      "licencia": "Esquema, documentación y colección vacía propios bajo CC BY 4.0; código con derechos reservados",
+      "licenciaMaterialPropio": "CC BY 4.0 para estructura, textos, cálculos y metadatos originales; el código conserva todos sus derechos salvo archivo de licencia separado",
+      "nombre": "Tensión · índice no calculable",
+      "sha256": "6e23c496f68fdaf8d85e401a2664a53b14d99acf48488da7a02fe0e2947dafcd",
+      "tamano_bytes": 2520,
+      "url": "/data/oro/tension-no-calculable.geojson",
+      "variablesDisponibles": [],
+      "vista": "ambas"
+    },
+    {
+      "archivo": "buffers.geojson",
+      "color": "#7566a8",
+      "derechosGeometria": "colección vacía y esquema propios; no incorpora geometría de terceros",
+      "descarga": {
+        "alcance": "enlace_de_descarga_en_la_interfaz",
+        "habilitada": true,
+        "motivo": "colección vacía que documenta la imposibilidad de calcular derivados"
+      },
+      "disponibilidadHttp": true,
+      "enlaceFuente": "https://geo.anm.gov.co/webgis/rest/services/ANM/ServiciosANM/MapServer/4?f=pjson",
+      "entidades": 0,
+      "estadoDatos": "buffer_no_calculable_sin_perimetro_redistribuible",
+      "familia": "buffers",
+      "fecha": "2026-08-29",
+      "fuente": "Auditoría de licencia geométrica",
+      "fuentes": [
+        {
+          "archivo": "datos/geo/bloqueado.md",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Textos, cálculos, esquema y metadatos propios: CC BY 4.0; código sin licencia de reutilización declarada. Datos o geometrías fuente conservan sus condiciones",
+          "sha256": "1283cb8d2dace7d7536635c01232ab3e7cca6bdddbc42fb5c97c751d07ba4121",
+          "tamano_bytes": 9717,
+          "url": "https://geo.anm.gov.co/webgis/rest/services/ANM/ServiciosANM/MapServer/4?f=pjson"
+        }
+      ],
+      "geometria": "fill",
+      "id": "oro-buffers",
+      "licencia": "Colección vacía, estado de disponibilidad y metadatos propios: CC BY 4.0; no incorpora ni deriva geometría ANM/Nexus",
+      "licenciaMaterialPropio": "CC BY 4.0 para estructura, textos, cálculos y metadatos originales; el código conserva todos sus derechos salvo archivo de licencia separado",
+      "nombre": "Buffers no calculables · sin perímetro redistribuible",
+      "sha256": "f5e07de2ca6b7eeb8fce1595b0b4e7b0b2291035956f7d10abf2b498c729708a",
+      "tamano_bytes": 976,
+      "url": "/data/oro/buffers.geojson",
+      "vista": "ambas"
+    },
+    {
+      "archivo": "rutas-contexto.geojson",
+      "color": "#515b63",
+      "derechosGeometria": "ODbL 1.0 para vías OSM; línea diagramática propia bajo CC BY 4.0",
+      "descarga": {
+        "alcance": "enlace_de_descarga_en_la_interfaz",
+        "habilitada": true,
+        "motivo": "base jurídica, procedencia y atribución verificadas"
+      },
+      "disponibilidadHttp": true,
+      "enlaceFuente": "https://www.openstreetmap.org/copyright",
+      "entidades": 331,
+      "estadoDatos": "red_vial_de_contexto_y_dos_agregados_aduaneros_nacionales",
+      "familia": "rutas",
+      "fecha": "2026-08-29",
+      "fuente": "OpenStreetMap y UN Comtrade",
+      "fuentes": [
+        {
+          "archivo": "datos/geo/fuentes/osm-mina-walter.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "49c62c5665cd74470f014b6f233784632ae39258a2b58d0c345bb485714a9a22",
+          "tamano_bytes": 93392,
+          "url": "https://www.openstreetmap.org/copyright"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-agataes.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "3f49c8cb1c665115f5c6b2bc5e591fe894b9c41a94de501bbc23e95b7a2c6dda",
+          "tamano_bytes": 1341522,
+          "url": "https://www.openstreetmap.org/copyright"
+        },
+        {
+          "archivo": "datos/geo/fuentes/crucitas-osm.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "ef73d3ce884bb1e9bd8993faa848a4f0496b3be3c15a2e1e6e47ac1412674265",
+          "tamano_bytes": 156406,
+          "url": "https://www.openstreetmap.org/copyright"
+        },
+        {
+          "archivo": "expediente restringido: resultados cuantitativos no redistribuidos",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Vías OSM: ODbL 1.0, © OpenStreetMap contributors. Línea diagramática propia: CC BY 4.0. Campos estadísticos: conservan los términos de UN Comtrade",
+          "sha256": "50ad12c87b21a7c6ddf0ad5dd4a84228c77ba75c09e8ffa3dbfce7ce730a5895",
+          "tamano_bytes": 20664,
+          "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?period=2018&reporterCode=188&cmdCode=7108&flowCode=X&partnerCode=0&partner2Code=0&customsCode=C00&motCode=0&maxRecords=500"
+        }
+      ],
+      "geometria": "line",
+      "id": "oro-rutas",
+      "licencia": "Vías OSM: ODbL 1.0, © OpenStreetMap contributors. Línea diagramática propia: CC BY 4.0. Campos estadísticos: conservan los términos de UN Comtrade",
+      "licenciaMaterialPropio": "CC BY 4.0 para estructura, textos, cálculos y metadatos originales; el código conserva todos sus derechos salvo archivo de licencia separado",
+      "nombre": "Vías OSM y flujo aduanero agregado",
+      "sha256": "fd41c4613eacda4c2be8b761f48031fa6677b9c6f97b3ebe25d268cacd8f7733",
+      "tamano_bytes": 242142,
+      "url": "/data/oro/rutas-contexto.geojson",
+      "vista": "ambas"
+    },
+    {
+      "archivo": "eventos.geojson",
+      "color": "#d36b31",
+      "derechosGeometria": "ODbL 1.0; © OpenStreetMap contributors",
+      "descarga": {
+        "alcance": "enlace_de_descarga_en_la_interfaz",
+        "habilitada": true,
+        "motivo": "anclas OSM bajo ODbL 1.0; no incluye perímetros ANM/Nexus"
+      },
+      "disponibilidadHttp": true,
+      "enlaceFuente": "https://nexuspj.poder-judicial.go.cr/document/sen-1-0034-552000",
+      "entidades": 4,
+      "estadoDatos": "publicable_como_cronologia_documental",
+      "familia": "eventos",
+      "fecha": "2026-08-29",
+      "fuente": "ANM y Poder Judicial de Costa Rica",
+      "fuentes": [
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/montecristo-703209601.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "f5ba21805a347daa949b861ea6ffc415017bf2635fa5fe778d17fb08d5571edf",
+          "tamano_bytes": 669,
+          "url": "https://www.openstreetmap.org/node/703209601"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/la-paz-703169171.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d476639d4c23ed08d40d0383ba13c897fde597fd649c5d0d0b9bfc21bd9b6d66",
+          "tamano_bytes": 825,
+          "url": "https://www.openstreetmap.org/node/703169171"
+        },
+        {
+          "archivo": "datos/geo/fuentes/osm-anclas/crucitas-6225740676.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "ODbL 1.0; © OpenStreetMap contributors",
+          "sha256": "d9130391b00dfd042f1b7f1fbb5790618d6fe87b7b561dd17b2339223db3e7aa",
+          "tamano_bytes": 858,
+          "url": "https://www.openstreetmap.org/node/6225740676"
+        },
+        {
+          "archivo": "datos/geo/fuentes/crucitas-sentencia-04399-2010.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Decisión judicial pública",
+          "sha256": "a692e6f5e835a80604adbe9db312984d16d75853a58b0eade02011b698bed4a4",
+          "tamano_bytes": 1415258,
+          "url": "https://nexuspj.poder-judicial.go.cr/document/sen-1-0034-552000"
+        },
+        {
+          "archivo": "datos/geo/fuentes/crucitas-sentencia-20047-2021.json",
+          "fecha": "2026-08-29",
+          "licencia_condicion": "Decisión judicial pública",
+          "sha256": "a880e430f9a942812864b6af34f5790ae5e066b0fa9d9f816f55659fadffa7dd",
+          "tamano_bytes": 714920,
+          "url": "https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879"
+        }
+      ],
+      "geometria": "circle",
+      "id": "oro-eventos",
+      "licencia": "Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ",
+      "licenciaMaterialPropio": "CC BY 4.0 para estructura, textos, cálculos y metadatos originales; el código conserva todos sus derechos salvo archivo de licencia separado",
+      "nombre": "Hitos documentales fechados",
+      "sha256": "3332c34f71a8e14a39fc7f7c0959c2344de68c0a474ba4b9e7f4e57394ad5949",
+      "tamano_bytes": 6598,
+      "url": "/data/oro/eventos.geojson",
+      "vista": "ambas"
+    }
+  ],
+  "centro": {
+    "mundo": [
+      -78.0,
+      18.0,
+      2.0
+    ],
+    "territorio": [
+      -78.7,
+      8.6,
+      4.3
+    ]
+  },
+  "comparaciones": [
+    {
+      "advertencia": "La cortina permite comparar cobertura observable. No delimita minería, oro, ilegalidad ni autoría. Las 34,04 ha DGM carecen de geometría y no se dibujan sobre estas imágenes. Las costuras del compuesto pueden proceder de fechas y condiciones atmosféricas distintas.",
+      "antes": {
+        "alt": "Falso color NIR-rojo-azul de Crucitas el 15 de febrero de 2017; la vegetación aparece roja y el gris identifica píxeles sin observación clara.",
+        "alto": 1401,
+        "ancho": 1304,
+        "calidad": {
+          "pixelesClaros": 1557900,
+          "pixelesNodata": 0,
+          "pixelesSinObservacionClara": 269004,
+          "pixelesTotales": 1826904,
+          "porcentajeClaroSobreTotal": 85.2754
+        },
+        "crs": "EPSG:32616",
+        "enlaceFuente": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_16PGT_20170215_0_L2A",
+        "escenas": [
+          "S2A_16PGT_20170215_0_L2A"
+        ],
+        "extensionM": [
+          785730.0,
+          1196290.0,
+          798770.0,
+          1210300.0
+        ],
+        "fecha": "2017-02-15",
+        "fuente": "Copernicus Sentinel-2 L2A mediante Earth Search",
+        "sha256": "0880c1b772919cf061e8355f642ae11c4aec9bd915172aed641a5db03677220e",
+        "tamanoBytes": 376550,
+        "url": "/data/oro/crucitas-sentinel-2017-falso-color.webp"
+      },
+      "bandasRgb": [
+        "B08 NIR",
+        "B04 rojo",
+        "B02 azul"
+      ],
+      "crs": "EPSG:32616",
+      "despues": {
+        "alt": "Compuesto de falso color NIR-rojo-azul de Crucitas con observaciones claras de abril, octubre y diciembre de 2018; la vegetación aparece roja.",
+        "alto": 1401,
+        "ancho": 1304,
+        "calidad": {
+          "pixelesClaros": 1812064,
+          "pixelesNodata": 0,
+          "pixelesSinObservacionClara": 14840,
+          "pixelesTotales": 1826904,
+          "porcentajeClaroSobreTotal": 99.1877
+        },
+        "crs": "EPSG:32616",
+        "enlaceFuente": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_16PGT_20181227_0_L2A",
+        "escenas": [
+          "S2B_16PGT_20180426_0_L2A",
+          "S2A_16PGT_20181008_0_L2A",
+          "S2A_16PGT_20181227_0_L2A"
+        ],
+        "extensionM": [
+          785730.0,
+          1196290.0,
+          798770.0,
+          1210300.0
+        ],
+        "fecha": "2018-12-27",
+        "fuente": "Copernicus Sentinel-2 L2A mediante Earth Search",
+        "sha256": "3726da172e471a230017f07738dea76759da9669722a081a75fcb64e0ea0b0b0",
+        "tamanoBytes": 462954,
+        "url": "/data/oro/crucitas-sentinel-2018-compuesto-falso-color.webp"
+      },
+      "escenasFuente": [
+        {
+          "archivo": "datos/geo/recortes/crucitas-base_2017.tif",
+          "fecha": "2017-02-15",
+          "id": "S2A_16PGT_20170215_0_L2A",
+          "item_stac": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_16PGT_20170215_0_L2A",
+          "rol": "antes",
+          "sha256": "65ede904e2942f320ed145a67f9c7dcac1aa8a5bc1166d239b621674a6875d87",
+          "tamano_bytes": 11528602
+        },
+        {
+          "archivo": "datos/geo/recortes/crucitas-relleno_2018_abril.tif",
+          "fecha": "2018-04-26",
+          "id": "S2B_16PGT_20180426_0_L2A",
+          "item_stac": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_16PGT_20180426_0_L2A",
+          "rol": "compuesto_2018",
+          "sha256": "36489962d369e43857aa6bcb67b411544659ff91f56452caed612666cfc841e8",
+          "tamano_bytes": 11449327
+        },
+        {
+          "archivo": "datos/geo/recortes/crucitas-relleno_2018_octubre.tif",
+          "fecha": "2018-10-08",
+          "id": "S2A_16PGT_20181008_0_L2A",
+          "item_stac": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_16PGT_20181008_0_L2A",
+          "rol": "compuesto_2018",
+          "sha256": "f104dcbaf2548a8f769d741f21a79aa2a6cd98300c6b0dd3730ae1a9ef61cccf",
+          "tamano_bytes": 10996893
+        },
+        {
+          "archivo": "datos/geo/recortes/crucitas-calibracion_2018.tif",
+          "fecha": "2018-12-27",
+          "id": "S2A_16PGT_20181227_0_L2A",
+          "item_stac": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_16PGT_20181227_0_L2A",
+          "rol": "compuesto_2018",
+          "sha256": "ceb24961a7223a3093d750c98766815e827543b5e381ac17c38f08df871f3ef7",
+          "tamano_bytes": 11391656
+        }
+      ],
+      "estiramientoDn": {
+        "blue": {
+          "max": 2200,
+          "min": 100
+        },
+        "nir": {
+          "max": 5500,
+          "min": 500
+        },
+        "red": {
+          "max": 2200,
+          "min": 100
+        }
+      },
+      "extensionM": [
+        785730.0,
+        1196290.0,
+        798770.0,
+        1210300.0
+      ],
+      "id": "crucitas-sentinel-2017-2018",
+      "licencia": "Copernicus Sentinel Data Legal Notice",
+      "licenciaUrl": "https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice",
+      "mascaraVisual": [
+        {
+          "color": "#b8c1cb",
+          "etiqueta": "Sin observación clara: nube, sombra, nieve o clase SCL excluida",
+          "id": "sin_observacion_clara"
+        },
+        {
+          "color": "#1b1e24",
+          "etiqueta": "Nodata o reflectancia cero en alguna banda visual",
+          "id": "nodata"
+        }
+      ],
+      "metodo": "Falso color NIR-rojo-azul. Cada canal usa un estiramiento lineal fijo en DN; el compuesto 2018 recorre abril, octubre y diciembre y conserva la observación SCL clara más reciente por píxel.",
+      "resolucionFuenteM": [
+        10.0,
+        10.0
+      ],
+      "titulo": "Crucitas: cobertura observable en 2017 y compuesto claro de 2018",
+      "vista": "territorio"
+    }
+  ],
+  "corte": "2026-08-29",
+  "estiloBase": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+  "licenciaPublicacion": {
+    "archivo": "/data/oro/LICENCIA.md",
+    "base_juridica": "Geometría pública de contexto: nodos OSM (OpenStreetMap) bajo ODbL 1.0. Los dos perímetros de título reproducen la geometría ANM con atribución expresa, sin licencia afirmativa. Nexus.PJ sigue sin redistribuirse",
+    "codigo": "todos los derechos reservados mientras no exista LICENSE-CODE",
+    "descargas_habilitadas": "9/9",
+    "disponibilidad_http": "9/9 para visualización y descarga con atribución",
+    "geometrias_fuente": "Las anclas OSM se publican bajo ODbL 1.0; los perímetros ANM y las geometrías derivadas de Nexus no se redistribuyen",
+    "material_propio": "CC BY 4.0 para textos, cálculos, esquema y metadatos originales"
+  },
+  "metodologia": {
+    "base": "0/9",
+    "complejidad": "O(A + R) tiempo y O(A + R) memoria",
+    "costo_externo_cop": 0,
+    "metrica_objetivo": "familias válidas / 9",
+    "resultado": "9/9",
+    "sanidad": "buffers publicados = 0 sin perímetro redistribuible; 34,04 ha como área reportada y atributo puntual, nunca delta; cero celdas de tensión cuando D,H,A,P,C son null",
+    "script": "geo/construir_capas_publicas.py",
+    "semilla": null,
+    "umbral": "9/9"
+  },
+  "version": 2
+}

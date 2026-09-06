@@ -19,6 +19,7 @@ import {
   parseArticleMarkdown,
   serializeArticle,
   validateArticle,
+  validateManagedSlug,
   validateSlug,
 } from "../lib/escritos.js";
 import {
@@ -113,8 +114,11 @@ test("el Markdown conserva solo el front matter permitido y vuelve a validarse a
 
 test("slugs, campos extra y Markdown activo son rechazados", () => {
   assert.throws(() => validateSlug("../secreto"), { code: "slug_invalido" });
+  assert.equal(validateSlug("oro-perimetros"), "oro-perimetros", "el compilador especial conserva su slug");
+  assert.throws(() => validateManagedSlug("oro-perimetros"), { code: "slug_reservado" });
   assert.throws(() => validateArticle({ ...ARTICULO, propietario: "otro" }), { code: "campo_no_permitido" });
   assert.throws(() => validateArticle({ ...ARTICULO, cuerpo: "<script>alert(1)</script>" }), { code: "markdown_inseguro" });
+  assert.throws(() => validateArticle({ ...ARTICULO, cuerpo: "x".repeat(60_001) }), { code: "campo_invalido" });
   assert.throws(() => validateArticle({ ...ARTICULO, fecha: "2026-02-31" }), { code: "fecha_invalida" });
   assert.throws(() => validateArticle({ ...ARTICULO, categoria: "⚖️" }), { code: "categoria_invalida" });
 });
@@ -124,6 +128,7 @@ test("la visita descarta consultas, credenciales y detalles de User-Agent", () =
     path: "/blog/",
     referrer: "buscador.test",
     campana: "",
+    enlace: "",
   });
   assert.equal(validateVisitInput({ path: "/hoja-de-vida/", referrer: "" }).path, "/hoja-de-vida/");
   assert.throws(() => validateVisitInput({ path: "/", ip: "192.0.2.1" }), { code: "campo_no_permitido" });
@@ -131,6 +136,7 @@ test("la visita descarta consultas, credenciales y detalles de User-Agent", () =
   assert.throws(() => validateVisitInput({ path: "/ruta-inventada/", referrer: "" }), { code: "ruta_no_publica" });
   assert.deepEqual(parseUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 18_0) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1"), {
     dispositivo: "Móvil",
+    familia: "iPhone",
     sistema: "iOS / iPadOS",
     navegador: "Safari",
   });
@@ -151,7 +157,7 @@ test("la auditoría contrasta los módulos con el sitemap publicado", async () =
 });
 
 test("si ipapi.is falla, la visita continúa con red no evaluada", async () => {
-  const network = await evaluateNetwork(request({ "x-forwarded-for": "192.0.2.55" }), {}, async () => {
+  const network = await evaluateNetwork(request({ "x-forwarded-for": "192.0.2.55" }), { VERCEL: "1" }, async () => {
     throw new Error("servicio fuera de línea");
   });
   assert.deepEqual(network, {
@@ -164,7 +170,7 @@ test("si ipapi.is falla, la visita continúa con red no evaluada", async () => {
   });
 });
 
-test("los eventos agregados nunca conservan IP, hash ni User-Agent bruto", () => {
+test("sin clave los eventos nunca conservan IP, hash sin clave ni User-Agent bruto", () => {
   const req = request({
     "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128.0 Safari/537.36",
     "x-vercel-ip-country": "CO",
@@ -179,7 +185,7 @@ test("los eventos agregados nunca conservan IP, hash ni User-Agent bruto", () =>
     datacenter: false,
     egress: false,
     clasificacion: "no detectada",
-  }, new Date("2026-08-23T12:00:00.000Z"), "https://ejemplo.test");
+  }, new Date("2026-08-23T12:00:00.000Z"), "https://ejemplo.test", { VERCEL: "1" });
   assert.equal(event.ruta, "/proyectos/");
   assert.equal(event.dispositivo, "Escritorio");
   assert.equal(event.pais, "Colombia");
@@ -202,12 +208,11 @@ test("la etiqueta de canal se conserva y se limpia, y nunca admite datos persona
     path: "/blog/",
     referrer: "Directo",
     campana: "linkedin",
+    enlace: "",
   });
 
-  // Se recorta a minúsculas y a un alfabeto corto: si alguien intenta
-  // colar un correo o un nombre por el enlace, no queda nada utilizable
-  // para identificar a una persona.
-  assert.equal(validateVisitInput({ path: "/blog/?via=Juan.Perez@gmail.com", referrer: "" }, "https://ejemplo.test").campana, "juanperezgmailcom");
-  assert.equal(validateVisitInput({ path: "/blog/?via=" + "x".repeat(80), referrer: "" }, "https://ejemplo.test").campana.length, 32);
+  // El catálogo cerrado descarta cuentas y correos en lugar de transformarlos.
+  assert.equal(validateVisitInput({ path: "/blog/?via=cuenta-860a4d8a4b@example.test", referrer: "" }, "https://ejemplo.test").campana, "");
+  assert.equal(validateVisitInput({ path: "/blog/?via=" + "x".repeat(80), referrer: "" }, "https://ejemplo.test").campana, "");
   assert.equal(validateVisitInput({ path: "/blog/", referrer: "" }, "https://ejemplo.test").campana, "");
 });

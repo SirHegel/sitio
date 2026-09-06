@@ -32,7 +32,11 @@ function enLinea(texto) {
 
   let salida = String(texto);
   salida = salida.replace(/`([^`\n]+)`/g, (_, codigo) => guardar(`<code>${escapar(codigo)}</code>`));
-  salida = salida.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]*)\)/g,
+  // Se admiten tres formas: absoluta http(s), ruta interna que empieza por / y
+  // ancla de la misma página. El ancla no navega fuera del documento, así que
+  // no abre superficie nueva, y evita que un salto interno se confunda con una
+  // ruta de anexo al auditar la privacidad del release.
+  salida = salida.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]*|#[A-Za-z][\w-]*)\)/g,
     (_, etiqueta, url) => guardar(`<a href="${escapar(url)}"${url.startsWith("http") ? ' rel="noopener" target="_blank"' : ""}>${escapar(etiqueta)}</a>`));
   salida = escapar(salida)
     .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
@@ -42,7 +46,18 @@ function enLinea(texto) {
 }
 
 const iniciaBloque = (linea) =>
-  /^\s*$|^```|^#{2,4}\s|^>\s?|^[-*]\s+|^\d+\.\s+|^---+$/.test(linea);
+  /^\s*$|^```|^#{2,4}\s|^>\s?|^[-*]\s+|^\d+\.\s+|^---+$|^\s*\|.*\|\s*$/.test(linea);
+
+const celdasTabla = (linea) => {
+  const limpia = String(linea).trim();
+  if (!limpia.startsWith("|") || !limpia.endsWith("|")) return null;
+  return limpia.slice(1, -1).split("|").map((celda) => celda.trim());
+};
+
+const esSeparadorTabla = (linea) => {
+  const celdas = celdasTabla(linea);
+  return Boolean(celdas?.length && celdas.every((celda) => /^:?-{3,}:?$/.test(celda)));
+};
 
 export function markdownAHtml(markdown) {
   const lineas = String(markdown).replace(/\r\n/g, "\n").split("\n");
@@ -100,6 +115,21 @@ export function markdownAHtml(markdown) {
     if (/^---+$/.test(linea)) {
       html.push("<hr>");
       i += 1;
+      continue;
+    }
+
+    const cabeceras = celdasTabla(linea);
+    if (cabeceras && esSeparadorTabla(lineas[i + 1] || "")) {
+      const ancho = cabeceras.length;
+      const filas = [];
+      i += 2;
+      while (i < lineas.length) {
+        const celdas = celdasTabla(lineas[i]);
+        if (!celdas || celdas.length !== ancho) break;
+        filas.push(celdas);
+        i += 1;
+      }
+      html.push(`<table><thead><tr>${cabeceras.map((celda) => `<th scope="col">${enLinea(celda)}</th>`).join("")}</tr></thead><tbody>${filas.map((fila) => `<tr>${fila.map((celda) => `<td>${enLinea(celda)}</td>`).join("")}</tr>`).join("")}</tbody></table>`);
       continue;
     }
 

@@ -46,7 +46,13 @@
   --micro:    0.75rem;                      /* 12 */
 
   /* Ritmo */
-  --columna: 68ch;
+  /* Medida de composición. El resto del sitio compone a 1.180 px y los
+     artículos se quedaban en 640: la diferencia se leía como un error de
+     maquetación. Se sube una sola medida y se aplica igual al texto, las
+     tablas, las fórmulas, las figuras y los mapas, de modo que dentro de un
+     artículo ninguna caja tenga un ancho distinto de las demás. */
+  --columna: 56rem;
+  --columna-ancha: 64rem;
   --gutter:  clamp(1.25rem, 4vw, 3rem);
   --ancho:   min(1180px, calc(100% - 2 * var(--gutter)));
   --radio:   4px;
@@ -438,6 +444,32 @@ nav.menu a.activo::after { transform: scaleX(1); }
     text-align: center;
     white-space: normal;
   }
+}
+
+/* En lectura móvil la cabecera inicial conserva las siete rutas. Tras 40 px de
+   desplazamiento se contrae a una fila táctil de 48 px: el mapa y las tablas
+   recuperan 143 px de pantalla en 320 px sin esconder la navegación activa. */
+@media (max-width: 48rem) {
+  .barra.encogida .barra-caja {
+    min-height: 3rem;
+    gap: 0;
+    padding-block: 0.1rem;
+  }
+  .barra.encogida .marca { display: none; }
+  .barra.encogida nav.menu {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.65rem;
+    overflow-x: auto;
+    padding: 0 0.15rem;
+  }
+  .barra.encogida nav.menu a {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.25rem;
+    white-space: nowrap;
+  }
+  .barra.encogida nav.menu a.activo { order: -1; }
 }
 
 /* --------------------------------------------------------------- portada */
@@ -1057,7 +1089,7 @@ a.escrito-card:focus-visible { outline-offset: 5px; }
   margin-inline: auto;
   color: var(--crema-2);
 }
-.prosa-ancha { max-width: 82ch; }
+.prosa-ancha { max-width: var(--columna-ancha); }
 .prosa p,
 .prosa li { max-width: none; }
 .prosa h2,
@@ -1089,6 +1121,38 @@ a.escrito-card:focus-visible { outline-offset: 5px; }
   border: 1px solid var(--filete);
   border-radius: var(--radio);
   background: rgba(8, 11, 17, 0.82);
+}
+
+/* Las tablas documentales conservan todas sus columnas en pantallas angostas.
+   El desplazamiento queda dentro de la tabla y jamás ensancha el artículo. Se
+   probó marcar el borde con un degradado; como la tabla no tiene fondo propio
+   sino el del artículo, la capa de cobertura se veía como una banda oscura en
+   cuanto la tabla dejaba de desbordar. Con la medida ancha las tablas caben en
+   escritorio y el indicador sobraba. */
+.prosa > table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  -webkit-overflow-scrolling: touch;
+}
+
+.prosa > table th,
+.prosa > table td {
+  min-width: 9rem;
+  overflow-wrap: anywhere;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--filete);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prosa > table th {
+  color: var(--ambar-alto);
+  font-family: var(--mono);
+  font-size: var(--micro);
 }
 
 @media (max-width: 34rem) {
@@ -1556,12 +1620,18 @@ footer.pie {
    el texto sea legible, no mientras se lee. */
 
 .revelar {
-  opacity: 0;
-  transform: translateY(1.75rem);
+  opacity: 1;
+  transform: none;
   transition:
     opacity 900ms var(--salida) calc(var(--i, 0) * 90ms),
     transform 900ms var(--salida) calc(var(--i, 0) * 90ms);
   will-change: opacity, transform;
+}
+@media (scripting: enabled) {
+  .revelar {
+    opacity: 0;
+    transform: translateY(1.75rem);
+  }
 }
 .revelar.visible { opacity: 1; transform: none; }
 
@@ -1722,3 +1792,312 @@ html.navegando #principal {
 
 .admin-nota { color: var(--topo); font-size: 0.82rem; line-height: 1.55; margin: 0 0 0.5rem; }
 .admin-vacio { color: var(--topo); padding: 1.5rem; text-align: center; }
+
+/* ============================================================
+   PANEL · SALIDA PRIVADA
+
+   Este bloque vive después de la autenticación del panel. La
+   dirección del despliegue tampoco existe en el JavaScript: llega
+   en la respuesta privada y se dibuja únicamente cuando es HTTPS.
+   ============================================================ */
+.admin-auditoria-conjunto {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  min-width: 0;
+}
+
+.admin-publicacion {
+  min-width: 0;
+  padding: clamp(1.1rem, 2.5vw, 1.75rem);
+  border: 1px solid rgba(232, 164, 76, 0.36);
+  border-radius: var(--radio);
+  background:
+    linear-gradient(135deg, rgba(232, 164, 76, 0.08), transparent 38%),
+    rgba(8, 11, 17, 0.48);
+}
+.admin-publicacion > h3,
+.admin-publicacion-bloque h3,
+.admin-publicacion-pie h3 {
+  margin: 1.5rem 0 0.75rem;
+  color: var(--crema-2);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+}
+.admin-publicacion-bloque h3 { margin-top: 0; }
+
+.admin-publicacion-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  min-width: 0;
+}
+.admin-publicacion-identidad { min-width: 0; }
+.admin-publicacion-identidad .micro { margin-bottom: 0.45rem; }
+.admin-publicacion-identidad h2 {
+  max-width: 50rem;
+  color: var(--crema);
+  font-size: clamp(1.45rem, 4vw, 2.35rem);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+.admin-publicacion-ruta {
+  margin: 0.75rem 0 0;
+  color: var(--topo);
+  font-size: var(--caption);
+  overflow-wrap: anywhere;
+}
+.admin-publicacion-ruta code {
+  color: var(--verde-alto);
+  font: inherit;
+  font-family: var(--mono);
+  word-break: break-word;
+}
+
+.admin-estado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 1.75rem;
+  padding: 0.22rem 0.55rem;
+  border: 1px solid currentColor;
+  border-radius: 99px;
+  color: var(--topo);
+  font: 700 var(--micro)/1.25 var(--sans);
+  letter-spacing: 0.035em;
+  text-align: center;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.admin-estado.cumple { color: var(--verde-alto); }
+.admin-estado.pendiente { color: var(--ambar); }
+.admin-estado.publicacion { flex: 0 0 auto; min-height: 2rem; }
+.admin-estado.privada { color: var(--ambar); background: rgba(232, 164, 76, 0.09); }
+.admin-estado.programada { color: var(--verde-alto); background: rgba(91, 154, 117, 0.09); }
+
+.admin-publicacion-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem 1rem;
+  flex-wrap: wrap;
+  min-width: 0;
+  margin: 1.25rem 0;
+  padding: 0.9rem;
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+  background: var(--scrim);
+}
+.admin-publicacion-acciones .admin-nota { flex: 1 1 18rem; margin: 0; }
+.admin-vista-previa {
+  flex: 0 0 auto;
+  min-height: 2.75rem;
+  text-align: center;
+}
+
+.admin-publicacion-metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem;
+  min-width: 0;
+}
+.admin-publicacion-metrica {
+  display: grid;
+  align-content: start;
+  gap: 0.42rem;
+  min-width: 0;
+  padding: 0.95rem;
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+  background: var(--scrim);
+}
+.admin-publicacion-metrica strong {
+  color: var(--ambar);
+  font: 700 clamp(1.35rem, 3vw, 1.9rem)/1 var(--serif);
+  overflow-wrap: anywhere;
+}
+.admin-publicacion-metrica > span:not(.admin-estado) { color: var(--crema-2); font-size: var(--caption); line-height: 1.35; }
+.admin-publicacion-metrica small { color: var(--topo); font-size: var(--micro); line-height: 1.45; overflow-wrap: anywhere; }
+.admin-publicacion-metrica .admin-estado { margin-top: 0.25rem; }
+
+.admin-publicacion-columnas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  min-width: 0;
+  margin-top: 1.25rem;
+}
+.admin-publicacion-bloque {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+}
+.admin-publicacion-datos,
+.admin-pruebas-publicacion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+}
+.admin-publicacion-dato {
+  min-width: 0;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--filete);
+}
+.admin-publicacion-dato:nth-last-child(-n + 2) { border-bottom: 0; }
+.admin-publicacion-dato:nth-child(odd) { padding-right: 0.75rem; }
+.admin-publicacion-dato:nth-child(even) { padding-left: 0.75rem; border-left: 1px solid var(--filete); }
+.admin-publicacion-dato dt {
+  margin-bottom: 0.25rem;
+  color: var(--topo);
+  font-size: var(--micro);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.admin-publicacion-dato dd {
+  margin: 0;
+  color: var(--crema-2);
+  font-size: var(--caption);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.admin-seccion-control {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.admin-seccion-control h3 { margin: 0 0 0.2rem; color: var(--crema-2); }
+.admin-seccion-control p { margin: 0; color: var(--topo); font-size: var(--caption); }
+.admin-lista-control {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: control-publicacion;
+}
+.admin-lista-control li {
+  counter-increment: control-publicacion;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+  background: var(--scrim);
+}
+.admin-lista-control strong::before {
+  content: counter(control-publicacion, decimal-leading-zero) " · ";
+  color: var(--ambar);
+  font-family: var(--mono);
+}
+.admin-lista-control strong,
+.admin-entregables strong { color: var(--crema-2); font-size: var(--caption); line-height: 1.4; overflow-wrap: anywhere; }
+.admin-lista-control p,
+.admin-entregables p { margin: 0.28rem 0 0; color: var(--topo); font-size: var(--micro); line-height: 1.5; overflow-wrap: anywhere; }
+
+.admin-entregables {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 0.65rem;
+  min-width: 0;
+}
+.admin-entregables article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.7rem;
+  min-width: 0;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+}
+
+.admin-pruebas-publicacion {
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.65rem;
+}
+.admin-pruebas-publicacion .admin-publicacion-dato {
+  padding: 0.75rem;
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+}
+.admin-pruebas-publicacion .admin-publicacion-dato:nth-child(even) { border-left: 1px solid var(--filete); }
+
+.admin-publicacion-pie {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--filete);
+  color: var(--topo);
+  font-size: var(--micro);
+  line-height: 1.55;
+}
+.admin-publicacion-pie p { margin: 0; }
+.admin-publicacion-pie h3 { margin-top: 1rem; }
+.admin-publicacion-pie ul { margin: 0; padding-left: 1.1rem; }
+.admin-publicacion-pie li { margin-top: 0.35rem; overflow-wrap: anywhere; }
+
+.admin-audiencia-omitida {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+  background: var(--scrim);
+}
+.admin-audiencia-omitida strong { color: var(--crema-2); }
+.admin-audiencia-omitida p { margin: 0.4rem 0 0; color: var(--topo); font-size: var(--caption); line-height: 1.55; }
+
+@media (max-width: 42rem) {
+  .admin-publicacion-cabecera { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .admin-publicacion-columnas { grid-template-columns: minmax(0, 1fr); }
+  .admin-publicacion-metricas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 34rem) {
+  .admin-publicacion-metricas,
+  .admin-publicacion-datos,
+  .admin-pruebas-publicacion { grid-template-columns: minmax(0, 1fr); }
+  .admin-publicacion-dato,
+  .admin-publicacion-dato:nth-child(odd),
+  .admin-publicacion-dato:nth-child(even) {
+    padding: 0.65rem 0;
+    border-right: 0;
+    border-left: 0;
+    border-bottom: 1px solid var(--filete);
+  }
+  .admin-publicacion-dato:last-child { border-bottom: 0; }
+  .admin-lista-control li,
+  .admin-entregables article { grid-template-columns: minmax(0, 1fr); }
+  .admin-entregables { grid-template-columns: minmax(0, 1fr); }
+  .admin-publicacion-acciones { align-items: stretch; }
+  .admin-vista-previa { width: 100%; }
+}
+
+
+/* Las cifras en línea son código semántico, no bloques: deben partirse dentro
+   de su caja. Nueve de ellas desbordaban el ancho de un teléfono de 390 px y el
+   texto quedaba cortado. El código preformateado se excluye: ese conserva sus
+   saltos y ya se desplaza dentro de su propio <pre>. */
+.prosa :not(pre) > code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: none;
+}
+
+/* En pantallas angostas las celdas ceden ancho mínimo para que quepan más
+   columnas por pantalla sin perder ninguna: el desplazamiento sigue existiendo,
+   pero deja de ser la única forma de leer la tabla. */
+@media (max-width: 40rem) {
+  .prosa > table th,
+  .prosa > table td {
+    min-width: 6.5rem;
+    padding: 0.6rem 0.55rem;
+  }
+}

@@ -1,0 +1,416 @@
+---
+titulo: "34,04 hectáreas reportadas tras la sentencia de Crucitas: oro, perímetros y capa basal"
+categoria: "Análisis"
+fecha: "2026-09-05"
+resumen: "Tres expedientes mineros, una prueba aduanera y un mapa que separa lo medido de lo pendiente. La DGM reportó 34,04 hectáreas intervenidas en Crucitas; el delta territorial sigue abierto por falta de geometría y catastro histórico completo."
+etiquetas: ["oro", "minería", "territorio", "capa basal", "Colombia", "Costa Rica", "datos reproducibles", "derecho"]
+---
+
+34,04 hectáreas intervenidas en Crucitas al 31 de diciembre de 2018: esa fue la cifra reportada por la DGM después de que la sentencia 04399-2010 anulara los actos del proyecto y ordenara cancelar la concesión 2594.
+
+La cifra exige una precisión antes de que llegue la fanfarria. La [Resolución 20047-2021 de la Sala Constitucional](https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879) transcribió el informe jurado de la Dirección de Geología y Minas. La [sentencia 04399-2010](https://nexuspj.poder-judicial.go.cr/document/sen-1-0034-552000) acredita una orden de cancelación. Falta el asiento registral resultante. También faltan el polígono DGM y la foto completa del catastro minero al cierre de 2018.
+
+Eso entrega un área reportada de 34,04 ha y una precisión decimal publicada de 0,01 ha. El delta queda `TODO(dato)`. No hay polígono para efectuar `R_DGM ∖ L_2018`. Tampoco hay sistema de referencia, protocolo de medición ni incertidumbre de campo. `σ = desconocida`. El decimal tiene dos puestos; la certeza espacial, ninguno calculable con el expediente público. Chibchombia tiene un primo juicioso en Centroamérica: ambos archivan la hectárea y extravían el borde.
+
+Este estudio empezó con una hipótesis vistosa: títulos capaces de lavar geografía, huellas fuera del borde y rutas hacia refinerías del norte. Los documentos dejaron otra figura. Crucitas conserva un área oficial sin geometría y un delta abierto. El Auto PARCAR 607 de Mina Walter contiene dos áreas incompatibles para `SF_40`: 0,305 ha en el encabezado y 305 m² en el antecedente 1.6. Agataes conserva un título de 659,0391 ha con inspección inactiva y formularios en cero. Dos clasificadores fallaron los umbrales previos. Se cayeron.
+
+La tesis cambió. Los datos no.
+
+[Ir al mapa interactivo](#el-mapa-conserva-los-huecos)
+
+RAYA hizo el reporteo que abrió los tres expedientes: [Mina Walter](https://revistaraya.com/el-rastro-de-abelardo-de-la-espriella-en-la-disputa-por-una-mina-de-oro-en-el-sur-de-bolivar.html), [Crucitas](https://revistaraya.com/la-multinacional-del-oro-que-le-abrio-las-puertas-a-la-mineria-ilegal-en-tierras-protegidas-de-costa-rica.html) y [la Serranía de los Agataes](https://revistaraya.com/empresarios-del-carbon-de-mercenarios-y-socios-de-narcos-amenazan-el-agua-de-la-paz-santander.html). Capturamos esas páginas el 28 de agosto de 2026, guardamos tamaño y SHA-256 y atribuimos cada afirmación que depende de ellas. La geometría y la aritmética corren aparte. Una publicación periodística puede abrir la puerta; el área la decide el CRS.
+
+## La prueba que manda
+
+Defino `L(j,t)` como el conjunto legal activo del caso `j` en la fecha `t`. Defino `R(j,t)` como la huella de intervención validada para esa misma fecha. El delta buscado es la porción de la segunda que queda afuera de la primera. Colombia usa MAGNA-SIRGAS Origen Nacional, EPSG:9377. Costa Rica usa CRTM05, EPSG:5367. EPSG:4326 queda reservado para dibujar en el navegador.
+
+```text
+A_legal(j,t) = area(L(j,t)) / 10.000                    [ha]
+A_real(j,t)  = area(R(j,t)) / 10.000                    [ha]
+Delta(j,t)   = area(R(j,t) diferencia L(j,t)) / 10.000 [ha]
+delta_pct    = 100 * Delta(j,t) / A_real(j,t)          [% de la huella]
+```
+
+El invariante exige `0 ≤ Delta ≤ A_real`. Una geometría vacía produce cero. Una orden de cancelación no prueba por sí sola que el registro ejecutó el asiento. Confundir sentencia y catastro equivale a ponerle escrituras al lote mirando una foto familiar.
+
+La métrica objetivo fue una: casos con veredicto geoespacial publicable, medidos sobre tres. La base era `0/3` antes de adquirir expedientes, escenas y muestras. El umbral quedó en `3/3`, con una condición: ningún clasificador por debajo de precisión y recobrado predeclarados podía convertirse en huella minera. El resultado fue `3/3` veredictos y `0/3` deltas numéricos: los tres quedaron no estimables con faltantes expresos. Crucitas aporta una magnitud independiente, 34,04 ha de intervención reportada. El éxito mide honestidad de la decisión, no cantidad de manchas coloreadas.
+
+El costo computacional vectorial crece como `O(C(F + V + W) + B)`, con tres casos `C`, entidades fuente `F`, vértices legales `V`, vértices de huella `W` y bytes leídos `B`. Los cálculos cuantitativos anuales crecen como `O(Y + E)`, con nueve años `Y` y un espejo aduanero `E` en la corrida conservada. Las API públicas costaron COP 0. Las horas humanas quedan en `TODO(dato): bitácora consolidada del equipo`; inventarlas para que el informe parezca caro sería una forma muy bogotana de consultoría.
+
+La prueba de sanidad tuvo cuatro cortes. Diez mil metros cuadrados producen una hectárea. Cero huella produce cero delta. La diferencia nunca supera la huella. El caso conocido `A ∖ ∅ = A` devuelve 34,04 ha únicamente bajo dos supuestos abiertos: cancelación registral ejecutada y ausencia de cualquier otro título aplicable. La identidad algebraica pasa. La premisa territorial sigue en `TODO(dato)`.
+
+## El Estado completo, nueve casillas
+
+La discusión minera suele quedarse en el alcalde, el juez y la licencia. Tres personajes mirando una montaña. Gustavo Bueno ofrece una máquina más amplia en *Primer ensayo sobre las categorías de las «ciencias políticas»*, Cultural Rioja, Logroño, 1991: tres capas cruzadas con tres ramas producen nueve poderes. La tabla está en la página 324. El que mira únicamente la fila conjuntiva analiza un tercio del Estado y después se sorprende cuando el fallo llega al monte convertido en PDF.
+
+| Capa | Rama operativa | Rama estructurativa | Rama determinativa |
+| --- | --- | --- | --- |
+| Conjuntiva, eje circular | Poder ejecutivo | Poder legislativo | Poder judicial |
+| Basal, eje radial | Poder gestor | Poder planificador | Poder redistribuidor |
+| Cortical, eje angular | Poder militar | Poder federativo | Poder diplomático |
+
+En la capa conjuntiva se organizan personas e instituciones. El ejecutivo opera; el legislativo estructura normas y el judicial determina casos. Los expedientes tienen abundancia conjuntiva: autos y sentencias, la papelería nacional que siempre consigue transporte.
+
+Territorio, infraestructura y producción ocupan la capa basal. El gestor controla la operación material. Planificación ordena usos; redistribución decide dónde termina la renta. Aquí se pregunta quién abre el túnel y quién recibe el valor. Una resolución sin coordenadas puede ser jurídicamente legible y basalmente miope.
+
+El borde exterior pertenece a la capa cortical: seguridad, puerto y régimen aduanero. La diplomacia comercial llama mercancía al metal después de que el territorio lo llamó conflicto. El eje angular empieza cuando el Estado de origen pierde la capacidad de responder de qué lote salió un kilogramo.
+
+Bueno llama eutaxia a la conexión efectiva entre programas políticos y curso material. En las páginas 178 a 184 propone la duración como su mejor medida, sin volverla certificado moral. La distaxia aparece aquí como área sin geometría y peso sin contenido identificado. Hay oficinas. Falta composición.
+
+El territorio y sus riquezas integran la capa basal; FiloMat 850 llama Patria a ese territorio histórico apropiado. Suelo, agua, vías y energía forman algo anterior al prólogo constitucional. Producción e instituciones económicas completan la capa, que no cabe entera en una bandera. Las entradas 827 y 835 de FiloMat permiten una síntesis: la Constitución jurídica presupone una sociedad política, leyes, tribunales y funciones ya en marcha. No la conjura desde una hoja. Por eso una comunidad que conserva una bocatoma ejerce una operación política material. Por eso un título de 660 hectáreas con producción declarada en cero reserva una posibilidad sobre el territorio.
+
+Luis Carlos Martín Jiménez lleva el problema al derecho en *La esencia del Derecho. Filosofía materialista de las categorías jurídicas*, Pentalfa, Oviedo, 2021. La ficha editorial presenta una praxis que conjuga hechos y normativas; una [reseña de Felicísimo Valbuena publicada en 2022](https://confilegal.com/20220128-la-esencia-del-derecho-un-libro-desde-la-filosofia-de-gustavo-bueno-y-ii/) atribuye al libro los principios como generalizaciones procesales, la normativa apoyada en su cumplimiento y la abstracción de hablar de derechos al margen de la propiedad. Falta cotejar la página individual en un ejemplar licenciado. Aquí funcionan como reglas de prueba: agua con captación y reparación con polígono.
+
+La tabla de Bueno permite localizar funciones sin santificar al concesionario. Un operador puede gestionar dentro del título y seguir sujeto al Estado; una comunidad puede controlar la entrada sin capacidad redistributiva. Imponer acceso por la fuerza tampoco concede legitimidad. La casilla describe la operación; el expediente determina su estatuto.
+
+José Eustasio Rivera dejó en *La vorágine*, 1924, la matriz colombiana del enclave: enganche, deuda, frontera armada y una administración que llega después del comerciante. Aquí cambia el mineral y aparece el satélite. La pregunta basal permanece: quién controla el acceso, organiza el trabajo y cobra la salida. La referencia sirve para identificar operaciones. No convierte el expediente de 2026 en novela ni le asigna culpables por metáfora.
+
+Ahí empieza el mapa.
+
+## El mapa conserva los huecos
+
+El mapa carga nueve familias por HTTP. El payload público muestra anclas OSM de contexto, no perímetros exactos de ANM ni reconstrucciones geométricas derivadas de Nexus. Las áreas que aparecen en las tablas son datos documentales o cálculos internos y no se codifican en el tamaño de los puntos. Los derechos se declaran por familia: anclas y vías OSM bajo ODbL 1.0; textos, cálculos, esquemas y metadatos propios bajo CC BY 4.0; línea aduanera diagramática propia bajo CC BY 4.0; estadísticas y cortina satelital bajo las condiciones de sus proveedores. Viviendas, líderes y captaciones conservan cero coordenadas publicadas.
+
+Las áreas de JG4-16531 y CEI-101 son datos documentales del servicio ANM consultado el 29 de agosto de 2026 y cálculos internos en EPSG:9377. Un snapshot legado del 28 de agosto diverge: para JG4-16531 declara 150,92144943 ha y otra titularidad; para CEI-101 declara 660,01760764 ha. El servicio vigente entrega 150,7628 y 659,0391 ha. La hora exacta de última edición no aparece y falta el histórico registral que explique las diferencias. Crucitas carece de área legal certificable: los seis vértices aproximados de la sentencia no declaran CRS y la capa DGM vigente excluye expedientes archivados. Ninguna cifra convierte el punto público en perímetro: el payload contiene anclas OSM de contexto.
+
+El paquete oficial de RUNAP descargado el 29 de agosto contiene 1.908 polígonos válidos en EPSG:4686; su archivo de 69.828.518 bytes conserva SHA-256 `1d4f55d16a1510c2b0376e566f98c9fe9af9c0b6cb4ff01ed4d0da08c638b0b6` y marca de modificación 2026-08-21. El cruce se calculó en EPSG:9377. JG4-16531 intersecta 0,00 ha, 0,00 % de sus 150,762832 ha; el área RUNAP más cercana queda a 33.712,150 m. CEI-101 intersecta 0,00 ha, 0,00 % de 659,039112 ha; Ojo de Agua queda a 5.686,878 m. El cero cubre RUNAP. Páramos, reserva forestal de Ley 2, territorios colectivos y otras figuras permanecen `TODO(dato)`. `σ posicional = desconocida`: ANM y RUNAP no declaran precisión en los insumos usados. Los polígonos oficiales no se redistribuyen porque el metadato consultado carece de licencia expresa.
+
+El selector temporal filtra fichas de 2018 y 2026; falta una serie anual validada. El índice de tensión publica cero celdas: `D = H = A = P = C = null`. Pueden inspeccionarse tres juegos de pesos. Los cinco controles libres permanecen desactivados. Null queda quieto.
+
+<MapaOro manifiestoUrl="/data/oro/manifiesto.json" vista="territorio" />
+
+### Cortina satelital: archivos y procedencia
+
+La cortina usa falso color NIR-rojo-azul sobre una grilla EPSG:32616 de 1304×1401 píxeles. El estiramiento fijo es NIR 500–5500, rojo 100–2200 y azul 100–2200 DN. El compuesto de 2018 toma la observación SCL clara más reciente por píxel.
+
+La cortina permite comparar cobertura observable. No delimita minería, oro, ilegalidad ni autoría. Las 34,04 ha DGM carecen de geometría y no se dibujan sobre estas imágenes. Las costuras del compuesto pueden proceder de fechas y condiciones atmosféricas distintas. El gris claro marca clases SCL excluidas; el oscuro, nodata. Ambas salidas registran 0 píxeles nodata.
+
+| Corte | Fecha | Escenas Sentinel-2 | Grilla y extensión | Observación clara | Fuente y licencia | Tamaño | SHA-256 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Antes | 2017-02-15 | S2A_16PGT_20170215_0_L2A | 1304×1401 px; EPSG:32616; [785730, 1196290, 798770, 1210300] m | 1.557.900 de 1.826.904 px; 85,2754 % | [Copernicus Sentinel-2 L2A mediante Earth Search](https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_16PGT_20170215_0_L2A); [Copernicus Sentinel Data Legal Notice](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice) | 376.550 B | `0880c1b772919cf061e8355f642ae11c4aec9bd915172aed641a5db03677220e` |
+| Compuesto 2018 | 2018-12-27 | S2B_16PGT_20180426_0_L2A, S2A_16PGT_20181008_0_L2A, S2A_16PGT_20181227_0_L2A | 1304×1401 px; EPSG:32616; [785730, 1196290, 798770, 1210300] m | 1.812.064 de 1.826.904 px; 99,1877 % | [Copernicus Sentinel-2 L2A mediante Earth Search](https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_16PGT_20181227_0_L2A); [Copernicus Sentinel Data Legal Notice](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice) | 462.954 B | `3726da172e471a230017f07738dea76759da9669722a081a75fcb64e0ea0b0b0` |
+
+### Lectura equivalente por caso
+
+| Caso | Expediente | Área documental o cálculo interno; geometría pública | Titularidad y alcance | Huella | Delta | Protección | Agua |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Mina Walter | JG4-16531 | 150,7628 ha: dato documental del servicio canónico ANM y cálculo interno coincidente; el snapshot legado declara 150,92144943 ha; consulta ANM 2026-08-29; la capa no expone hora de última edición; requiere reconciliación con expediente completo; geometría pública: perímetro ANM; precisión no declarada | Mineros del Caribona Gold S.A.S.; titular informado por el servicio ANM consultado el 2026-08-29; expediente completo pendiente | polígono: dato ausente; precisión 0,4582; recobrado 0,0191; F1 0,0368 | dato ausente; no_estimable_no_atribuible | 0 ha; runap_cruzado_sin_solape;otras_figuras_pendientes | dato ausente; cero ficha hídrica publicada |
+| Serranía de los Agataes | CEI-101 | 659,0391 ha: dato documental del servicio canónico ANM y cálculo interno coincidente; el snapshot legado declara 660,01760764 ha; consulta ANM 2026-08-29; la capa no expone hora de última edición; requiere reconciliación con expediente completo; geometría pública: perímetro ANM; precisión no declarada | tres cotitulares informados por el servicio ANM consultado el 2026-08-29; identidades reservadas hasta acreditar el traslado del cuestionario | polígono: dato ausente; precisión convencional 0; recobrado dato ausente; F1 dato ausente | dato ausente; no_estimable_no_atribuible | 0 ha; runap_cruzado_sin_solape;otras_figuras_pendientes | 17 acueductos atribuidos a RAYA; inventario primario: dato ausente; coordenadas publicadas 0 |
+| Crucitas | 2594 | dato ausente: la sentencia publica seis vértices aproximados sin CRS y la DGM no publica el polígono histórico de 2594; histórico; sentencia 04399-2010 ordenó cancelar 2594; la capa DGM vigente excluye archivados y no permite reconstruir el asiento de 2018; geometría pública: ancla OSM; sin perímetro publicable | Industrias Infinito S.A.; titular histórico del expediente 2594; la sentencia ordenó cancelar la concesión; el asiento registral resultante está pendiente | 34,04 ha agregadas al 31-12-2018; polígono: dato ausente; precisión productor del diagnóstico 0,0157 | delta: dato ausente; área DGM reportada 34,04 ha; geometría: dato ausente | solape: dato ausente; sin_recorte_vectorial_verificado | red vectorial: dato ausente; captaciones publicadas 0 |
+
+Los seis vértices aproximados de 2594 carecen de CRS declarado. La asignación diagnóstica EPSG:5456 fue retirada como área legal. La capa DGM vigente excluye expedientes archivados y las once fincas actuales no reconstruyen el catastro de 2018. Las 34,04 ha miden intervención reportada. El delta requiere el polígono DGM y el snapshot catastral histórico.
+
+### Buffers públicos
+
+| Geometrías publicadas | Radios documentados | Estado | Motivo |
+| --- | --- | --- | --- |
+| 0 | 5, 10, 25 km | buffer_no_calculable_sin_perimetro_redistribuible | No hay perímetro exacto redistribuible sobre el cual derivar una geometría pública |
+
+Los buffers públicos son cero. Los radios de 5, 10 y 25 km conservan valor metodológico, pero no se calcula ni distribuye su geometría porque el payload carece de un perímetro exacto redistribuible. No deben interpretarse como tiempo vial, cuenca o alcance de impacto.
+
+### Red vial disponible
+
+| Caso | Tramos | Clases OSM | Corte OSM | Alcance |
+| --- | --- | --- | --- | --- |
+| Mina Walter, Alto Caribona | 7 | unclassified: 7 | 2026-08-28 | Contexto OSM; no acredita transporte de mineral ni exportación |
+| Serranía de los Agataes | 281 | track: 103; unclassified: 102; secondary: 24; residential: 19; service: 16; path: 13; tertiary: 2; footway: 1; steps: 1 | 2026-08-28 | Contexto OSM; no acredita transporte de mineral ni exportación |
+| Proyecto Minero Crucitas | 41 | unclassified: 25; residential: 10; tertiary: 3; track: 2; service: 1 | 2026-08-28 | Contexto OSM; no acredita transporte de mineral ni exportación |
+
+Las 329 líneas OSM fueron simplificadas a 20 m. Describen acceso físico; hay cero ruta de exportación publicada.
+
+### Sensibilidad declarada del índice de tensión
+
+| Escenario | w1 D | w2 H | w3 A | w4 P | w5 C | Alcance |
+| --- | --- | --- | --- | --- | --- | --- |
+| Violencia y desplazamiento | 0,3 | 0,3 | 0,15 | 0,1 | 0,15 | sensibilidad declarada; resultado nulo hasta obtener las cinco variables |
+| Pesos iguales | 0,2 | 0,2 | 0,2 | 0,2 | 0,2 | escenario base; resultado nulo hasta obtener las cinco variables |
+| Agua y protección | 0,1 | 0,1 | 0,35 | 0,35 | 0,1 | sensibilidad declarada; resultado nulo hasta obtener las cinco variables |
+
+Cada fila suma 1. Faltan las cinco series compatibles; el resultado permanece nulo.
+
+### Hitos documentales
+
+| Fecha | Caso | Hito | Precisión espacial | Fuente |
+| --- | --- | --- | --- | --- |
+| 2008-10-07 | Mina Walter, Alto Caribona | Inscripción registral del expediente JG4-16531 | ancla OSM de contexto; hito sin coordenada propia | [ANM Títulos Mineros Anotaciones RMN](https://www.datos.gov.co/api/views/si2v-pbq5) |
+| 2005-10-20 | Serranía de los Agataes | Inscripción registral del expediente CEI-101 | ancla OSM de contexto; hito sin coordenada propia | [ANM Títulos Mineros Anotaciones RMN](https://www.datos.gov.co/api/views/si2v-pbq5) |
+| 2010-12-14 | Proyecto Minero Crucitas | Sentencia 04399-2010 ordena cancelar la concesión 2594 | ancla OSM de contexto; hito sin coordenada propia | [Tribunal Contencioso Administrativo de Costa Rica](https://nexuspj.poder-judicial.go.cr/document/sen-1-0034-552000) |
+| 2018-12-31 | Proyecto Minero Crucitas | Corte del informe DGM que registra 34,04 ha acumuladas | ancla OSM de contexto; hito sin coordenada propia | [Resolución 20047-2021, Sala Constitucional de Costa Rica](https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879) |
+
+### Fuentes, licencias y huellas de archivo
+
+| Familia | Contenido | Entidades | Fecha | Fuente | Condición de uso de la familia | Derechos de geometría | Descarga | Tamaño | SHA-256 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| legal | Perímetros ANM y contexto OSM | 5 | 2026-08-29 | [ANM y OpenStreetMap](https://www.openstreetmap.org/copyright) | Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ | ODbL 1.0; © OpenStreetMap contributors | Directa | 7.336 B | `7e28db6cfc920d0df3aceca0dd32d9829554f299a0d1b24dfd623df15292d191` |
+| huella | Disponibilidad de huella · puntos de ficha | 4 | 2026-08-29 | [Validación propia y DGM](https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879) | Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ | ODbL 1.0; © OpenStreetMap contributors | Directa | 7.910 B | `fccc84dd607db78dfe629c411569f28c4b7cbc131f9c48b908b7e303400e7398` |
+| delta | Delta pendiente · puntos de ficha | 3 | 2026-08-29 | [Cálculo propio sobre decisiones judiciales](https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879) | Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ | ODbL 1.0; © OpenStreetMap contributors | Directa | 6.381 B | `402a97af11c63b37688a65355dff173aa68218bf9970b5928c4466bfdb56f794` |
+| proteccion | Protección · cruce RUNAP y pendientes | 3 | 2026-08-29 | [RUNAP y SINAC](https://storage.googleapis.com/pnn_geodatabase/runap/latest.zip) | Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ | ODbL 1.0; © OpenStreetMap contributors | Directa | 7.844 B | `4cb5127a243a87e62ea963a3906b6e8e114fe0f3685f1e0c5b5570248cfa68e5` |
+| agua | Agua · estado del inventario | 2 | 2026-08-29 | [RAYA y MINAE/Dirección de Agua](https://revistaraya.com/empresarios-del-carbon-de-mercenarios-y-socios-de-narcos-amenazan-el-agua-de-la-paz-santander.html) | Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ | ODbL 1.0; © OpenStreetMap contributors | Directa | 4.471 B | `6764cd890fa1d08dd04d658d1422b7edcab2fee05fa9a15ff394de8a0f311de7` |
+| tension | Tensión · índice no calculable | 0 | 2026-08-29 | [Auditoría de disponibilidad del estudio](https://mapas.parquesnacionales.gov.co/arcgis/rest/services/pnn/runap/FeatureServer/info/iteminfo?f=pjson) | Esquema, documentación y colección vacía propios bajo CC BY 4.0; código con derechos reservados | colección vacía y esquema propios; no incorpora geometría de terceros | Directa | 2.520 B | `6e23c496f68fdaf8d85e401a2664a53b14d99acf48488da7a02fe0e2947dafcd` |
+| buffers | Buffers no calculables · sin perímetro redistribuible | 0 | 2026-08-29 | [Auditoría de licencia geométrica](https://geo.anm.gov.co/webgis/rest/services/ANM/ServiciosANM/MapServer/4?f=pjson) | Colección vacía, estado de disponibilidad y metadatos propios: CC BY 4.0; no incorpora ni deriva geometría ANM/Nexus | colección vacía y esquema propios; no incorpora geometría de terceros | Directa | 976 B | `f5e07de2ca6b7eeb8fce1595b0b4e7b0b2291035956f7d10abf2b498c729708a` |
+| rutas | Vías OSM y flujo aduanero agregado | 331 | 2026-08-29 | [OpenStreetMap y UN Comtrade](https://www.openstreetmap.org/copyright) | Vías OSM: ODbL 1.0, © OpenStreetMap contributors. Línea diagramática propia: CC BY 4.0. Campos estadísticos: conservan los términos de UN Comtrade | ODbL 1.0 para vías OSM; línea diagramática propia bajo CC BY 4.0 | Directa | 242.142 B | `fd41c4613eacda4c2be8b761f48031fa6677b9c6f97b3ebe25d268cacd8f7733` |
+| eventos | Hitos documentales fechados | 4 | 2026-08-29 | [ANM y Poder Judicial de Costa Rica](https://nexuspj.poder-judicial.go.cr/document/sen-1-0034-552000) | Anclas territoriales OpenStreetMap: ODbL 1.0, © OpenStreetMap contributors. Perímetros JG4-16531 y CEI-101: geometría ANM sin licencia afirmativa. Textos y metadatos propios: CC BY 4.0. Sin geometrías Nexus.PJ | ODbL 1.0; © OpenStreetMap contributors | Directa | 6.598 B | `3332c34f71a8e14a39fc7f7c0959c2344de68c0a474ba4b9e7f4e57394ad5949` |
+
+Cada hash cubre el GeoJSON cargado. La tabla separa las condiciones de cada familia y no concede sublicencias sobre documentos fuente. Véase [LICENCIA.md](/data/oro/LICENCIA.md).
+
+## Mina Walter: un auto, dos áreas incompatibles y ningún polígono reconciliado
+
+El servicio ANM archivado como evidencia documental entrega 150,7628 ha en el atributo de JG4-16531; el cálculo interno en EPSG:9377 coincide a cuatro decimales y deja una diferencia inferior a 0,0001 ha. Otro servicio oficial, capturado el mismo 28 de agosto de 2026, declaró 150,92144943 ha. La brecha entre atributos es 0,15864943 ha. Esas superficies no están en el payload público, que usa un ancla OSM de contexto. El servicio canónico nombra a Mineros del Caribona Gold S.A.S.; el snapshot legado registra una cooperativa minera distinta cuya identidad queda reservada. Falta el histórico registral que explique área y titularidad. La precisión posicional tampoco está declarada: `σ_area = desconocida`. El catastro tiene dos ventanillas y ambas hablan con sello.
+
+RAYA reportó el 23 de abril de 2026 que la firma de Abelardo de la Espriella intervino en la disputa mediante Daniel Peñarredonda, presentado por el medio como antiguo socio del hoy presidente. También atribuyó a pobladores denuncias de presión, compra de viviendas y pérdida de control comunitario. Son afirmaciones de RAYA. La representación profesional y los vínculos personales no prueban delito.
+
+El [Auto PARCAR 607 del 23 de mayo de 2025](https://www.anm.gov.co/sites/default/files/DocumentosAnm/Auto_No._607_23-05-25_EXP._SF_40_%28JG4-16531-%20003%29.pdf) identifica `SF_40/JG4-16531-003` y a Mineros del Caribona Gold S.A.S. Su encabezado escribe 0,305 ha, equivalentes a 3.050 m²; el antecedente 1.6 escribe 305 m², equivalentes a 0,0305 ha. Factor 10. La visita del 29 de noviembre de 2024 constató actividad y la ANM la ubicó dentro del polígono otorgado. El auto también registra vencimiento desde el 6 de febrero de 2022 y una solicitud de prórroga que incumplía el requisito técnico evaluado. `TODO(dato): acto posterior que reconcilie área y situación de SF_40`.
+
+Los planos omitían bocaminas y frentes; algunos SHP carecían de referencia espacial y otros no delimitaban el subpolígono. La serie Sentinel-2 alcanzó 96,7274 % de cobertura conjunta. Los umbrales previos eran 0,70 para precisión, recobrado y F1. La validación produjo 0,4582, 0,0191 y 0,0368. El intervalo diagnóstico exterior de 95 % fue 11,04–1.877,8893 ha. Falló. Esa banda no mide minería.
+
+`Delta_Walter = no estimable`. Faltan geometría oficial de `SF_40`, verdad-terreno estratificada y recobrado aceptable. Una galería también puede avanzar bajo los diez metros del píxel sin dibujarse en superficie.
+
+El Auto 607 aprobó formularios de regalías entre 2020 y 2023, pero registró producción cero en el FBM 2023 frente a producción trimestral de oro y plata. La ANM ordenó corregir y requirió certificados de origen, facturas y formularios de 2018, 2019 y parte de 2024. La divergencia prueba mala conciliación documental; no prueba entrada de oro externo.
+
+El test de capacidad exige tonelaje removido, ley en g/t, recuperación y producción declarada. Las cuatro series completas faltan. `TODO(dato): FBM corregidos, PTOC con reservas, geometría certificada y certificados de origen`.
+
+```text
+Au_max = M_removible * ley * recuperacion             [g Au]
+exceso = max(0, produccion_declarada - Au_max)         [g Au]
+```
+
+La sanidad exige `Au_max = 0` con tonelaje o ley cero y recuperación en `[0,1]`. Una ley regional inventada produciría una cifra y basura.
+
+Empresa, ANM y comunidad descrita por RAYA ejercen operaciones distintas. La evidencia no asigna gestión, planificación y redistribución a un actor único. H1 y H2 siguen abiertas. El Consejo de Estado reconoció vulneración de consulta previa en el radicado `11001-03-15-000-2017-01785-01`; el Auto 607 documenta actividad cinco años después. Esa coexistencia no prueba desacato ni continuidad del control. H4 requiere expediente de cumplimiento y una serie comparable. La sentencia habla; el territorio pide coordenada.
+
+## Crucitas: 34,04 hectáreas reportadas y un delta que sigue abierto
+
+La Dirección de Geología y Minas reportó 34,04 hectáreas intervenidas al 31 de diciembre de 2018. La cifra viene del informe rendido bajo juramento y reproducido en la [sentencia 2021-20047 de la Sala Constitucional](https://nexuspj.poder-judicial.go.cr/document/sen-1-0007-1063879), fechada el 3 de septiembre de 2021. Mide intervención acumulada. El delta territorial queda abierto. Su precisión decimal publicada es 0,01 hectáreas; eso no equivale a resolución espacial. `σ = desconocida`: faltan el informe técnico de febrero de 2019, el polígono medido, el CRS y el protocolo de campo.
+
+La cuenta jurídica empieza once años antes. El Tribunal Contencioso Administrativo dictó la [sentencia 4399-2010](https://www.imprentanacional.go.cr/pub/2012/06/07/COMP_07_06_2012.html) el 14 de diciembre de 2010. Anuló los actos del proyecto, ordenó cancelar la concesión y condenó al Estado, al SINAC y a la concesionaria privada a la reparación ambiental integral dentro de sus responsabilidades. La orden está probada. El asiento registral resultante queda `TODO(dato)`. La DGM comenzó su monitoreo de extracción ilícita el 21 de marzo de 2017. Registró 10,34 hectáreas intervenidas en febrero de 2018 y 34,04 al cierre del año: el aumento fue de 23,70 hectáreas, equivalente a 229,21 % de la base de 10,34. También informó al menos quince cuerpos de agua afectados y seis sectores con pozos o túneles. Encontró dos sitios de procesamiento.
+
+La orden llegó primero. El hueco llegó después.
+
+### El área histórica sigue sin borde certificable
+
+La sentencia publica seis vértices de “ubicación aproximada” y omite el sistema de referencia. Asignarles EPSG:5456 produjo una figura plausible durante el diagnóstico; esa plausibilidad no certifica un lindero y el cálculo fue retirado como área legal. La capa DGM vigente, revisada el 7 de julio de 2026, contiene 149 expedientes y excluye los archivados; 2594 no aparece. El Registro Inmobiliario devuelve geometría actual para las once fincas citadas en el litigio. Esa foto de 2026 tampoco reconstruye el catastro de 2018. `A_legal_2594 = TODO(polígono histórico DGM con CRS y vigencia)`.
+
+```text
+R_DGM = poligono de intervencion DGM                 [ausente]
+L_2018 = conjunto completo de titulos aplicables     [ausente]
+Delta_2018 = area(R_DGM diferencia L_2018) / 10.000 [ha]
+Area_DGM_reportada = 34,04 ha                        [sin geometria]
+```
+
+`R_DGM` es el polígono de intervención; `L_2018`, el conjunto completo de títulos aplicables. La disponibilidad partió de `0/2` geometrías. El umbral era `2/2`; el resultado fue `0/2`. Las 10,34 ha son una medición DGM anterior, no la base del delta. No dibujé las 34,04 ha: un agregado sin vértices no tiene borde.
+
+La prueba de sanidad exige `0 ≤ Delta_2018 ≤ 34,04 ha` si la cifra DGM cubre toda la intervención pertinente. La conversión usa `10.000 m² = 1 ha`. En el caso degenerado, una huella vacía produce delta cero. La identidad `A ∖ ∅ = A` daría 34,04 ha bajo un universo restringido a 2594, con la orden ya ejecutada en el registro. Es un cálculo condicional. No es el delta total.
+
+Probé una clasificación espectral aparte: cinco escenas Sentinel-2, cinco bandas y 1.826.904 píxeles por recorte. La base de febrero de 2017 cubrió 85,8315 %; la pareja 2018, 85,0291 %. El clasificador produjo 26,9104 ha. La diferencia aritmética frente al agregado DGM es −7,1296 ha, −20,9448 % con 34,04 como denominador. No constituye error espacial ni calibración: falta un polígono DGM comparable.
+
+Ese resultado no entra al mapa. La clasificación de 2025 produjo 0–65,2477 ha de cambio candidato; el escenario base dio 16,2674. También queda fuera: 30,4044 % de la pareja carece de observación conjunta y `σ = desconocida`. El proceso tardó 2,392 segundos, con costo `O(SBP + PV log V)` temporal y `O(BP + V)` espacial. APIs: COP 0. La máquina también sabe decir que no.
+
+### Modelo 2 primero: la prueba aduanera
+
+La serie de PROCOMER suma 2.648,285516 toneladas estadísticas MBPVI para HS 7108 entre 2017 y 2025. RAYA atribuye al Ministerio de Hacienda 9,1 toneladas entre 2017 y mediados de 2025. La diferencia de 2.639,185516 toneladas frente a Hacienda conserva cortes temporales distintos y carece de la descarga primaria de esa entidad. `σ = desconocida`. `TODO(dato): serie TICA/Hacienda por DUA, unidad y fecha exacta`.
+
+Hay un segundo comparador. RAYA publicó 2.652 toneladas acumuladas con atribución a PROCOMER; la descarga propia suma 2.648,285516. La separación absoluta es 3,714484 toneladas frente a la cifra de RAYA; el residual descarga menos cifra publicada vale −3,714484 toneladas. Esta cuenta revisa el redondeo o corte de una misma institución. La anterior enfrenta instituciones distintas. Mezclarlas produciría una noticia de utilería.
+
+El [Portal de PROCOMER](https://servicios.procomer.go.cr/PortalEstadistico/) separa peso físico y peso MBPVI. Para 2018, HS 7108 registra 1.175,05022 toneladas y USD 30.877.742,98. [UN Comtrade](https://comtradeapi.un.org/public/v1/preview/C/A/HS?period=2018&reporterCode=188&cmdCode=7108&flowCode=X&partnerCode=0&partner2Code=0&customsCode=C00&motCode=0&maxRecords=500) devuelve 664,72 kg y USD 27.330.313,21, agregado estimado. El cociente de masas es 1.767,737: queda fuera del factor 1.000 ± 5 % fijado para un error kg/t. El valor PROCOMER, USD 26,277807/kg, equivale a 0,064275 % del precio USGS de oro fino en 2018, USD 40.883,532/kg.
+
+```text
+cociente_unidad = masa_PROCOMER_kg / masa_Comtrade_kg
+umbral_error_kg_t = [950, 1.050]
+fraccion_fina_implicita = valor_unitario_HS7108 / precio_USGS_oro_fino
+```
+
+| Hipótesis | Veredicto | Documento faltante |
+|---|---|---|
+| Error kg/t | Refutada para ×1.000 | Fórmula ETL para el residual |
+| Reexportación o tránsito | `TODO(dato)` | DUA por régimen y procedencia |
+| Mercancía con contenido metálico desconocido | Compatible con el valor unitario | DUA, descripción y ensaye |
+| Oro fino de esa masa | Refutada | Producción por frente y balance territorial |
+
+La sanidad exige masas positivas, unidades comunes y denominador distinto de cero. La complejidad y memoria son `O(Y + E)` para nueve años y un espejo; costo externo COP 0. El dato prueba peso estadístico de mercancías clasificadas. Contenido, origen y régimen quedan abiertos.
+
+### Modelo 1: 149.243 onzas que engordaron en televisión
+
+La DGM estimó 149.243,10 onzas troy de oro sustraídas entre el 21 de marzo de 2017 y el 31 de diciembre de 2018, valoradas en USD 197.426.237,85. La unidad consta en la resolución 2021-20047. La [investigación de Revista RAYA](https://revistaraya.com/la-multinacional-del-oro-que-le-abrio-las-puertas-a-la-mineria-ilegal-en-tierras-protegidas-de-costa-rica.html), publicada el 23 de noviembre de 2025, llevó esa magnitud a la prosa como 149 toneladas y calculó cerca de 59 toneladas de mercurio. Hay que corregirla con la misma frialdad con la que se corrige una escritura: una onza troy pesa 31,1034768 gramos.
+
+```text
+M_Au = 149.243,10 oz_t × 31,1034768 g/oz_t = 4,641979 t_Au
+```
+
+Las 149.243,10 onzas troy equivalen a 4,641979 toneladas métricas de oro. Con la relación semilla de 14 gramos de mercurio por gramo de oro, el escenario da 64,987710 toneladas de mercurio. Las 59,233590 toneladas aparecen al usar 28,349523125 gramos, la onza avoirdupois. El mineral precioso consiguió cambiar de sistema de unidades en plena selva. Chibchombia internacionalizó la viveza métrica.
+
+El cociente de mercurio tampoco es una medición local. La [guía técnica de UNEP y UNIDO sobre minería artesanal](https://www.unido.org/sites/default/files/files/2017-11/ASGM_English%20%281%29.pdf) documenta relaciones que dependen del método: tomé 1, 14 y 50 gramos de Hg por gramo de Au como escenarios bajo, base y alto. El intervalo resultante es 4,641979–232,098965 toneladas de Hg. `σ = desconocida`: faltan técnica empleada por frente, reciclaje de mercurio, ensayes y balance ambiental. Publicar 64,99 toneladas como consumo observado convertiría un supuesto en chimenea.
+
+El volumen exige otra sensibilidad. Usé leyes de 1,578, 1,23 y 0,5 gramos de oro por tonelada de material, tomadas de documentos históricos del proyecto, y densidades de saprolita entre 1,4 y 1,8 t/m³. La inversión de la ley supone recuperación metalúrgica de 100 %; ese límite favorable minimiza el material requerido. Una recuperación menor lo aumentaría. Esas leyes no fueron medidas en los frentes ilícitos. El resultado abarca 2,942–9,284 millones de toneladas de material y 1,634–6,631 millones de metros cúbicos. Repartido sobre 34,04 hectáreas daría una profundidad media de 4,80–19,48 metros. Es una banda de plausibilidad, jamás una excavación medida.
+
+La prueba decisiva sigue pendiente: `TODO(dato): diferencia de modelos de elevación, ley y recuperación por frente`. Inferir el volumen a partir del oro estimado y usar ese volumen para validar el mismo oro sería una cuenta circular con botas pantaneras. El modelo de capacidad del polígono permanece abierto.
+
+```text
+Au_max = M_removible * ley * recuperacion             [g Au]
+exceso = max(0, produccion_atribuible - Au_max)        [g Au]
+```
+
+`M_removible`, la ley local, la recuperación y la producción atribuible tienen valor `null`. El modelo de capacidad no admite una salida numérica con cuatro entradas ausentes.
+
+### Modelo 4: valor, regalía contrafactual y fuga desconocida
+
+La DGM valoró el oro estimado en USD 197.426.237,85. El [inciso ch del artículo 51 de la Ley 6797](https://pgrweb.go.cr/scij/Busqueda/Normativa/Normas/nrm_articulo.aspx?nValor1=1&nValor2=48839&nValor3=52096&nValor5=52&param1=NRA) fija 2 % del valor comercial para minerales extraídos en concesiones de explotación. Aplicar esa tasa como contrafactual produce USD 3.948.524,757. La extracción reportada como ilícita no queda convertida en obligación causada ni giro omitido.
+
+```text
+regalia_teorica = valor_DGM * 0,02 = USD 3.948.524,757
+fuga = regalia_teorica - giro_observado
+giro_observado = null; fuga = null
+```
+
+`TODO(dato): norma efectivamente aplicable a extracción ilícita, ejecución presupuestal y transferencias municipales`. La sanidad devuelve regalía cero con valor o tasa cero. `σ = desconocida` para obligación y giro.
+
+### El fallo y el terreno
+
+Gustavo Bueno dispuso poder gestor, planificador y redistribuidor en la capa basal de *Primer ensayo sobre las categorías de las «ciencias políticas»*, Cultural Rioja, Logroño, 1991; la [tabla canónica aparece en la página 324](https://www.fgbueno.es/med/dig/gb91ccp7.pdf). Crucitas deja una grieta medible entre esas funciones. La autoridad contó el área y valoró el recurso. Falta identificar, por actor y periodo, quién organizó el trabajo, fijó el plan extractivo y repartió la renta. `H1 = TODO(dato)`.
+
+`H2 = TODO(dato)`. La sentencia ordenó cancelar 2594; falta el asiento registral y el catastro completo de 2018. Probar blanqueo geográfico exige un título o comercializador identificable, registros de producción, compras, ley y recuperación. `H3 = TODO(dato)`: UN Comtrade acredita dos agregados nacionales anuales para 2019 bajo HS 380210. Esas líneas no identifican operación, empresa, terminal, origen minero, contenido de oro, recepción o procesamiento. La ruta legal para solicitar manifiestos estadounidenses consta en [19 CFR §103.31](https://www.govinfo.gov/content/pkg/CFR-2025-title19-vol1/pdf/CFR-2025-title19-vol1.pdf). Falta una llave documental que una frente, carga y receptor.
+
+`H4 = TODO(dato)`. La decisión de 2010 anuló actos y ordenó reparación; la resolución de 2021 documentó intervención posterior y fijó un plan de seguridad y contención en tres meses, levantamientos, muestras de mercurio y remediación. La persistencia material posterior queda documentada como subhallazgo. H4 pregunta si cambió el control del terreno. Falta una serie antes/después, el expediente de ejecución y la identificación de actores.
+
+Luis Carlos Martín Jiménez sitúa hechos y normas dentro de una misma praxis jurídica en *La esencia del Derecho. Filosofía materialista de las categorías jurídicas*, Pentalfa, Oviedo, 2021; la [ficha editorial](https://helicon.es/pen/7848628.htm) verifica la edición de 287 páginas. Crucitas sirve como prueba de cumplimiento: fecha de la orden, mecanismo de ejecución, plazo y efecto territorial. `TODO(fuente primaria): página exacta del libro para las formulaciones sobre cumplimiento normativo y propiedad de los bienes.` La filosofía organiza el expediente. La hectárea lo contradice cuando corresponde.
+
+El fallo ordenó cancelar. La DGM reportó 34,04 ha intervenidas después; el polígono no llegó.
+
+## Agataes: un título quieto también ocupa espacio
+
+El cálculo interno de la geometría archivada de `CEI-101` en MAGNA-SIRGAS Origen Nacional produce 659,0391 ha y 11,7914 km de perímetro. El servicio canónico declara 659,0391 ha; la diferencia de cálculo queda por debajo de 0,0001 ha. El snapshot legado declara 660,01760764 ha y el Auto PARB 0383 escribe 660,0591 ha. La brecha canónico–legado es 0,97850764 ha. Entre el snapshot legado y el auto hay 0,04149236 ha, equivalentes a 414,9236 m². El payload lo redistribuye con atribución. `σ_area = desconocida`. Alta definición administrativa, borde borroso.
+
+El Auto PARB 0383 del 17 de julio de 2025, archivado en el expediente restringido con SHA-256 `f924d14ff15b45bba59e76bc2600e31c4135112a773350320294abb79505800f`, reconstruye la vida administrativa. El enlace directo se excluye porque sus primeras páginas reproducen identificadores personales. El contrato fue otorgado en 2004. La autoridad ambiental concedió licencia en 2014. El programa de trabajos y obras quedó aprobado en 2015 para 36.000 m³ de carbón y 48.000 t de caliza. Esas magnitudes expresan capacidad autorizada del plan; no son producción observada.
+
+El mismo auto aprobó declaraciones de producción cero para 2020, 2021, 2022, 2023 y los tres primeros trimestres de 2024. La visita del 18 de septiembre de 2023 encontró inactividad. La ANM inició trámite de caducidad y dejó pendientes documentales. Cero tiene denominador por formulario y periodo. Las capacidades aprobadas permanecen separadas: 36.000 m³ de carbón y 48.000 t de caliza. Sumarlas produciría 84.000 unidades de nada, una ordinariez dimensional con membrete.
+
+La observación satelital cubrió 86,9988 % de la ventana conjunta. El protocolo buscó componentes superficiales nuevos de al menos 0,20 ha. Nueve candidatos llegaron a inspección visual; ninguno quedó confirmado. Ese `0/9` no prueba ausencia de explotación. El recobrado del instrumento quedó desconocido por falta de positivos de referencia. El intervalo simultáneo de Wilson para el área visible se abrió entre 0 y 2.157,3828 ha; una cota tan ancha no sirve para declarar delta. Sirve para clausurar al clasificador.
+
+`Delta_Agataes = no estimable`. El límite de detección de 0,20 ha describe el tamaño mínimo del componente que buscó el algoritmo. No limita galerías, labores anteriores a septiembre de 2017 ni cambios ocultos por nubes. Convertir la falta de candidato confirmado en `0 ha` habría premiado al instrumento por no saber ver.
+
+RAYA atribuyó a comunidades de La Paz y Vélez la defensa de la Serranía de los Agataes y reportó diecisiete acueductos veredales amenazados. También situó actividades a menos de 600 m de fuentes de agua. Conservamos ambas cifras con marca `[RAYA]`: el artículo del medio no publica el inventario de diecisiete, población servida, caudales o geometría de recarga. Por protección de líderes, una vivienda jamás habría pasado al mapa aunque estuviera disponible. La precisión periodística tampoco reemplaza el aforo.
+
+Dos actos primarios de la CAS, archivados con hash en el expediente restringido, permiten distinguir dos sistemas sin confundirlos con el universo atribuido por RAYA. Sus nombres y localizadores quedan reservados en la salida de revisión. La coincidencia nominal con los diecisiete permanece `null`. Dos actos administrativos no reconstruyen un inventario ausente.
+
+Una ficha piloto sí admite aritmética. Un acto de la CAS expedido en 2025 registra para un acueducto rural un caudal administrativo de 1,154 L/s, 552 habitantes permanentes y 50 transitorios. `1,154 L/s × 86.400 s/d = 99.705,6 L/d`: equivalente diario teórico si el caudal permaneciera constante durante veinticuatro horas. El cociente bruto da 180,63 L/(persona·día) para 552 permanentes y 165,62 bajo el escenario nominal máximo de `552 + 50 = 602` personas. El acto no acredita presencia simultánea. Tampoco acredita disponibilidad residual: omite método y duración del aforo, estacionalidad, pérdidas, caudal ecológico y continuidad. `σ = desconocida`. La copia probatoria, el número del acto, el nombre de la fuente y la coordenada de bocatoma quedan en la auditoría restringida.
+
+El [portal municipal informó el 30 de junio de 2026](https://lapazsantander.micolombiadigital.gov.co/api/v1/contents/administracion-municipal-acompano-la-socializacion-de) que apenas iniciaría visitas SIASAR para levantar infraestructura, operación y estado. El anuncio no enumera sistemas, hogares, fuentes o caudales. El [contrato SECOP 24-12-14259506](https://www.contratos.gov.co/consultas/detalleProceso.do?numConstancia=24-12-14259506), firmado por COP 35.526.260, encargó actualizar el PUEAA de La Paz. Sus anexos exigen reCAPTCHA.
+
+CEI-101 cruza dos subzonas IDEAM al medir en EPSG:9377: Río Opón, 310,303937 ha o 47,084290 %; Río Suárez, 348,735275 ha o 52,915710 %. El denominador geométrico es 659,039212 ha. El Auto PARB 0383 menciona licencia ambiental y PTO; su tabla escribe “Permisos menores: No” y omite captación, consumo, vertimiento y demanda del proyecto. Esa casilla no equivale a demanda cero.
+
+El modelo hídrico quedó definido antes de buscar resultados:
+
+```text
+oferta_k = suma(caudal_captacion_k)                    [L/día]
+demanda_humana_k = poblacion_k * consumo_escenario     [L/día]
+deficit_k = max(0, demanda_humana_k + demanda_mina - oferta_k)
+deficit_pc_k = deficit_k / poblacion_k                 [L/hab/día]
+```
+
+Los escenarios bajo, base y alto requieren población servida por sistema, aforo estacional, pérdidas, otros usos, caudal ecológico y demanda minera por método. `TODO(dato): obtener el balance hídrico del PMA/EIA y del PTO de CEI-101`. `TODO(dato): faltan el inventario nominal atribuido por RAYA, su reconciliación con los actos, aforos estacionales, pérdidas, caudal ecológico y demanda minera`. El caso degenerado funciona: con población igual a cero, el déficit per cápita no se calcula; con demanda igual a cero y oferta suficiente, el déficit vale 0 L/día. La complejidad es `O(Q + K)`, con captaciones `Q` y acueductos `K`. El costo de descarga fue COP 0; el costo de una campaña de aforos permanece desconocido.
+
+La capacidad del título tampoco demuestra blanqueo geográfico. La producción declarada en los periodos disponibles vale cero. H2 necesita un registro positivo, una compra de mineral o una exportación atribuible a los titulares para ejecutar el balance. `TODO(dato): FBM originales, acto final de caducidad, control de producción y certificados de origen`. El título quieto conserva efectos administrativos y expectativas económicas. La montaña no firma formularios.
+
+## La cadena hacia el norte: el eslabón que existe y los que faltan
+
+Una ruta comercial se prueba con una llave compuesta: fecha, exportador, partida, masa, documento de transporte, consignatario, recepción y ensaye. Si una llave cambia, la cadena cambia. El mapa mundial muestra rutas viales de contexto y dos flujos bilaterales agregados. Ninguna línea dibujada atribuye una carga a un frente minero.
+
+La prueba publicable de 2019 quedó limitada a dos agregados nacionales anuales de UN Comtrade, uno por cada reportante, bajo HS 380210. Base `0/2`; resultado `2/2` registros reproducibles. La fecha diaria, la declaración individual, el documento de transporte y el buque siguen ausentes.
+
+El [espejo estadounidense de UN Comtrade](https://comtradeapi.un.org/public/v1/preview/C/A/HS?period=2019&reporterCode=842&cmdCode=380210&flowCode=M&partnerCode=188&partner2Code=0&customsCode=C00&motCode=0&maxRecords=500) registra 8.231 kg netos y USD 30.866 FOB para la línea anual de 2019. La [línea costarricense anual](https://comtradeapi.un.org/public/v1/preview/C/A/HS?period=2019&reporterCode=188&cmdCode=380210&flowCode=X&partnerCode=842&partner2Code=0&customsCode=C00&motCode=0&maxRecords=500) registra 15.497,567 kg estimados y USD 31.875,72. La diferencia entre reportantes es `15.497,567 − 8.231 = 7.266,567 kg`, equivalente a `46,888437391 %` del registro costarricense usado como denominador. `σ comparabilidad = desconocida`: una línea marca peso estimado y falta la semántica común bruto/neto. `k_operaciones = TODO(dato)`: año, países, HS6, masa y valor pueden enlazarse con bases externas; agregado nacional no significa anónimo. Convertir 7.266,567 kg en embalaje sería contabilidad de *La Casa de los Famosos*: mucho encierro, cero trazabilidad.
+
+RAYA reprodujo una ficha atribuida a Panjiva con localizadores de una carga. Esos campos no se reproducen en el manuscrito, los modelos versionables o el paquete cartográfico. Sin los documentos originales no hay forma de reconciliar esa ficha con las líneas nacionales anuales. Recepción, ensaye y procesamiento permanecen sin prueba primaria.
+
+La [Responsible Gold Guidance de la LBMA](https://www.lbma.org.uk/publications/responsible-gold-guidance-v9) exige debida diligencia y auditoría anual dentro de su sistema. Falta probar que alguna auditoría examinó la carga. La [sección 1502 de la SEC](https://www.sec.gov/rules-regulations/2012/08/conflict-minerals) tiene alcance geográfico y corporativo que este expediente no acredita. La [guía OCDE](https://legalinstruments.oecd.org/public/doc/268/5ae350d5-bec7-4c86-9b4e-49eb6f2b6693.html) es más amplia; aplicarla exige una política, contrato o regulación concreta. `TODO(dato): política de abastecimiento y auditoría del receptor en 2019`.
+
+El flujo bilateral anual existe como estadística oficial. La cadena Crucitas–carga–receptor permanece cortada por el origen minero, el contenido de oro y la recepción. Walter y Agataes carecen de declaración atribuible. Cuatro terminales habrían quedado preciosas. También inventadas.
+
+### Vista mundo: lo que la cadena todavía no demuestra
+
+<MapaOro manifiestoUrl="/data/oro/manifiesto.json" vista="mundo" />
+
+#### Flujos aduaneros documentados
+
+| Año | Flujo | Partida | Peso según fuente | Valor | Geometría | Fuente |
+| --- | --- | --- | --- | --- | --- | --- |
+| 2018 | Costa Rica–Estados Unidos | HS 7108 | 275,704 kg netos | USD 10.935.528 | línea diagramática entre centroides nacionales; no representa trayecto físico | [UN Comtrade, importación espejo de Estados Unidos](https://comtradeapi.un.org/public/v1/preview/C/A/HS?period=2018&reporterCode=842&cmdCode=7108&flowCode=M&partnerCode=188&partner2Code=0&customsCode=C00&motCode=0&maxRecords=500) |
+| 2019 | Costa Rica–Estados Unidos | HS 380210 | 8.231 kg netos | USD 30.866 | línea diagramática entre centroides nacionales; no representa trayecto físico | [UN Comtrade, importación espejo de Estados Unidos](https://comtradeapi.un.org/public/v1/preview/C/A/HS?period=2019&reporterCode=842&cmdCode=380210&flowCode=M&partnerCode=188&partner2Code=0&customsCode=C00&motCode=0&maxRecords=500) |
+
+Las dos líneas conectan centroides nacionales. Ninguna representa un trayecto físico ni identifica empresa, mes o puerto. Para HS 380210 faltan DUA, BOL, buque, origen minero, oro, recepción y procesamiento.
+
+#### Lectura equivalente mundial
+
+| Caso | Expediente | Nodo visible | Cadena hacia el norte |
+| --- | --- | --- | --- |
+| Mina Walter | JG4-16531 | Ancla OSM de contexto; no es perímetro exacto | Puerto, buque, consignatario y refinería: dato ausente |
+| Serranía de los Agataes | CEI-101 | Ancla OSM de contexto; no es perímetro exacto | Puerto, buque, consignatario y refinería: dato ausente |
+| Crucitas | 2594 | Ancla OSM de contexto; no es perímetro exacto | Puerto, buque, consignatario y refinería: dato ausente |
+| Costa Rica–Estados Unidos | HS 7108, 2018 | Línea diagramática entre centroides nacionales | 275,704 kg y USD 10.935.528 en el espejo agregado; no identifica mina, puerto, buque, receptor ni refinería |
+| Costa Rica–Estados Unidos | HS 380210, 2019 | Línea diagramática entre centroides nacionales | 8.231 kg netos y USD 30.866 en el espejo agregado; sin empresa, mes, puerto, DUA, buque, origen minero, oro, recepción o procesamiento |
+
+Las dos líneas Costa Rica–Estados Unidos representan espejos nacionales agregados de UN Comtrade. El mapa no publica una ruta física ni une la carga con Crucitas.
+
+## Política exterior, drogas y una inferencia que se queda afuera
+
+La [Casa Blanca informó el 16 de septiembre de 2025](https://www.whitehouse.gov/releases/2025/09/auto-draft-5bae/) que el presidente estadounidense había entregado la lista al Congreso el día anterior y que Colombia figuraba entre cinco países que, en la formulación oficial, fallaron de manera demostrable en hacer esfuerzos sustanciales contra las drogas. El [Tesoro de Estados Unidos designó a Gustavo Petro el 24 de octubre de 2025](https://home.treasury.gov/news/press-releases/sb0292) bajo autoridades relacionadas con el narcotráfico. La designación es un acto administrativo estadounidense; no es una condena penal colombiana.
+
+El 26 de agosto de 2026, la [Presidencia de Abelardo de la Espriella](https://www.presidencia.gov.co/prensa/Paginas/Mas-de-30-extradiciones-ha-firmado-el-Presidente-en-tan-solo-16-dias-260826.aspx) informó 8.424 capturas, 31.174 kg de drogas incautadas y 13.669 kg de cocaína desde el 7 de agosto. Son cifras institucionales de parte, con `σ = desconocida` y sin microdatos enlazados en el comunicado. La métrica de incautación tiene kilogramos por periodo; no mide control estable del territorio ni reducción de oferta.
+
+La existencia de una política gubernamental vigente sobre dolarización, bases extranjeras y áreas protegidas queda `TODO(dato)`: falta acto expedido, proyecto radicado o programa oficial al 28 de agosto de 2026. El cuestionario a Presidencia pide esos soportes. La dolarización exige estudiar moneda y comercio con *El mito del capitalismo. Filosofía de la moneda y del comercio*, Pentalfa, Oviedo, 2020, de Luis Carlos Martín Jiménez. Sin fuente primaria, la discusión se cae.
+
+Estos hechos delimitan la capa cortical reciente. No prueban una relación causal con JG4-16531, CEI-101 o Crucitas. Tampoco conectan la política antidrogas con el embarque atribuido de carbón activado. Esa inferencia queda fuera. El cuestionario remitido al canal oficial de Presidencia el 28 de agosto de 2026 pregunta por el vínculo documentable de la firma con Mina Walter. El servidor aceptó el mensaje; el traslado al Despacho y la entrega personal siguen sin acreditar. Una respuesta institucional no reemplazaría una contestación personal.
+
+La distinción de Gustavo Bueno entre imperio generador y depredador tampoco se resuelve con una línea bilateral. *España frente a Europa*, Alba, 1999, clasifica estructuras por sus relaciones y resultados históricos: importa si desarrollan sociedades políticas o bloquean su capacidad. Para trasladar la distinción a esta cadena hacen falta intervención estatal, persistencia, mecanismo de extracción y efecto sobre capacidades políticas. El comercio agregado acredita comercio. Todavía no acredita imperio.
+
+Luis Carlos Martín Jiménez ordena cuatro modelos en “Hispanoamérica no es un mito”, *El Basilisco* 47, 2016: el indigenista hace a América determinante; el católico o providencial hace a España determinante; el humanista postilustrado separa ambas identidades; el materialista circularista estudia su codeterminación institucional. Este estudio adopta la exigencia del cuarto: aduana, empresa, puerto, tribunal y comunidad tienen que aparecer con operaciones verificables. El Dorado sirve como mito basal. Una DUA sirve para saber quién comió.
+
+## Veredictos: cuatro hipótesis, doce casillas y cero cierres
+
+La regla de decisión fue escrita antes del resultado. “Confirmada” exige el mecanismo completo en el alcance declarado. “Refutada” exige un documento o cálculo incompatible. `TODO(dato)` identifica el documento capaz de decidir. El silencio administrativo no refuta nada.
+
+| Hipótesis | Mina Walter | Crucitas | Agataes | Veredicto conjunto |
+| --- | --- | --- | --- | --- |
+| H1 · sustitución de los tres poderes basales | `TODO(dato)`: falta matriz actor–función–periodo | `TODO(dato)`: hay extracción ilícita, faltan gestión, plan y renta por actor | `TODO(dato)`: cotitulares e inactividad no prueban control material | `TODO(dato)` |
+| H2 · título como blanqueo geográfico | `TODO(dato)`: faltan capacidad, producción y origen | `TODO(dato)`: falta catastro 2018, título o comercializador y balance | `TODO(dato)`: los registros disponibles declaran cero | `TODO(dato)` |
+| H3 · absorción exterior enlazada al frente | `TODO(dato)`: no hay DUA del título | `TODO(dato)`: existe comercio agregado y una pista secundaria | `TODO(dato)`: no hay cadena aduanera | `TODO(dato)` |
+| H4 · fallo favorable sin cambio material | `TODO(dato)`: audiencia y actividad posterior no prueban identidad de control | `TODO(dato)`: intervención posterior documentada; falta medir cambio de control | `TODO(dato)`: falta una sentencia comunitaria identificada | `TODO(dato)` global |
+
+H4 queda `TODO(dato)` en los tres casos. Crucitas conserva un subhallazgo: la sentencia 4399-2010 anuló actos y ordenó reparación; la resolución 20047-2021 documentó extracción ilícita y daño posterior, y ordenó contención y remediación. Esa secuencia prueba intervención material posterior. No mide si el control cambió ni identifica continuidad de actores. Walter carece de acta final y observación independiente. Agataes carece de sentencia comunitaria identificada. Una victoria jurídica parcial no autoriza una victoria gramatical.
+
+## Método abierto, costo y límites
+
+La cartografía pública contiene nueve familias: ficha legal, estado de huella, delta pendiente, protección, agua, tensión, buffers, rutas y eventos. Las seis familias puntuales usan anclas OSM de contexto y no perímetros ANM/Nexus. Las áreas quedan como datos documentales o cálculos internos. `buffers` publica cero geometrías porque falta un perímetro exacto redistribuible. “Estado” importa. Crucitas conserva 34,04 ha de intervención reportada sin polígono DGM; Walter y Agataes aparecen como resultados no estimables. El índice de tensión expone `D = H = A = P = C = nulo` donde faltan series compatibles; no convierte nulos en ceros. Los controles de pesos permanecen visibles para enseñar el algoritmo. No producen una superficie hasta que las cinco variables tengan fecha y cobertura.
+
+```text
+T(i) = w1*D(i) + w2*H(i) + w3*A(i) + w4*P(i) + w5*C(i)
+0 <= cada variable <= 1; suma(w) = 1
+```
+
+La sanidad exige `T ∈ [0,1]` cuando todos los términos existen. Con cinco ceros, `T = 0`. Con una variable nula, el índice de esa celda queda nulo. El manifiesto publica tres juegos que suman 1: violencia/desplazamiento, pesos iguales, agua/protección. El selector cambia el escenario declarado; el resultado sigue nulo. Alterar pesos sobre datos inexistentes sería una ruleta sin bola.
+
+Las coordenadas de viviendas y testimonios se excluyeron. Las fichas públicas usan tres anclas territoriales OSM de contexto: localizan cabeceras o caseríos públicos; no localizan viviendas, testimonios, captaciones, predios o frentes de intervención. El mapa no solicita ubicación del lector. Sin JavaScript, las tablas conservan áreas documentales, fechas, estados y fuentes. La visualización sirve al dato; el dato no queda secuestrado en un lienzo.
+
+## El Derecho aterriza o queda de paseo
+
+*La esencia del Derecho*, Pentalfa, Oviedo, 2021, organiza una praxis que enlaza hechos y normas. Una [reseña de 2022](https://confilegal.com/20220128-la-esencia-del-derecho-un-libro-desde-la-filosofia-de-gustavo-bueno-y-ii/) atribuye a la página 183 la existencia jurídica efectiva mediante verificación y sentencias cumplidas; falta cotejo del ejemplar. La aplicación pide orden, agente obligado, acto de ejecución y resultado territorial. El libro no decide el expediente.
+
+En Crucitas, el tribunal de 2010 anuló actos y ordenó reparación. Once años después, otra sala documentó daño y fijó un plan de seguridad y contención en tres meses, además de medidas de valoración y remediación. El caso documenta intervención material posterior al fallo. H4 sigue abierta porque control territorial y persistencia física son variables distintas. `TODO(dato): informes de cumplimiento 2021–2026, levantamiento topográfico, muestreo de mercurio, actas de remediación y actores antes/después`.
+
+En Mina Walter, el fallo y la audiencia iniciada en 2019 pertenecen al plano procesal. El Auto 607 acredita actividad en 2024 dentro de un subpolígono. Falta demostrar que esa actividad contrariara una orden concreta o que conservara el mismo controlador discutido. En Agataes no identificamos una sentencia final favorable a la comunidad con ejecutoria y seguimiento. Las tres historias no caben en el mismo saco jurídico. El saco era muy fotogénico.
+
+El derecho al agua exige captación, caudal y usuarios. Propiedad y consulta requieren bienes, operación y cumplimiento verificables. La abstracción empieza cuando el sustantivo pierde su materia. El mapa le devuelve dirección.
+
+## Fuentes, réplica y reproducibilidad
+
+Las afirmaciones factuales conservan traza `[DOC]`, `[REG]`, `[RAYA]`, `[CALC]` o `[INT]`. Diez cuestionarios salieron en once transacciones SMTP el 28 de agosto de 2026. Ocho copias congeladas aún dicen “NO ENVIADO”; la aclaración aceptada en esos hilos preserva sus hashes. Al corte del 6 de septiembre de 2026 habían transcurrido `5/5` días hábiles; la consulta de correo de solo lectura quedó sellada y el cierre editorial continúa pendiente. El registro conserva dos contestaciones administrativas, seis avisos de rebote correspondientes a tres buzones y seis canales sin evento. reCAPTCHA rechazó dos formularios. Las identidades y los localizadores de la operación aduanera permanecen fuera del cuerpo publicable. Una respuesta autorizada irá íntegra. El silencio llevará fecha, jamás culpa.
+
+### Actualización de la réplica · 6 de septiembre de 2026
+
+La Dirección de Geología y Minas acusó recibo el 1 de septiembre y comunicó el traslado al Registro Nacional Minero. Ese mensaje no aporta los polígonos ni las certificaciones solicitadas. Los límites territoriales declarados en este estudio se mantienen.
+
+PROCOMER contestó el 4 de septiembre: solicitó precisar las preguntas e indicó que no encontraba el cuestionario adjunto. El envío original incorporó las preguntas al cuerpo del correo; la aclaración posterior no las repitió. Falta resolver esa incidencia y recibir la contestación estadística. Este intercambio no valida las cifras del estudio.
+
+Las dos comunicaciones se reseñan por su estado de trámite, sin reproducir cuerpos, firmas ni datos de contacto. No constituyen respuestas de fondo a las hipótesis. El plazo calendario terminó; siguen pendientes la aclaración a PROCOMER, la respuesta documental y un canal válido para el destinatario corporativo cuyo buzón rebotó. El registro privado conserva los originales y sus huellas SHA-256.
+
+Los anexos publicables reúnen [scripts geoespaciales](https://github.com/SirHegel/sitio/tree/master/geo), [modelos cuantitativos saneados](https://github.com/SirHegel/sitio/tree/master/modelos), el [manifiesto del paquete](/data/oro/manifiesto.json) y la [licencia cartográfica](/data/oro/LICENCIA.md). El ejecutor con rutas privadas y el directorio interno de resultados quedan fuera del release. Cuestionarios, trazas, localizadores y correo tampoco entran al artefacto Vercel. Dos ramas remotas heredadas conservaban material operativo y fueron retiradas del repositorio público el 29 de agosto de 2026; el commit operativo no se empuja. Una réplica autorizada aparecerá íntegra. Las demás recibirán resumen corroborado y saneado.
+
+La DGM dice 34,04 hectáreas. La geometría oficial no dice dónde. ¿Quién manda en el polígono y quién come de él?

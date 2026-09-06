@@ -1,0 +1,30 @@
+{
+  "esquema": 1,
+  "estado": "publicada",
+  "origen": "https://jhonstevenalvarezruiz.vercel.app",
+  "ruta": "/blog/oro-perimetros/",
+  "publicacionOriginal": "2026-08-29",
+  "autorizacionContinuidad": "encargo-del-autor-2026-09-06",
+  "manuscritoSha256": "b56ed4ebb792b55460619b9332494a90e19cbf134c5f7d97e3362c21edd83a5d",
+  "manuscritoPalabras": 9174,
+  "trazas": 211,
+  "verificacion": {
+    "fechaUtc": "2026-09-06T21:14:39.635Z",
+    "articuloHttp": 200,
+    "blogHttp": 200,
+    "enlaceEnBlog": true,
+    "articuloSha256": "3f641bc194cfc51650a0ae4c0f773e1258fa762b8df97bcdd2a38ec79821cce4",
+    "blogSha256": "b516daf73b9be278878971965d8d923a5d247a3f7e252e1facec5c105edc56db"
+  },
+  "replica": {
+    "estado": "pendiente_documentacion",
+    "consultaUtc": "2026-09-06T21:12:26.510056+00:00",
+    "diasHabiles": 5,
+    "respuestas": 2,
+    "respuestasDeFondo": 0,
+    "canalesSinEvento": 6,
+    "dsn": 6,
+    "buzonesConRebote": 3,
+    "detalle": "DGM acusó recibo y comunicó traslado al Registro Nacional Minero. PROCOMER pidió precisar las preguntas e indicó que no encontraba el cuestionario adjunto. Las dos comunicaciones son administrativas; faltan documentos y un canal corporativo válido."
+  }
+}

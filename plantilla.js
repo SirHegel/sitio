@@ -5,7 +5,7 @@
    confunde solo a Google.
    ========================================================================= */
 
-import { SITIO, PERSONA, EPIGRAFE, GOOGLE_ETIQUETA } from "./datos.js";
+import { SITIO, PERSONA, GOOGLE_ETIQUETA } from "./datos.js";
 
 export const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -144,6 +144,7 @@ ${ruta === "/" ? `<meta property="profile:first_name" content="Jhon Steven">
 <link rel="icon" href="/activos/icono.svg" type="image/svg+xml">
 <link rel="alternate" type="application/rss+xml" title="Escritos de ${esc(PERSONA.nombre)}" href="${SITIO}/feed.xml">
 <link rel="stylesheet" href="/activos/estilos.css">
+<link rel="stylesheet" href="/activos/cinematografia.css">
 
 <script type="application/ld+json">
 ${json(ld)}
@@ -153,7 +154,12 @@ ${json(ld)}
 
 <a class="saltar" href="#principal">Saltar al contenido</a>
 
-<div id="fondo" aria-hidden="true"></div>
+<div id="fondo" aria-hidden="true">
+  <div class="ambiente ambiente-terciopelo"></div>
+  <div class="ambiente ambiente-nocturno"></div>
+  <div class="ambiente ambiente-celuloide"></div>
+  <div class="luz-proyector"></div>
+</div>
 <canvas id="lienzo" aria-hidden="true"></canvas>
 <div id="grano" aria-hidden="true"></div>
 <div id="halo" aria-hidden="true"></div>
@@ -165,14 +171,15 @@ ${puerta ? puertaHTML() : ""}
 
   <header class="barra">
     <div class="barra-caja">
-      <a class="marca" href="/">Jhon Steven Alvarez Ruiz<span class="h">.</span></a>
-      <nav class="menu" aria-label="Principal">
+      <a class="marca" href="/" aria-label="Jhon Steven Alvarez Ruiz · Inicio"><span class="marca-sello" aria-hidden="true">JS<span class="h">/</span></span><span class="marca-nombre">Jhon Steven Alvarez Ruiz</span></a>
+      <button class="menu-mando" type="button" aria-expanded="false" aria-controls="menu-principal">Menú <span aria-hidden="true">＋</span></button>
+      <nav class="menu" id="menu-principal" aria-label="Principal">
           ${enlaces}
       </nav>
     </div>
   </header>
 
-  <main id="principal">
+  <main id="principal" tabindex="-1">
 ${cuerpo}
   </main>
 
@@ -205,12 +212,18 @@ ${cuerpo}
 
 </div>
 
+${ruta.startsWith("/admin/") ? "" : `<div class="direccion-escena" aria-label="Ambiente visual">
+  <span class="escena-indice" aria-hidden="true">01</span>
+  <button id="cambiar-escena" type="button" aria-label="Cambiar ambiente visual: Terciopelo">Terciopelo <span aria-hidden="true">↗</span></button>
+  <button id="pausar-escena" type="button" aria-pressed="false" aria-label="Pausar animación de fondo"><span aria-hidden="true">Ⅱ</span></button>
+</div>
+
 <button id="mando" type="button" aria-pressed="false"
         data-titulo-musica="Beethoven · Sinfonía n.º 5"
         aria-label="Reproducir o silenciar la Quinta Sinfonía de Beethoven">
   <span class="onda" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
   <span class="obra">Música</span>
-</button>
+</button>`}
 
 <script type="module" src="/activos/animacion.js"></script>
 ${analitica ? `<script defer src="/_vercel/insights/script.js"></script>
@@ -222,22 +235,5 @@ ${scripts.map((src) => `<script type="module" src="${esc(src)}"></script>`).join
 }
 
 function puertaHTML() {
-  return `<div id="puerta">
-  <div class="puerta-caja">
-    <p class="micro">Neiva · Huila · Colombia</p>
-    <h1 class="nombre" data-componer>Jhon Steven Alvarez Ruiz</h1>
-    <p class="pie-nota">${esc(EPIGRAFE.texto)}</p>
-    <div class="puerta-acciones">
-      <button class="boton primario" type="button" data-entrar-con-musica>
-        <span>Entrar con música</span>
-      </button>
-      <button class="boton" type="button" data-entrar-en-silencio>
-        <span>Entrar en silencio</span>
-      </button>
-    </div>
-    <p class="pie-nota sep-s">
-      Beethoven, Sinfonía n.º 5 en do menor, op. 67 — Skidmore College Orchestra
-    </p>
-  </div>
-</div>`;
+  return `<div id="puerta" aria-hidden="true"><span class="inicio-sello">JS /<small>Una mirada propia.</small></span></div>`;
 }

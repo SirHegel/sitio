@@ -1,0 +1,395 @@
+.mapa-oro-app {
+  display: grid;
+  gap: 1rem;
+  color: #f4ead9;
+}
+
+.mapa-oro-controles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(232, 164, 76, 0.28);
+  border-radius: 0.65rem;
+  background: rgba(8, 11, 17, 0.82);
+}
+
+.mapa-oro-controles fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.mapa-oro-controles legend {
+  margin-bottom: 0.55rem;
+  color: #e8a44c;
+  font: 700 0.78rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.mapa-oro-capas,
+.mapa-oro-pesos {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.mapa-oro-capas label,
+.mapa-oro-pesos label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  font-size: 0.82rem;
+}
+
+.mapa-oro-capas input[type="checkbox"] {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.mapa-oro-pesos input[type="range"],
+.mapa-oro-tiempo input[type="range"],
+.mapa-oro-cortina input[type="range"] {
+  min-height: 2.75rem;
+}
+
+.mapa-oro-capas i {
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 0.2rem;
+  background: var(--color-capa);
+}
+
+.mapa-oro-pesos output,
+.mapa-oro-tiempo output {
+  min-width: 3.3rem;
+  color: #9bd5b1;
+  font: 0.78rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-align: right;
+}
+
+.mapa-oro-pesos input:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.mapa-oro-escenario-pesos {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.55rem;
+  color: #c9bca6;
+  font-size: 0.78rem;
+}
+
+.mapa-oro-escenario-pesos select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid rgba(155, 213, 177, 0.34);
+  border-radius: 0.4rem;
+  color: #f4ead9;
+  background: #10161d;
+}
+
+.mapa-oro-escenario-pesos select:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.mapa-oro-aviso-control {
+  margin: 0.45rem 0 0;
+  color: #c9bca6;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.mapa-oro-tiempo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.mapa-oro-tiempo label { grid-column: 1 / -1; font-size: 0.82rem; }
+.mapa-oro-tiempo input { width: 100%; }
+
+.mapa-oro-lienzo {
+  width: 100%;
+  min-height: min(68vh, 42rem);
+  border: 1px solid rgba(232, 164, 76, 0.32);
+  border-radius: 0.65rem;
+  overflow: hidden;
+  background: #10161d;
+}
+
+.mapa-oro-lienzo--mundo {
+  min-height: min(50vh, 30rem);
+}
+
+.mapa-oro-descargas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 0.65rem;
+}
+
+.mapa-oro-descarga {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  padding: 0.55rem;
+  border: 1px solid rgba(155, 213, 177, 0.2);
+  border-radius: 0.65rem;
+  background: rgba(8, 11, 17, 0.62);
+}
+
+.mapa-oro-descargas a {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(155, 213, 177, 0.34);
+  border-radius: 0.45rem;
+  color: #cce9d6;
+  font-size: 0.78rem;
+  overflow-wrap: anywhere;
+}
+
+.mapa-oro-descarga small {
+  color: #c9bca6;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.mapa-oro-app :is(a, button, input, select):focus-visible {
+  outline: 3px solid #f4c77d;
+  outline-offset: 2px;
+}
+
+.mapa-oro-estado {
+  margin: 0;
+  color: #c9bca6;
+  font-size: 0.82rem;
+}
+
+.mapa-oro-comparaciones {
+  display: grid;
+  gap: 1rem;
+}
+
+.mapa-oro-cortina {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.mapa-oro-cortina h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.mapa-oro-par {
+  position: relative;
+  width: 100%;
+  max-height: 46rem;
+  overflow: hidden;
+  border: 1px solid rgba(232, 164, 76, 0.32);
+  border-radius: 0.65rem;
+  background: #10161d;
+}
+
+.mapa-oro-par img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.mapa-oro-par .mapa-oro-despues { z-index: 1; }
+.mapa-oro-par .mapa-oro-divisor {
+  position: absolute;
+  z-index: 2;
+  inset-block: 0;
+  left: var(--posicion);
+  width: 2px;
+  background: #fff7e8;
+  transform: translateX(-1px);
+  pointer-events: none;
+}
+
+.mapa-oro-par span {
+  position: absolute;
+  z-index: 3;
+  top: 0.7rem;
+  padding: 0.3rem 0.48rem;
+  border-radius: 0.3rem;
+  background: rgba(8, 11, 17, 0.86);
+  font: 700 0.7rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-transform: uppercase;
+}
+
+.mapa-oro-par .mapa-oro-antes-etiqueta { left: 0.7rem; }
+.mapa-oro-par .mapa-oro-despues-etiqueta { right: 0.7rem; }
+.mapa-oro-cortina input { width: 100%; }
+.mapa-oro-cortina figcaption { color: #c9bca6; font-size: 0.78rem; }
+
+.mapa-oro-cortina-meta {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.mapa-oro-cortina-meta p { margin: 0; }
+.mapa-oro-cortina-meta strong { color: #f4ead9; }
+.mapa-oro-cortina-meta a { color: #b9e1c7; }
+
+.mapa-oro-mascara {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.9rem;
+}
+
+.mapa-oro-mascara span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.mapa-oro-mascara i {
+  flex: 0 0 auto;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 0.15rem;
+  background: var(--color-mascara);
+}
+
+.maplibregl-popup-content {
+  max-width: min(20rem, calc(100vw - 2rem));
+  color: #17120d;
+  line-height: 1.45;
+}
+
+.maplibregl-popup-content dl { margin: 0; }
+.maplibregl-popup-content dt { margin-top: 0.45rem; font-weight: 700; }
+.maplibregl-popup-content dd { margin-left: 0; }
+.maplibregl-popup-content a,
+.maplibregl-popup-content dd { overflow-wrap: anywhere; }
+
+.mapa-oro-app .maplibregl-popup-close-button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+}
+
+@media (max-width: 40rem) {
+  /* El mapa es el objeto del artículo: en pantallas angostas aparece primero y
+     los controles quedan debajo. Antes, nueve conmutadores apilados empujaban
+     el lienzo casi 1.300 px hacia abajo y había que recorrer el panel entero
+     antes de ver el territorio. El orden del DOM no cambia: el foco de teclado
+     y la lectura asistida siguen encontrando los controles antes que el mapa. */
+  .mapa-oro-lienzo { order: -2; min-height: min(68svh, 31rem); }
+  .mapa-oro-estado { order: -1; }
+  .mapa-oro-lienzo--mundo { min-height: min(55svh, 24rem); }
+
+  /* Dos columnas reales: conserva los nueve conmutadores y las nueve descargas
+     con blanco táctil de 44 px, y reduce a la mitad la altura del panel. */
+  .mapa-oro-controles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mapa-oro-descargas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Por debajo de 22rem las dos columnas dejaban dos blancos táctiles bajo los
+   44 px exigidos. El ancho manda sobre la compacidad: se vuelve a una columna
+   y el panel crece, pero ningún control queda por debajo del mínimo. */
+@media (max-width: 22rem) {
+  .mapa-oro-controles,
+  .mapa-oro-descargas { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 34rem) {
+  .mapa-oro-controles { padding: 0.75rem; }
+
+  .mapa-oro-app .maplibregl-ctrl button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .mapa-oro-app .maplibregl-ctrl-group button {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .mapa-oro-pesos label {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0 0.55rem;
+  }
+
+  .mapa-oro-pesos label > span { grid-column: 1; grid-row: 1; }
+  .mapa-oro-pesos label > output { grid-column: 2; grid-row: 1; }
+  .mapa-oro-pesos label > input {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+  }
+
+  .mapa-oro-par .mapa-oro-despues-etiqueta {
+    top: auto;
+    bottom: 0.7rem;
+  }
+
+  .mapa-oro-par { max-height: none; }
+
+  .mapa-oro-cortina input[type="range"] {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    touch-action: pan-x;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa-oro-app *,
+  .mapa-oro-app *::before,
+  .mapa-oro-app *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Encuadre por caso. Es la respuesta al problema real del mapa: abría sobre
+   Colombia y Panamá enteras, donde no se distingue ninguna de las tres zonas.
+   Los botones llevan el ancla OSM al centro; no dibujan perímetros, que el
+   estudio no publica por falta de licencia sobre las geometrías ANM/Nexus. */
+.mapa-oro-focos { grid-column: 1 / -1; }
+
+.mapa-oro-focos-nota {
+  margin: 0 0 0.55rem;
+  color: #cbb99a;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.mapa-oro-focos-botones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.5rem;
+}
+
+.mapa-oro-focos-botones button {
+  min-height: 2.75rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid rgba(232, 164, 76, 0.42);
+  border-radius: 0.5rem;
+  background: rgba(232, 164, 76, 0.1);
+  color: #f4ead9;
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.mapa-oro-focos-botones button:hover { background: rgba(232, 164, 76, 0.2); }

@@ -9,3 +9,23 @@ Se adoptó `metricas/repositorios.json` del perfil SirHegel como fuente única p
 Se fijó para la próxima revisión de cada ficha el umbral `M ≥ 0,25`, donde `M` es prueba/fuente. La primera medición queda como línea base; no se declara éxito retroactivo.
 
 Se conservó la categoría Análisis para el texto sobre drogas. El asunto cruza seguridad, economía, derecho y Estado; crear una taxonomía nueva para un solo artículo agregaría un cajón sin mejorar la lectura.
+
+## 2026-09-06
+
+El encargo del autor autoriza rediseño, auditoría, corrección del blog y publicación.
+La rama pública incorpora fuentes reproducibles y capas publicables del artículo
+existente. Los correos, cuestionarios, acuses y geometrías reservadas permanecen
+en el expediente local. La continuidad del artículo se acredita mediante su acta
+y SHA exacto; no equivale al cierre del derecho de réplica.
+
+Se habilita despliegue automático exclusivamente de `master`, que es la rama
+de producción del proyecto Vercel conectado. La regla `**: false` bloquea las
+demás ramas. El CMS conserva su commit y muestra el estado de publicación.
+
+La dirección visual usa tres escenas originales CSS/canvas, tipografía editorial
+y música voluntaria. La interfaz conserva el contenido sin JavaScript y respeta
+cambios de movimiento reducido durante la sesión.
+
+La IP se cifra con AES-256-GCM; el panel limita su consulta a siete días. Git
+conserva versiones cifradas históricas. Los mapas se rotulan como aproximaciones
+de red, sin inferir dirección, barrio ni identidad personal.

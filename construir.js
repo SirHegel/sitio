@@ -3,7 +3,8 @@
        node construir.js
    ========================================================================= */
 
-import { mkdir, writeFile, readdir, copyFile, rm } from "node:fs/promises";
+import { mkdir, writeFile, readdir, copyFile, readFile, rm } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -16,11 +17,88 @@ import {
 import { ARCHIVO_HOJA_DE_VIDA, HOJA_DE_VIDA } from "./datos-hoja-de-vida.js";
 import { cargarEscritos, categoriasDe, slugificar } from "./escritos.js";
 import { notaInvestigacionHtml } from "./herramientas/nota-investigacion.js";
+import { auditarPublicacionOro, auditarSalidaEstaticaOro } from "./herramientas/validar-publicacion-oro.mjs";
+import { leerContinuidadOro } from "./lib/continuidad-publicacion.js";
+import { cargarEstudioOro } from "./estudio-oro.js";
 
 const raiz = dirname(fileURLToPath(import.meta.url));
 const salida = join(raiz, "publico");
-const ESCRITOS = await cargarEscritos(join(raiz, "escritos"));
-const CATEGORIAS = categoriasDe(ESCRITOS, ["Derecho", "Economía", "Pensamientos", "Análisis"]);
+const continuidadOro = process.env.ORO_PRIVATE_PREVIEW !== "1" && !process.argv.includes("--previsualizar-oro")
+  ? await leerContinuidadOro(raiz)
+  : null;
+const auditoriaInventarioOro = continuidadOro
+  ? { puertas: [] }
+  : await auditarPublicacionOro(raiz);
+let auditoriaOro = auditoriaInventarioOro;
+const entornoVercel = String(process.env.VERCEL_ENV || "");
+const huellaReleaseOro = String(process.env.ORO_RELEASE_HUELLA || "");
+if (huellaReleaseOro && !continuidadOro) {
+  if (entornoVercel !== "production"
+    || process.env.ORO_PUBLICATION_STATE !== "published"
+    || process.env.ORO_USER_APPROVAL_STATE !== "approved") {
+    throw new Error("el release público exige el estado de publicación y aprobación verificados");
+  }
+  const contrato = JSON.parse(await readFile(join(raiz, "datos", "release-oro-exclusiones.json"), "utf8"));
+  const exclusiones = [...(auditoriaInventarioOro.privacidad?.exclusionesRequeridas || [])].sort();
+  const rutasContrato = Array.isArray(contrato?.rutas) ? contrato.rutas : [];
+  const huellaObservada = createHash("sha256")
+    .update(exclusiones.map((ruta) => `${ruta}\0`).join(""))
+    .digest("hex");
+  if (JSON.stringify(rutasContrato) !== JSON.stringify(exclusiones)
+    || contrato?.cantidad !== exclusiones.length
+    || contrato?.sha256 !== huellaObservada
+    || huellaReleaseOro !== huellaObservada) {
+    throw new Error("la huella de exclusiones del release no coincide con el inventario físico");
+  }
+  auditoriaOro = await auditarPublicacionOro(raiz, { rutasReleaseExcluidas: exclusiones });
+  if (!auditoriaOro.publicable || auditoriaOro.privacidad?.exclusionesPendientes?.length
+    || auditoriaOro.privacidad?.exclusionesSobrantes?.length) {
+    throw new Error("el release del estudio no supera todas las compuertas con exclusión exacta");
+  }
+}
+const vistaPreviaOro = process.argv.includes("--previsualizar-oro");
+const vistaPreviaPrivadaOro = process.env.ORO_PRIVATE_PREVIEW === "1";
+if (vistaPreviaPrivadaOro && (process.env.VERCEL !== "1" || entornoVercel !== "preview")) {
+  throw new Error("ORO_PRIVATE_PREVIEW solo se admite en un build Vercel Preview");
+}
+if (vistaPreviaPrivadaOro && huellaReleaseOro) {
+  throw new Error("la vista privada y el release público son modos excluyentes");
+}
+const fallasOro = auditoriaOro.puertas.filter((puerta) => !puerta.cumple).map((puerta) => puerta.id);
+const fallasAdmitidasEnVistaPrevia = new Set(["derecho_replica", "rendimiento_accesibilidad"]);
+const vistaPreviaMedible = vistaPreviaOro
+  && !process.env.VERCEL
+  && fallasOro.length > 0
+  && fallasOro.every((id) => fallasAdmitidasEnVistaPrevia.has(id));
+// La vista privada es un artefacto de revisión interna, no una publicación:
+// admite únicamente el derecho de réplica mientras corre su calendario, y el
+// panel lo declara pendiente con su fecha de corte. Cualquier otra compuerta
+// abierta la cierra. Producción usa el publicador separado y no hereda esta
+// excepción.
+const fallasAdmitidasEnVistaPrivada = new Set(["derecho_replica"]);
+const vistaPreviaPrivadaValida = vistaPreviaPrivadaOro
+  && fallasOro.every((id) => fallasAdmitidasEnVistaPrivada.has(id));
+if (vistaPreviaPrivadaOro && !vistaPreviaPrivadaValida) {
+  throw new Error("la vista privada solo admite el derecho de réplica en curso");
+}
+const estudioOro = (Boolean(continuidadOro) || Boolean(huellaReleaseOro) || vistaPreviaMedible || vistaPreviaPrivadaValida)
+  ? await cargarEstudioOro(join(raiz, "salidas", "oro-perimetros.mdx"))
+  : null;
+const escritosOrdinarios = await cargarEscritos(join(raiz, "escritos"));
+if (escritosOrdinarios.some((escrito) => escrito.slug === "oro-perimetros")) {
+  throw new Error("la ruta reservada oro-perimetros está ocupada por un escrito ordinario");
+}
+const ESCRITOS = [
+  ...escritosOrdinarios,
+  ...(estudioOro ? [estudioOro] : []),
+].sort((a, b) => b.fecha.localeCompare(a.fecha) || a.titulo.localeCompare(b.titulo, "es"));
+// La vista protegida conserva una ruta auditable, pero no anuncia el borrador
+// en inicio, archivo, temas, relaciones ni RSS. El panel autenticado es el
+// único lugar que revela su enlace. Producción usa el inventario completo.
+const ESCRITOS_LISTADOS = vistaPreviaPrivadaOro
+  ? ESCRITOS.filter((escrito) => escrito.slug !== "oro-perimetros")
+  : ESCRITOS;
+const CATEGORIAS = categoriasDe(ESCRITOS_LISTADOS, ["Derecho", "Economía", "Pensamientos", "Análisis"]);
 
 const fechaHumana = (valor, opciones = { dateStyle: "medium" }) =>
   new Intl.DateTimeFormat("es-CO", { ...opciones, timeZone: "America/Bogota" }).format(new Date(valor));
@@ -264,32 +342,36 @@ const epigrafe = () => `    <section class="franja epigrafe revelar">
 
 function inicio() {
   const destacados = proyectosCurados.slice(0, 3).map(fichaProyecto).join("\n");
-  const escritosRecientes = ESCRITOS.slice(0, 3).map(fichaEscrito).join("\n");
+  const escritosRecientes = ESCRITOS_LISTADOS.slice(0, 3).map(fichaEscrito).join("\n");
 
-  const cuerpo = `    <section class="portada">
+  const cuerpo = `    <section class="portada" data-ambiente="terciopelo">
       <div class="portada-caja">
-        <p class="micro">Neiva · Huila · Colombia</p>
-        <h1 class="nombre" data-componer>Jhon Steven Alvarez Ruiz</h1>
+        <p class="micro portada-creditos"><span class="punto-vivo" aria-hidden="true"></span> Portafolio personal <span>Neiva, Colombia</span></p>
+        <p class="portada-preludio">Una mirada propia.</p>
+        <h1 class="nombre nombre-editorial"><span>Jhon Steven</span><span>Alvarez <em>Ruiz.</em></span></h1>
         <p class="titular">${esc(PERSONA.titular)}</p>
         <p class="subtitular">${esc(PERSONA.subtitular)}</p>
-        <p class="lugar">Disponible para trabajo remoto</p>
         <div class="acciones">
-          <a class="boton primario" href="/proyectos/"><span>Ver proyectos</span></a>
-          <a class="boton" href="/hoja-de-vida/"><span>Hoja de vida</span></a>
-          <a class="boton" href="/academico/"><span>Formación académica</span></a>
-          <a class="boton" href="${PERSONA.linkedin}" rel="me noopener" target="_blank"><span>LinkedIn</span></a>
-          <a class="boton" href="${PERSONA.github}" rel="me noopener" target="_blank"><span>GitHub</span></a>
+          <a class="boton primario" href="/proyectos/"><span>Explorar proyectos</span><span aria-hidden="true">↗</span></a>
+          <a class="boton" href="/blog/"><span>Leer mis escritos</span><span aria-hidden="true">→</span></a>
         </div>
+        <div class="portada-enlaces"><a href="/hoja-de-vida/">Hoja de vida ↗</a><span>Disponible para trabajo remoto</span></div>
       </div>
-      <figure class="retrato">
+      <figure class="retrato retrato-cine">
+        <div class="fotograma-creditos"><span>El autor</span><span>JS / 01</span></div>
+        <div class="fotograma-imagen">
         <img src="/activos/retrato.jpg" width="800" height="800" fetchpriority="high"
              alt="Retrato de ${esc(PERSONA.nombre)}, analista de datos y desarrollador de automatización en ${esc(PERSONA.ciudad)}, ${esc(PERSONA.pais)}">
-        <figcaption>${esc(PERSONA.nombre)} · ${esc(PERSONA.ciudad)}, ${esc(PERSONA.region)}</figcaption>
+        <span class="fotograma-esquina" aria-hidden="true">+</span>
+        </div>
+        <figcaption><span>El mundo merece<br>una segunda lectura.</span><span class="fotograma-firma">J. S. Alvarez</span></figcaption>
       </figure>
+      <a class="portada-continuar" href="#mirada"><span aria-hidden="true">↓</span> Continúa la historia <span>Desplázate para explorar</span></a>
     </section>
 
-${franja(`      <div class="scrim columna revelar">
-        <p class="micro">Quién</p>
+${franja(`      <div id="mirada" class="scrim columna revelar presentacion-editorial" data-ambiente="nocturno">
+        <p class="micro">01 / La mirada</p>
+        <h2 class="titulo media">Pensar con los pies<br><em>en la tierra.</em></h2>
 ${PRESENTACION.map((p) => `        <p class="lead">${p.trim()}</p>`).join("\n")}
       </div>
 
@@ -306,7 +388,7 @@ ${franja(`      <div class="scrim columna revelar actualidad">
         <p class="lead">${esc(ACTUALIDAD.cuerpo.trim())}</p>
       </div>`)}
 
-${franja(`${rotulo("Líneas de trabajo", "Un solo problema, tres instrumentos")}
+${franja(`${rotulo("Líneas de trabajo", "En lo que trabajo")}
       <div class="rejilla duo" data-escalonar>
 ${LINEAS.map((l) => `        <article class="ficha revelar">
           <h3>${esc(l.titulo)}</h3>
@@ -314,13 +396,24 @@ ${LINEAS.map((l) => `        <article class="ficha revelar">
         </article>`).join("\n")}
       </div>`)}
 
-${franja(`${rotulo("Selección", "Proyectos", "verde")}
+${franja(`<div data-ambiente="celuloide">${rotulo("02 / Obra seleccionada", "Proyectos", "verde")}</div>
       <div class="rejilla" data-escalonar>
 ${destacados}
       </div>
       <p class="sep-m"><a class="mas" href="/proyectos/">Los ${PROYECTOS_TODOS.length} proyectos y repositorios <i>→</i></a></p>`)}
 
-${franja(`${rotulo("Escritura", "Últimos textos", "verde")}
+${franja(`      <div class="intermedio revelar" data-ambiente="terciopelo">
+        <div class="sala-imaginaria" aria-hidden="true"><div class="sala-telon"></div><div class="sala-piso"></div><div class="sala-umbral"></div><span class="sala-luz"></span><span class="sala-rotulo">INTERMEDIO / 35 MM</span></div>
+        <div class="intermedio-texto">
+          <p class="micro">Fuera de campo</p>
+          <h2>El cine también<br>es una forma<br><em>de mirar.</em></h2>
+          <p>La conversación de Woody Allen. La extrañeza de David Lynch.
+          Me interesa ese cine que termina y se queda dando vueltas en la cabeza.</p>
+          <a class="mas" href="/blog/">Mis notas al margen <i>→</i></a>
+        </div>
+      </div>`)}
+
+${franja(`<div data-ambiente="celuloide">${rotulo("03 / Notas al margen", "Últimos textos", "verde")}</div>
       <div class="lista-escritos" data-escalonar>
 ${escritosRecientes}
       </div>
@@ -722,8 +815,8 @@ ${franja(`${rotulo("Costo y error", "Cómo se construyó este inventario", "verd
 
 function indiceBlog(categoria = null) {
   const escritos = categoria
-    ? ESCRITOS.filter((e) => e.categoriaSlug === categoria.slug)
-    : ESCRITOS;
+    ? ESCRITOS_LISTADOS.filter((e) => e.categoriaSlug === categoria.slug)
+    : ESCRITOS_LISTADOS;
   const ruta = categoria ? `/blog/tema/${categoria.slug}/` : "/blog/";
   const tituloVisible = categoria ? categoria.nombre : "Escritos";
   const lista = escritos.length
@@ -736,9 +829,8 @@ function indiceBlog(categoria = null) {
   const cuerpo = `${franja(`      <div class="scrim columna revelar">
         <p class="micro verde">Archivo</p>
         <h1 class="titulo grande">${esc(tituloVisible)}</h1>
-        <p class="lead">Derecho, economía, pensamientos y análisis en textos que se abren como
-        páginas independientes. Cada nuevo Markdown publicado desde el panel crea su título, tema,
-        ruta, metadatos y entrada en el feed sin editar el generador.</p>
+        <p class="lead">Lecturas del poder, la economía y la vida cotidiana.
+        Ensayos para mirar de cerca y discutir con argumentos.</p>
       </div>`)}
 
 ${franja(`${filtrosBlog(categoria?.slug || "")}
@@ -774,7 +866,8 @@ ${lista}
 }
 
 function escrito(e) {
-  const relacionados = ESCRITOS
+  const esEstudioOroPrivado = vistaPreviaPrivadaOro && e.slug === "oro-perimetros";
+  const relacionados = ESCRITOS_LISTADOS
     .filter((otro) => otro.slug !== e.slug && otro.categoriaSlug === e.categoriaSlug)
     .slice(0, 2);
   const cuerpo = `${franja(`      <header class="scrim columna revelar articulo-cabecera">
@@ -787,6 +880,7 @@ function escrito(e) {
           <span>${e.minutos} min de lectura</span>
           <span>${numeroHumano(e.palabras)} palabras</span>
         </div>
+        ${esEstudioOroPrivado ? '<p class="estado-proyecto" role="status">Resultado final para aprobación · vista privada · no citar ni distribuir</p>' : ""}
       </header>`)}
 
 ${franja(`      <article class="scrim prosa prosa-ancha revelar">
@@ -828,6 +922,8 @@ ${relacionados.map(fichaEscrito).join("\n")}
       },
     ],
     cuerpo,
+    noIndex: esEstudioOroPrivado,
+    scripts: e.scripts || [],
   });
 }
 
@@ -927,28 +1023,39 @@ ${franja(`${rotulo("Agregado", "Páginas y audiencia")}
         del sitio.</p>
       </div>`)}
 
-${franja(`${rotulo("Ingreso", "Ciudad y estimación de red", "verde")}
+${franja(`${rotulo("Registro privado", "Conexión y ubicación aproximada", "verde")}
       <div class="scrim columna prosa-ancha revelar">
-        <p>En el primer ingreso de cada sesión, el servidor conserva de forma privada: hora,
-        primera ruta, dominio referente, país, región, ciudad, tipo de dispositivo, sistema,
-        navegador y una clasificación estimada de VPN, proxy, Tor o centro de datos.</p>
+        <p>Cada carga de página pública con JavaScript puede producir un registro privado: hora,
+        ruta, dominio referente, canal conocido y código del enlace compartido, país, región, ciudad, tipo de dispositivo,
+        sistema, navegador y clasificación estimada de VPN, proxy, Tor o centro de datos.
+        Los registros anteriores a esta versión contienen el primer ingreso de sesión.</p>
+        <p>La IP de conexión se obtiene de la infraestructura de Vercel y se cifra con AES-256-GCM
+        antes de escribirla en un repositorio privado. El panel requiere una sesión de administración
+        y permite consultar IP de los últimos siete días. Un código con clave agrupa la misma
+        conexión dentro de un día; cambia al día siguiente. El identificador aleatorio del evento
+        permite deduplicar reintentos. No se almacenan cookies de seguimiento ni el User-Agent completo.</p>
         <p>Para obtener esa clasificación, la IP que ya acompaña la conexión se consulta
         transitoriamente en <a href="https://ipapi.is/" rel="noopener" target="_blank">ipapi.is</a>.
-        El código del sitio no la escribe en el repositorio, no la convierte en hash, no la muestra
-        y no conserva coordenadas ni el User-Agent completo. El proveedor y la infraestructura de
-        red pueden procesarla bajo sus propias condiciones; por eso no se afirma que desaparezca
-        de todo sistema externo.</p>
+        El proveedor y la infraestructura de red pueden procesarla bajo sus propias condiciones.
+        Vercel proporciona las coordenadas de contexto, guardadas con dos decimales. Ese redondeo
+        reduce el detalle; no acredita precisión. Al abrir el mapa, OpenStreetMap recibe el centro
+        aproximado y la conexión del administrador, sin la IP del visitante en el enlace.</p>
       </div>`)}
 
 ${franja(`${rotulo("Alcance", "Lo que la auditoría no puede prometer")}
       <div class="scrim columna prosa-ancha revelar">
-        <p>Una ciudad derivada de red es aproximada. Una VPN residencial, un proxy nuevo o una red
+        <p>La precisión de GeoIP es de ciudad o región, con error desconocido. El mapa no acredita
+        barrio, domicilio ni posición GPS. Una VPN residencial, un proxy nuevo o una red
         móvil pueden eludir la clasificación; una salida corporativa puede parecer una VPN. El
         sistema nunca pretende descubrir la ubicación real escondida detrás de una VPN.</p>
-        <p>La muestra privada se protege con límite de solicitudes en el firewall. La rama activa y
-        el panel muestran una ventana máxima de 90 días; Git puede conservar versiones anteriores
-        en su historial de commits. Las cifras agregadas de Vercel son la fuente principal para
-        páginas, países y dispositivos.</p>
+        <p>El panel consulta 30 días de actividad y muestra hasta 100 registros recientes; la API
+        admite como máximo 90 días. La IP deja de mostrarse al cumplir siete días.
+        Git conserva el historial privado, incluidas copias cifradas de las IP: la caducidad
+        de consulta no elimina esas copias. Una eliminación completa requiere revisar ese historial.</p>
+        <p>El servidor limita el registro a 20 solicitudes por IP y minuto y 120 por instancia
+        y minuto, además de las reglas del firewall. El límite por instancia no sustituye un control
+        distribuido. Bloqueadores, JavaScript deshabilitado, errores de red y límites pueden omitir
+        cargas. Una IP puede ser compartida por varias personas; los registros no miden personas únicas.</p>
       </div>`)}
 
 ${franja(`      <div class="scrim columna revelar">
@@ -960,7 +1067,7 @@ ${franja(`      <div class="scrim columna revelar">
   return pagina({
     ruta: "/privacidad/",
     titulo: `Privacidad y analítica — ${PERSONA.nombre}`,
-    descripcion: "Cómo se agregan páginas, ciudad, dispositivo y estimaciones de red sin almacenar IP ni perfiles identificables en el sitio.",
+    descripcion: "Auditoría privada con IP cifrada, consulta limitada, ubicación aproximada y límites verificables de privacidad.",
     grafo: [
       persona(),
       migas([{ nombre: "Inicio", ruta: "/" }, { nombre: "Privacidad", ruta: "/privacidad/" }]),
@@ -985,9 +1092,9 @@ function admin() {
         <div class="scrim columna articulo-cabecera">
           <p class="micro verde">Área privada</p>
           <h1 class="titulo media">Publicar y auditar</h1>
-          <p class="lead">Escribe, actualiza el blog y consulta ingresos auditados por ciudad,
-          país y dispositivo junto con la analítica agregada de Vercel. La IP cruda nunca se
-          guarda ni se muestra en este sistema.</p>
+          <p class="lead">Escribe, actualiza el blog y consulta el rastro de cada página registrada:
+          IP protegida mediante cifrado, ruta, hora y ubicación aproximada. Los detalles de
+          seguridad están disponibles después de iniciar sesión.</p>
         </div>
         <div id="admin-app" class="scrim ancho sep-m" aria-live="polite" aria-busy="true">
           <p class="lead">Cargando el panel seguro…</p>
@@ -1217,7 +1324,11 @@ const RUTAS = [
   ["/admin/", admin, { sitemap: false }],
   ...PROYECTOS_TODOS.map((p) => ["/proyectos/" + p.slug + "/", () => proyecto(p)]),
   ...CATEGORIAS.map((c) => ["/blog/tema/" + c.slug + "/", () => indiceBlog(c)]),
-  ...ESCRITOS.map((e) => ["/blog/" + e.slug + "/", () => escrito(e)]),
+  ...ESCRITOS.map((e) => [
+    "/blog/" + e.slug + "/",
+    () => escrito(e),
+    vistaPreviaPrivadaOro && e.slug === "oro-perimetros" ? { sitemap: false } : undefined,
+  ]),
 ];
 
 async function copiarArbol(desde, hacia) {
@@ -1240,6 +1351,9 @@ async function construir() {
   }
 
   await copiarArbol(join(raiz, "activos"), join(salida, "activos"));
+  if (estudioOro) {
+    await copiarArbol(join(raiz, "public", "data"), join(salida, "data"));
+  }
 
   const hoy = new Date().toISOString().slice(0, 10);
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -1254,12 +1368,9 @@ ${RUTAS.filter(([, , opciones]) => opciones?.sitemap !== false).map(([r]) => `  
 `;
   await writeFile(join(salida, "sitemap.xml"), sitemap, "utf8");
 
-  await writeFile(join(salida, "robots.txt"),
-`User-agent: *
-Allow: /
-
-Sitemap: ${SITIO}/sitemap.xml
-`, "utf8");
+  await writeFile(join(salida, "robots.txt"), vistaPreviaPrivadaOro
+    ? `User-agent: *\nDisallow: /\n`
+    : `User-agent: *\nAllow: /\n\nSitemap: ${SITIO}/sitemap.xml\n`, "utf8");
 
   await writeFile(join(salida, CLAVE_INDEXNOW + ".txt"), CLAVE_INDEXNOW, "utf8");
   await writeFile(join(salida, GOOGLE_ARCHIVO),
@@ -1273,7 +1384,7 @@ Sitemap: ${SITIO}/sitemap.xml
     <description>Derecho, economía, pensamientos y análisis.</description>
     <language>es-CO</language>
     <atom:link href="${SITIO}/feed.xml" rel="self" type="application/rss+xml" />
-${ESCRITOS.map((e) => `    <item>
+${ESCRITOS_LISTADOS.map((e) => `    <item>
       <title>${esc(e.titulo)}</title>
       <link>${SITIO}/blog/${e.slug}/</link>
       <guid isPermaLink="true">${SITIO}/blog/${e.slug}/</guid>
@@ -1297,10 +1408,16 @@ ${ESCRITOS.map((e) => `    <item>
   LinkedIn:${PERSONA.linkedin}
 
 /* SITIO */
-  Estático, sin dependencias externas.
+  Estático. Los estudios cartográficos usan teselas estándar de OpenStreetMap sin llave.
   Música: Quinta Sinfonía de Beethoven, Skidmore College Orchestra (dominio público).
 `, "utf8");
 
+  if (continuidadOro) {
+    const privacidad = await auditarSalidaEstaticaOro(salida);
+    if (!privacidad.cumple) {
+      throw new Error(`la salida pública no supera privacidad: ${privacidad.errores.join("; ")}; ${privacidad.hallazgos.length} hallazgos`);
+    }
+  }
   console.log(`Construido: ${RUTAS.length} páginas + sitemap + robots en publico/`);
   for (const [r] of RUTAS) console.log("  " + r);
 }

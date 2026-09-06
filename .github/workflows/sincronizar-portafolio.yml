@@ -39,6 +39,14 @@ jobs:
       - name: Verificar el snapshot
         run: node --check datos-github.js
 
+      - name: Preparar verificación del PDF
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install --yes --no-install-recommends poppler-utils
+
+      - name: Actualizar la hoja de vida con el inventario
+        run: npm run cv
+
       - name: Probar y construir el sitio actualizado
         run: |
           npm test
@@ -48,7 +56,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cambios="$(git status --porcelain=v1 -- datos-github.js)"
+          archivos=(datos-github.js documentos/hoja-de-vida/hoja-de-vida-jhon-steven-alvarez-ruiz.html documentos/hoja-de-vida/manifiesto.json activos/hoja-de-vida-jhon-steven-alvarez-ruiz.pdf)
+          cambios="$(git status --porcelain=v1 -- "${archivos[@]}")"
           if [[ -z "$cambios" ]]; then
             echo "GitHub no cambio; no hay nada que publicar."
             exit 0
@@ -56,6 +65,6 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- datos-github.js
+          git add -- "${archivos[@]}"
           git commit -m "Sincronizar proyectos publicos de GitHub"
           git push

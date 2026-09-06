@@ -1,9 +1,9 @@
 # Sitio de Jhon Steven Alvarez Ruiz
 
 Sitio personal, blog y portafolio de **Jhon Steven Alvarez Ruiz** — analista de
-datos y desarrollador de automatización en Neiva, Colombia. El HTML público se genera
-sin dependencias; las funciones privadas de Vercel permiten publicar escritos y
-consultar una auditoría anónima desde `/admin/`.
+datos y desarrollador de automatización en Neiva, Colombia. Genera HTML estático;
+React/Preact y MapLibre se cargan para los mapas del estudio. Las funciones privadas
+de Vercel permiten publicar escritos y consultar registros de seguridad en `/admin/`.
 
 ```bash
 npm test                  # seguridad, contenido, audio, rutas y snapshots
@@ -26,10 +26,18 @@ npm run sync:activity     # actualiza el agregado del ledger local
 | `construir.js` | Blog, proyectos, actividad, feed, sitemap y HTML estático. |
 | `api/` y `lib/` | Autenticación, CMS y auditoría en funciones de Vercel. |
 | `activos/animacion.js` | Movimiento, audio persistente y navegación progresiva. |
+| `activos/cinematografia.js` y `.css` | Escenas originales, luz de proyección, menú móvil y pausa accesible. |
+| `activos/lectura-accesible.js` | Desplazamiento de tablas y fórmulas mediante teclado. |
+| `datos/continuidad-publicacion-oro.json` | Estado del artículo ya publicado y SHA del manuscrito revisado. |
 
 La navegación interna reemplaza únicamente el contenido principal. El elemento
 `<audio>` permanece vivo, por lo que cambiar de Inicio a Blog o Proyectos no
 reinicia ni apaga la obra.
+
+Terciopelo, Nocturno y Celuloide cambian según la sección o la elección del lector.
+El canvas está limitado a 45 partículas y 30 cuadros por segundo; se pausa cuando
+la pestaña está oculta. El movimiento reducido se respeta también al cambiar la
+preferencia durante la visita. La entrada nunca exige un clic para acceder al contenido.
 
 ## Música
 
@@ -61,6 +69,10 @@ Texto del artículo…
 El panel `/admin/` permite crear y actualizar estos archivos mediante la API de
 contenidos de GitHub. Cada publicación queda versionada en `master`; la
 integración GitHub–Vercel vuelve a construir automáticamente el sitio.
+Solo `master` despliega automáticamente; las demás ramas están deshabilitadas.
+El artículo especial de oro conserva su fuente MDX y mapas. Su acta de continuidad
+permite reconstruir una publicación existente sin declarar cerrado el derecho de
+réplica. Un manuscrito que no coincida con su SHA detiene la compilación.
 
 Variables de entorno requeridas en Vercel:
 
@@ -68,7 +80,7 @@ Variables de entorno requeridas en Vercel:
 |---|---|
 | `ADMIN_USER` | Usuario único del panel. |
 | `ADMIN_PASSWORD_HASH` | Hash `scrypt`, nunca la contraseña en texto. |
-| `SESSION_SECRET` | Secreto aleatorio de al menos 32 bytes. |
+| `SESSION_SECRET` | Firma de sesión y derivación de la clave para cifrar IP. Su rotación impide descifrar registros anteriores. |
 | `GITHUB_SITE_TOKEN` | Token server-only con Contents lectura/escritura en `SirHegel/sitio`. |
 | `GITHUB_AUDIT_REPO` | Repositorio privado de auditoría; en producción, `SirHegel/sitio-auditoria`. |
 | `GITHUB_AUDIT_TOKEN` | Requerido y separado por configuración; debe limitarse al repositorio de auditoría. |
@@ -82,26 +94,26 @@ se valida tanto al escribir como al leer.
 
 ## Auditoría y privacidad
 
-Vercel Web Analytics es la fuente principal para visitantes, páginas, rutas,
-países y dispositivos agregados. No usa cookies de seguimiento. El sistema
-propio conserva únicamente el primer ingreso de cada sesión: hora, primera ruta,
-dominio referente, país, región, ciudad, clase de dispositivo, sistema,
-navegador y estimación de VPN/proxy/Tor.
+Vercel Web Analytics conserva la analítica agregada. La auditoría propia registra
+páginas visitadas, hora, identificador de evento, origen permitido, equipo y
+estimaciones de ubicación y tipo de red. Los bloqueadores, JavaScript desactivado,
+las cuotas y los fallos de red impiden prometer un registro universal de accesos.
 
-La IP se entrega transitoriamente a `ipapi.is` para clasificar la red y el código
-del sitio la descarta: no la escribe, muestra, cifra ni convierte en hash. El
-proveedor externo y la infraestructura pueden procesarla bajo sus condiciones;
-la página pública `/privacidad/` explica ese límite. Tampoco se conservan
-coordenadas ni el User-Agent completo.
+La IP se cifra con AES-256-GCM y solo se revela tras autenticar, durante siete
+días. La identidad de conexión usa HMAC con rotación diaria. Solo se confía en
+la cabecera protegida de Vercel; los encabezados arbitrarios del cliente no son
+una fuente válida. Antes de leer o escribir registros, se verifica que el
+repositorio de auditoría sea privado.
 
-La muestra diaria vive en un repositorio privado distinto. La rama activa y el
-panel conservan una ventana máxima de 90 días; como Git mantiene el historial de
-commits, retirar un archivo de esa rama no equivale a borrarlo de todo el
-historial remoto. Un límite distribuido del firewall —12 solicitudes cada diez
-minutos por IP y huella TLS— protege las variantes con y sin barra final de
-`/api/visita` y `/api/auth/entrar`. La detección de VPN sigue siendo una
-estimación: una VPN residencial o nueva puede no ser identificada y una red
-corporativa puede parecer un proxy.
+El panel consulta 30 días calendario y muestra como máximo 100 registros. Git
+conserva versiones históricas cifradas: siete días es una ventana de consulta,
+no una promesa de borrado del historial. Las visitas antiguas no contienen una IP
+recuperable. La política pública `/privacidad/` explica este alcance.
+
+`ipapi.is` recibe la IP transitoriamente para estimar VPN, proxy, Tor y proveedor.
+El mapa usa ubicación aproximada de Vercel, con precisión desconocida. No identifica
+barrio, domicilio ni a una persona. Las IP, cookies y secretos nunca van en el
+enlace al mapa; tampoco se almacena el User-Agent completo.
 
 ## Sincronización automática
 
@@ -115,7 +127,8 @@ La corrida de 22 repositorios usa 92 solicitudes API al corte actual. Su costo e
 pull requests. El modo enriquecido exige `GITHUB_TOKEN` o `GH_TOKEN`; 92 supera la
 cuota anónima de 60 solicitudes por hora. Una respuesta incompleta o un árbol
 truncado falla antes de reemplazar el snapshot anterior. El workflow instala con
-`npm ci`, prueba, construye y crea un commit únicamente cuando el catálogo cambió.
+`npm ci`, regenera la hoja de vida con el snapshot, prueba, construye y crea un
+commit con los datos y sus artefactos PDF/HTML/manifiesto cuando hay cambios.
 
 La actividad de Orquesta IA nace en un ledger local que no debe subir a GitHub.
 `herramientas/sincronizar-actividad.js` publica únicamente agregados. El timer de
@@ -131,9 +144,13 @@ systemctl --user enable --now sitio-actividad.timer
 
 ## Despliegue
 
-Vercel ejecuta `node construir.js`, sirve `publico/` y detecta las funciones de
+Vercel ejecuta `npm run build`, sirve `publico/` y detecta las funciones de
 `api/`. `vercel.json` añade CSP, cabeceras de seguridad, caché revalidable para
 activos y `no-store` para las respuestas privadas.
 
 La verificación continua está en `.github/workflows/verificar.yml`; todo cambio
 debe pasar las pruebas antes de considerarse publicable.
+
+El repositorio público incluye el sitio reproducible y sus datos cartográficos
+publicables. Correos, acuses, destinatarios y geometrías reservadas permanecen
+en el expediente local y no forman parte de GitHub ni del artefacto Vercel.

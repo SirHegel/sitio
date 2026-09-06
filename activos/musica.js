@@ -58,7 +58,9 @@ export class MusicaPersistente {
     const audio = document.createElement("audio");
     audio.id = "musica-persistente";
     audio.hidden = true;
-    audio.preload = "metadata";
+    // La grabación pesa 33 MB. La metadata se solicita con el primer gesto;
+    // así no compite con el artículo ni con las teselas del mapa en 4G.
+    audio.preload = "none";
     audio.loop = true;
     audio.playsInline = true;
     audio.setAttribute("playsinline", "");
@@ -117,7 +119,6 @@ export class MusicaPersistente {
 
     addEventListener("pagehide", () => guardarPosicion(this.llavePosicion, audio));
     document.body.append(audio);
-    audio.load();
     this.audio = audio;
     return audio;
   }

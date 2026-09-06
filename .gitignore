@@ -3,3 +3,36 @@ node_modules/
 .vercel
 __pycache__/
 .env*
+
+# Artefactos reproducibles del bundle cartográfico; Vercel los genera durante el build.
+activos/mapa-oro.js
+activos/mapa-oro.css
+activos/maplibre-gl-worker.mjs
+activos/maplibre-gl-shared.mjs
+
+# Insumos geoespaciales locales: recortes raster reproducibles y respuestas oficiales voluminosas.
+datos/geo/recortes/
+.venv-oro/
+datos/geo/fuentes/crucitas-sentencia-*.json
+# Descargas crudas con identificadores registrales o edificios a escala predial.
+datos/geo/fuentes/anm-titulos-jg4-cei.geojson
+datos/geo/fuentes/crucitas-osm.json
+datos/geo/fuentes/osm-agataes.json
+# Metadato de la base descartada por ser posterior al inicio DGM; se conserva solo en local.
+datos/geo/fuentes/stac-S2B_16PGT_20171117_0_L2A.json
+# Descarga oficial RUNAP: el manifiesto y el resultado agregado sí se versionan.
+datos/geo/fuentes/runap/latest.zip
+datos/geo/fuentes/runap/extraido/
+
+# Respuestas completas del derecho de réplica: contienen datos y cuerpos privados.
+manuscrito/respuestas-privadas/
+
+# Configuración SMTP y acuses originales: buzones, Message-ID y respuestas literales.
+manuscrito/operacion-privada/
+
+# DOM y capturas del formulario: pueden contener el correo emisor cargado en memoria.
+manuscrito/formularios-privados/
+
+# Temporales de escrituras reanudables; el archivo final se instala con rename.
+**/.*.cierre-*
+**/.*.publicacion-*

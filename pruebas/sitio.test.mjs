@@ -59,6 +59,8 @@ test("la Quinta de Beethoven es un archivo MP3 real e íntegro", () => {
 test("el reproductor usa solo el archivo y no sintetiza una partitura", () => {
   const fuente = readFileSync(`${raiz}/activos/musica.js`, "utf8");
   assert.match(fuente, /beethoven-quinta-sinfonia\.mp3/);
+  assert.match(fuente, /audio\.preload = "none"/);
+  assert.doesNotMatch(fuente, /audio\.load\(\)/);
   for (const resto of ["AudioContext", "createOscillator", "COMPASES", "VOCES", "aFrecuencia"]) {
     assert.ok(!fuente.includes(resto), `quedó código musical antiguo: ${resto}`);
   }
@@ -146,7 +148,9 @@ test("el blog genera artículos, temas y feed", async () => {
     assert.ok(html.includes(escrito.titulo));
   }
   const feed = readFileSync(`${construido}feed.xml`, "utf8");
-  assert.equal([...feed.matchAll(/<item>/g)].length, escritos.length);
+  assert.equal([...feed.matchAll(/<item>/g)].length, escritos.length + 1);
+  assert.ok(feed.includes("/blog/oro-perimetros/"), "la continuidad perdió el artículo del feed");
+  assert.ok(existsSync(archivoRuta("/blog/oro-perimetros/")), "el artículo ya publicado desapareció");
   for (const tema of ["derecho", "economia", "pensamientos", "analisis"]) {
     assert.ok(existsSync(archivoRuta(`/blog/tema/${tema}/`)), `falta el tema ${tema}`);
   }
@@ -296,12 +300,12 @@ test("el panel es privado, no indexable y no se autoaudita", () => {
   assert.match(html, /data-ruta="\/admin\/"/);
 });
 
-test("la analítica pública es agregada y explica sus límites", () => {
+test("la analítica explica la IP cifrada privada, su ventana y sus límites", () => {
   const inicio = readFileSync(archivoRuta("/"), "utf8");
   assert.match(inicio, /src="\/_vercel\/insights\/script\.js"/);
   assert.match(inicio, /src="\/activos\/analitica\.js"/);
   const privacidad = readFileSync(archivoRuta("/privacidad/"), "utf8");
-  for (const texto of ["ipapi.is", "90 días", "no la convierte en hash", "VPN residencial"]) {
+  for (const texto of ["ipapi.is", "90 días", "AES-256-GCM", "siete días", "copias cifradas", "no elimina esas copias", "error desconocido", "VPN residencial"]) {
     assert.ok(privacidad.includes(texto), `la política no explica: ${texto}`);
   }
 });

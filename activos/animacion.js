@@ -5,8 +5,15 @@
    ========================================================================= */
 
 import { MusicaPersistente } from "./musica.js";
+import { iniciarCinematografia } from "./cinematografia.js";
+import { iniciarLecturaAccesible } from "./lectura-accesible.js";
 
-const quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const preferenciaMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)");
+let quieto = preferenciaMovimiento.matches;
+preferenciaMovimiento.addEventListener("change", (evento) => {
+  quieto = evento.matches;
+  reiniciarContenido();
+});
 let vigiaRevelado = null;
 let vigiaContadores = null;
 let versionContenido = 0;
@@ -46,111 +53,6 @@ function componerNombre() {
   }
 }
 
-/* ------------------------------------------------------- fondo: el horizonte */
-/* Una retícula en fuga hacia el punto de horizonte y brasas que suben. Vive en
-   el lienzo fijo, siempre por debajo del scrim. */
-
-function horizonte() {
-  const lienzo = document.getElementById("lienzo");
-  if (!lienzo || quieto) return;
-  const g = lienzo.getContext("2d", { alpha: true });
-
-  let an = 0, al = 0, dpr = 1;
-  const brasas = [];
-
-  function medir() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    an = lienzo.clientWidth;
-    al = lienzo.clientHeight;
-    lienzo.width = Math.floor(an * dpr);
-    lienzo.height = Math.floor(al * dpr);
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    brasas.length = 0;
-    const cuantas = Math.round(Math.min(70, (an * al) / 26000));
-    for (let i = 0; i < cuantas; i++) {
-      brasas.push({
-        x: Math.random() * an,
-        y: Math.random() * al,
-        r: 0.5 + Math.random() * 1.5,
-        v: 0.09 + Math.random() * 0.28,
-        fase: Math.random() * Math.PI * 2,
-        vaiven: 0.25 + Math.random() * 0.7,
-        alfa: 0.14 + Math.random() * 0.4,
-      });
-    }
-  }
-
-  let t = 0;
-  let corriendo = true;
-
-  function cuadro() {
-    if (!corriendo) return;
-    t += 0.0042;
-    g.clearRect(0, 0, an, al);
-
-    const hy = al * 0.66;              // línea de horizonte
-    const fx = an * 0.5;               // punto de fuga
-
-    // Retícula en fuga. Opacidad baja: es atmósfera, no información.
-    g.lineWidth = 1;
-
-    for (let i = -16; i <= 16; i++) {
-      const x = fx + i * (an * 0.15);
-      g.beginPath();
-      g.moveTo(fx, hy);
-      g.lineTo(x, al + 40);
-      g.strokeStyle = `rgba(232,164,76,${0.05 + 0.02 * Math.cos(i * 0.5 + t * 6)})`;
-      g.stroke();
-    }
-
-    // Las horizontales se acercan: el desplazamiento es la profundidad.
-    for (let i = 0; i < 18; i++) {
-      const p = ((i / 18) + (t % (1 / 18)) * 18 / 18) % 1;
-      const y = hy + Math.pow(p, 2.6) * (al - hy + 60);
-      if (y > al + 10) continue;
-      g.beginPath();
-      g.moveTo(0, y);
-      g.lineTo(an, y);
-      g.strokeStyle = `rgba(232,164,76,${0.055 * (1 - p * 0.85)})`;
-      g.stroke();
-    }
-
-    // Franja de brasa sobre el horizonte. Se desvanece por arriba y por abajo:
-    // un degradado que termina en opaco deja el borde del rectángulo a la vista.
-    const intensidad = 0.095 + 0.028 * Math.sin(t * 3);
-    const franja = g.createLinearGradient(0, hy - 150, 0, hy + 170);
-    franja.addColorStop(0, "rgba(232,164,76,0)");
-    franja.addColorStop(0.47, `rgba(232,164,76,${intensidad})`);
-    franja.addColorStop(0.55, `rgba(212,64,44,${intensidad * 0.6})`);
-    franja.addColorStop(1, "rgba(232,164,76,0)");
-    g.fillStyle = franja;
-    g.fillRect(0, hy - 150, an, 320);
-
-    // Brasas.
-    for (const b of brasas) {
-      b.y -= b.v;
-      b.fase += 0.011;
-      if (b.y < -12) { b.y = al + 12; b.x = Math.random() * an; }
-      const x = b.x + Math.sin(b.fase) * b.vaiven * 16;
-      const parpadeo = 0.65 + 0.35 * Math.sin(b.fase * 2.1);
-      g.beginPath();
-      g.arc(x, b.y, b.r, 0, Math.PI * 2);
-      g.fillStyle = `rgba(255,206,138,${b.alfa * parpadeo})`;
-      g.fill();
-    }
-
-    requestAnimationFrame(cuadro);
-  }
-
-  medir();
-  addEventListener("resize", medir, { passive: true });
-  document.addEventListener("visibilitychange", () => {
-    corriendo = !document.hidden;
-    if (corriendo) requestAnimationFrame(cuadro);
-  });
-  requestAnimationFrame(cuadro);
-}
 
 /* --------------------------------------------------- revelado al desplazar */
 
@@ -272,36 +174,10 @@ function avance() {
   actualizarAvance();
 }
 
-/* -------------------------------------------------------------- el halo */
-
-function halo() {
-  const h = document.getElementById("halo");
-  if (!h || quieto) return;
-  if (!matchMedia("(pointer: fine)").matches) return;
-  document.body.classList.add("puntero-fino");
-
-  let x = innerWidth / 2, y = innerHeight / 2, hx = x, hy = y;
-
-  addEventListener("pointermove", (e) => {
-    x = e.clientX; y = e.clientY;
-    // Sobre un bloque de lectura el halo se atenúa: la regla del scrim vale
-    // también para el ornamento que pasa por encima.
-    const bajo = document.elementFromPoint(x, y);
-    document.body.classList.toggle("sobre-lectura", !!bajo?.closest(".scrim, .ficha, .metrica, .barra"));
-  }, { passive: true });
-
-  (function seguir() {
-    hx += (x - hx) * 0.085;
-    hy += (y - hy) * 0.085;
-    h.style.transform = `translate3d(${hx}px, ${hy}px, 0)`;
-    requestAnimationFrame(seguir);
-  })();
-}
 
 /* ------------------------------------------------- puerta de entrada y audio */
 
 function audio() {
-  const puerta = document.getElementById("puerta");
   const mando = document.getElementById("mando");
   const musica = new MusicaPersistente();
   const LLAVE = "jsar:musica";
@@ -348,22 +224,6 @@ function audio() {
     }
   }
 
-  function abrir(conMusica) {
-    if (puerta) puerta.classList.add("abierta");
-    try { sessionStorage.setItem("jsar:entrado", "1"); } catch {}
-    if (conMusica) {
-      guardarPreferencia(true);
-      intentarTocar();
-    }
-    setTimeout(() => puerta?.remove(), 1300);
-  }
-
-  puerta?.querySelector("[data-entrar-con-musica]")?.addEventListener("click", () => abrir(true));
-  puerta?.querySelector("[data-entrar-en-silencio]")?.addEventListener("click", () => {
-    guardarPreferencia(false);
-    musica.callar();
-    abrir(false);
-  });
 
   mando?.addEventListener("click", async () => {
     if (musica.sonando) {
@@ -379,11 +239,6 @@ function audio() {
   musica.suscribir(reflejar);
   musica.preparar();
 
-  // Tras una recarga completa, la puerta ya no vuelve a interrumpir la sesión.
-  // La navegación progresiva conserva tanto la puerta retirada como el audio.
-  let yaEntro = false;
-  try { yaEntro = sessionStorage.getItem("jsar:entrado") === "1"; } catch {}
-  if (yaEntro && puerta) puerta.remove();
 
   if (preferida()) {
     musica.solicitada = true;
@@ -437,6 +292,7 @@ function reiniciarContenido() {
   componerNombre();
   revelado();
   contadores(versionContenido);
+  iniciarLecturaAccesible();
   requestAnimationFrame(actualizarAvance);
 }
 
@@ -643,8 +499,7 @@ function navegacion() {
 /* ------------------------------------------------------------------ arranque */
 
 reiniciarContenido();
-horizonte();
+iniciarCinematografia();
 avance();
-halo();
 audio();
 navegacion();
