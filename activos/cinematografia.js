@@ -1,36 +1,46 @@
-/* Escenas originales: luz volumétrica y polvo de proyección.
-   O(P) por cuadro, O(P) memoria, P <= 45. Un solo rAF, máximo 30 fps;
-   se detiene al ocultar la pestaña, pausar o pedir movimiento reducido. */
+import { crearSalaWebGL } from "./sala-webgl.js";
+
+/* Cámara y controles: un solo rAF, máximo 30 fps. Pausa, movimiento reducido,
+   pestaña oculta, portada fuera de vista y administración detienen el bucle.
+   Escena [0,2], cambio 1.8 s,
+   recorrido voluntario 9 s por escena. O(1) por cuadro de control; O(W·H) GPU.
+   El scroll sigue siendo nativo; ningún evento bloquea el contenido. */
 export function iniciarCinematografia() {
   const documento = document.documentElement;
   const cuerpo = document.body;
+  if (documento.classList.contains("js-cine")) return;
   const reduccion = matchMedia("(prefers-reduced-motion: reduce)");
   const fino = matchMedia("(pointer: fine)");
   const escenas = ["terciopelo", "nocturno", "celuloide"];
   const nombres = ["Terciopelo", "Nocturno", "Celuloide"];
-  const cambiar = document.getElementById("cambiar-escena");
-  const pausar = document.getElementById("pausar-escena");
+  const titulos = ["La habitación roja", "Después de medianoche", "La sala de proyección"];
+  const actos = ["Acto I / El umbral", "Acto II / La ciudad", "Acto III / El montaje"];
   const lienzo = document.getElementById("lienzo");
-  let contexto = null;
-  try { contexto = lienzo?.getContext("2d", { alpha: true }); } catch { /* CSS conserva la escena. */ }
+  let sala = null;
   let pausaManual = false;
-  const administrativa = cuerpo.classList.contains("pagina-admin");
   let eleccionManual = false;
   let indice = 0;
   let cuadro = 0;
   let ultimo = 0;
   let tiempo = 0;
-  let ancho = 0;
-  let alto = 0;
-  let particulas = [];
-  const puntero = { x: .65, y: .35, destinoX: .65, destinoY: .35 };
+  let recorrido = false;
+  let relojRecorrido = 0;
+  let transicion = null;
+  let versionEscena = 0;
+  let observador = null;
+  let limitePortada = Infinity;
+  let salaEnVista = true;
+  let paginaActiva = true;
+  const puntero = { x: 0, y: 0, destinoX: 0, destinoY: 0 };
   try { pausaManual = localStorage.getItem("jsar:escena-pausa") === "1"; } catch {}
 
-  function escena(nombre) {
-    const siguiente = escenas.indexOf(nombre);
-    if (siguiente < 0) return;
-    indice = siguiente;
+  function administrativa() { return cuerpo.classList.contains("pagina-admin"); }
+  function corriendo() { return paginaActiva && salaEnVista && !administrativa() && !pausaManual && !reduccion.matches && !document.hidden; }
+
+  function reflejar() {
+    const nombre = escenas[indice];
     cuerpo.dataset.escena = nombre;
+    const cambiar = document.getElementById("cambiar-escena");
     if (cambiar) {
       cambiar.replaceChildren(document.createTextNode(nombres[indice] + " "));
       const flecha = document.createElement("span");
@@ -39,71 +49,96 @@ export function iniciarCinematografia() {
       cambiar.append(flecha);
       cambiar.setAttribute("aria-label", `Cambiar ambiente visual: ${nombres[indice]}`);
     }
-    const contador = document.querySelector(".escena-indice");
-    if (contador) contador.textContent = String(indice + 1).padStart(2, "0");
-    if (!corriendo()) dibujar(0);
+    document.querySelectorAll(".escena-indice").forEach((nodo) => { nodo.textContent = String(indice + 1).padStart(2, "0"); });
+    document.querySelectorAll("[data-escena-titulo]").forEach((nodo) => { nodo.textContent = nodo.getAttribute(`data-titulo-${nombre}`) || titulos[indice]; });
+    document.querySelectorAll("[data-escena-subtitulo]").forEach((nodo) => { nodo.textContent = nodo.getAttribute(`data-subtitulo-${nombre}`) || actos[indice]; });
+    document.querySelectorAll("[data-ir-escena]").forEach((nodo) => {
+      const activa = nodo.dataset.irEscena === nombre;
+      nodo.setAttribute("aria-pressed", String(activa));
+      nodo.classList.toggle("activa", activa);
+    });
+    const recorrer = document.getElementById("recorrer-escenas");
+    if (recorrer) {
+      recorrer.setAttribute("aria-pressed", String(recorrido));
+      recorrer.setAttribute("aria-label", recorrido ? "Detener recorrido cinematográfico" : "Recorrer las tres escenas");
+      recorrer.disabled = reduccion.matches || administrativa() || !sala?.disponible(nombre);
+      const etiqueta = recorrer.querySelector("[data-recorrido-etiqueta]");
+      if (etiqueta) etiqueta.textContent = recorrido ? "Detener recorrido" : "Recorrer las escenas";
+    }
+  }
+
+  function detenerRecorrido() {
+    if (!recorrido) return;
+    recorrido = false;
+    relojRecorrido = 0;
+    reflejar();
+  }
+
+  function dibujar() {
+    const lista = !administrativa() && sala?.dibujar({
+      escena: escenas[indice], anterior: transicion?.anterior,
+      progreso: transicion ? Math.min(1, transicion.tiempo / 1.8) : 1,
+      tiempo, x: puntero.x, y: puntero.y,
+      avance: Math.min(1, Math.max(0, scrollY / Math.max(1, innerHeight))),
+      movimiento: !reduccion.matches,
+    });
+    cuerpo.classList.toggle("sala-lista", Boolean(lista));
+    if (lienzo) lienzo.dataset.motor = lista ? "webgl" : "imagen";
+    return lista;
+  }
+
+  async function escena(nombre, animada = true) {
+    const siguiente = escenas.indexOf(nombre);
+    if (siguiente < 0) return;
+    const anterior = escenas[indice];
+    const version = ++versionEscena;
+    indice = siguiente;
+    reflejar();
+    if (nombre === anterior) return;
+    transicion = null;
+    cuerpo.classList.remove("escena-cambiando");
+    const disponible = await sala?.preparar(nombre);
+    if (version !== versionEscena) return;
+    if (animada && disponible && sala.disponible(anterior) && corriendo()) {
+      transicion = { anterior, tiempo: 0 };
+      cuerpo.classList.add("escena-cambiando");
+    }
+    dibujar(); estado();
+    dispatchEvent(new CustomEvent("sitio:escena", { detail: { escena: nombre, indice, transicion: Boolean(transicion) } }));
   }
 
   function escenaDeRuta() {
     if (eleccionManual) return;
     const ruta = cuerpo.dataset.ruta || location.pathname;
-    escena(ruta.startsWith("/blog/") ? "celuloide" : /^\/(proyectos|contribuciones|academico)\//.test(ruta) ? "nocturno" : "terciopelo");
+    escena(ruta.startsWith("/blog/") ? "celuloide" : /^\/(proyectos|contribuciones|academico)\//.test(ruta) ? "nocturno" : "terciopelo", false);
   }
 
-  function medir() {
-    if (!contexto) return;
-    ancho = innerWidth;
-    alto = innerHeight;
-    const dpr = Math.min(devicePixelRatio || 1, ancho < 768 ? 1.25 : 1.5);
-    lienzo.width = Math.round(ancho * dpr);
-    lienzo.height = Math.round(alto * dpr);
-    contexto.setTransform(dpr, 0, 0, dpr, 0, 0);
-    particulas = Array.from({ length: Math.min(45, Math.ceil(ancho * alto / 35000)) }, (_, i) => ({
-      x: ((i * .61803398875) % 1) * ancho,
-      y: ((i * .38196601125) % 1) * alto,
-      radio: .4 + (i % 4) * .24,
-      velocidad: 2 + (i % 7) * .55,
-      fase: i * 2.39,
-    }));
-    dibujar(0);
-  }
-
-  function dibujar(delta) {
-    if (!contexto) return;
-    const g = contexto;
-    tiempo += delta;
-    puntero.x += (puntero.destinoX - puntero.x) * .035;
-    puntero.y += (puntero.destinoY - puntero.y) * .035;
-    g.clearRect(0, 0, ancho, alto);
-    const luzX = ancho * (.66 + (puntero.x - .5) * .12);
-    const luzY = alto * (.18 + (puntero.y - .5) * .08);
-    const luz = g.createRadialGradient(luzX, luzY, 0, luzX, luzY, ancho * .7);
-    const rgb = indice === 1 ? "149,184,187" : "227,194,138";
-    luz.addColorStop(0, `rgba(${rgb},.065)`);
-    luz.addColorStop(.55, `rgba(${rgb},.018)`);
-    luz.addColorStop(1, `rgba(${rgb},0)`);
-    g.fillStyle = luz;
-    g.fillRect(0, 0, ancho, alto);
-    for (const p of particulas) {
-      p.y -= p.velocidad * delta;
-      if (p.y < -4) p.y = alto + 4;
-      const x = p.x + Math.sin(tiempo * .16 + p.fase) * 18;
-      const intensidad = .12 + .13 * (.5 + Math.sin(tiempo * .3 + p.fase) * .5);
-      g.beginPath();
-      g.arc(x, p.y, p.radio, 0, Math.PI * 2);
-      g.fillStyle = `rgba(${rgb},${intensidad})`;
-      g.fill();
-    }
-  }
-
-  function corriendo() { return !administrativa && !pausaManual && !reduccion.matches && !document.hidden; }
   function animar(ahora) {
     cuadro = 0;
-    if (!corriendo() || !contexto) return;
+    if (!corriendo() || !sala?.disponible(escenas[indice])) return;
     const transcurrido = ahora - ultimo;
     if (transcurrido >= 1000 / 30) {
-      dibujar(Math.min(transcurrido / 1000, .08));
+      const delta = Math.min(transcurrido / 1000, .08);
       ultimo = ahora;
+      tiempo += delta;
+      const inercia = 1 - Math.exp(-delta * 3.5);
+      puntero.x += (puntero.destinoX - puntero.x) * inercia;
+      puntero.y += (puntero.destinoY - puntero.y) * inercia;
+      if (transicion) {
+        transicion.tiempo += delta;
+        if (transicion.tiempo >= 1.8) {
+          transicion = null;
+          cuerpo.classList.remove("escena-cambiando");
+        }
+      }
+      if (recorrido) {
+        relojRecorrido += delta;
+        if (relojRecorrido >= 9 && !transicion) {
+          relojRecorrido = 0;
+          escena(escenas[(indice + 1) % escenas.length]);
+        }
+      }
+      dibujar();
     }
     cuadro = requestAnimationFrame(animar);
   }
@@ -111,53 +146,60 @@ export function iniciarCinematografia() {
   function estado() {
     cancelAnimationFrame(cuadro);
     cuadro = 0;
-    const pausado = administrativa || pausaManual || reduccion.matches;
+    const pausado = administrativa() || pausaManual || reduccion.matches;
+    const oculta = document.hidden || !salaEnVista || !paginaActiva;
     cuerpo.classList.toggle("escena-pausada", pausado);
-    cuerpo.classList.toggle("escena-oculta", document.hidden);
+    cuerpo.classList.toggle("escena-oculta", oculta);
+    if (pausado || oculta) detenerRecorrido();
+    if ((pausado || oculta) && transicion) {
+      transicion = null;
+      cuerpo.classList.remove("escena-cambiando");
+      dibujar();
+    }
+    const pausar = document.getElementById("pausar-escena");
     if (pausar) {
       pausar.setAttribute("aria-pressed", String(pausado));
       pausar.setAttribute("aria-label", reduccion.matches ? "Movimiento reducido activado en tu dispositivo" : pausado ? "Reanudar animación de fondo" : "Pausar animación de fondo");
       pausar.disabled = reduccion.matches;
-      pausar.firstElementChild.textContent = pausado ? "▷" : "Ⅱ";
+      if (pausar.firstElementChild) pausar.firstElementChild.textContent = pausado ? "▷" : "Ⅱ";
     }
-    if (corriendo() && contexto) {
+    reflejar();
+    if (corriendo() && sala?.disponible(escenas[indice])) {
       ultimo = performance.now();
       cuadro = requestAnimationFrame(animar);
     }
   }
 
-  cambiar?.addEventListener("click", () => {
-    eleccionManual = true;
-    escena(escenas[(indice + 1) % escenas.length]);
-  });
-  pausar?.addEventListener("click", () => {
-    pausaManual = !pausaManual;
-    try { localStorage.setItem("jsar:escena-pausa", pausaManual ? "1" : "0"); } catch {}
-    estado();
-  });
-  addEventListener("pointermove", (evento) => {
-    if (!fino.matches || !corriendo()) return;
-    puntero.destinoX = evento.clientX / innerWidth;
-    puntero.destinoY = evento.clientY / innerHeight;
-  }, { passive: true });
-  addEventListener("resize", medir, { passive: true });
-  document.addEventListener("visibilitychange", estado);
-  reduccion.addEventListener("change", estado);
-  addEventListener("pagehide", () => { cancelAnimationFrame(cuadro); cuadro = 0; });
-  addEventListener("pageshow", estado);
+  function medirPortada() {
+    const portada = (cuerpo.dataset.ruta || location.pathname) === "/" ? document.querySelector(".portada") : null;
+    limitePortada = portada ? scrollY + portada.getBoundingClientRect().bottom : Infinity;
+    salaEnVista = scrollY < limitePortada;
+  }
 
-  let observador = null;
+  function medir() { medirPortada(); sala?.medir(); dibujar(); estado(); }
+
+  function desplazar() {
+    detenerRecorrido();
+    // O(1), sin medir layout ni programar otro rAF. El trabajo de estado sólo
+    // ocurre al cruzar el borde que se midió al navegar o cambiar de tamaño.
+    const visible = scrollY < limitePortada;
+    if (visible === salaEnVista) return;
+    salaEnVista = visible;
+    estado();
+  }
+
   function observarEscenas() {
     observador?.disconnect();
-    escenaDeRuta();
-    if (!("IntersectionObserver" in window)) return;
+    escenaDeRuta(); reflejar();
+    // El plano inicial se dirige manualmente. Otras páginas pueden marcar un
+    // cambio deliberado sin que todas sus secciones compitan al entrar en vista.
+    if ((cuerpo.dataset.ruta || location.pathname) === "/" || !("IntersectionObserver" in window)) return;
     observador = new IntersectionObserver((entradas) => {
-      if (eleccionManual || reduccion.matches || pausaManual) return;
-      for (const entrada of entradas) {
-        if (entrada.isIntersecting) escena(entrada.target.dataset.ambiente);
-      }
-    }, { rootMargin: "-15% 0px -35% 0px", threshold: 0 });
-    document.querySelectorAll("[data-ambiente]").forEach((nodo) => observador.observe(nodo));
+      if (eleccionManual || recorrido || !corriendo() || transicion) return;
+      const entrada = entradas.find((e) => e.isIntersecting);
+      if (entrada) escena(entrada.target.dataset.ambiente);
+    }, { rootMargin: "-35% 0px -45% 0px", threshold: 0 });
+    document.querySelectorAll('[data-ambiente][data-escena-scroll="si"]').forEach((nodo) => observador.observe(nodo));
   }
 
   function menu(abierto, enfocar = false) {
@@ -167,24 +209,71 @@ export function iniciarCinematografia() {
     if (boton?.lastElementChild) boton.lastElementChild.textContent = abierto ? "−" : "＋";
     if (enfocar) boton?.focus();
   }
-  document.querySelector(".menu-mando")?.addEventListener("click", (evento) => {
-    menu(evento.currentTarget.getAttribute("aria-expanded") !== "true");
+
+  document.addEventListener("click", (evento) => {
+    if (!(evento.target instanceof Element)) return;
+    const destino = evento.target.closest("[data-ir-escena]");
+    if (destino || evento.target.closest("#cambiar-escena")) {
+      detenerRecorrido(); eleccionManual = true;
+      escena(destino?.dataset.irEscena || escenas[(indice + 1) % escenas.length]);
+    }
+    if (evento.target.closest("#pausar-escena")) {
+      pausaManual = !pausaManual;
+      try { localStorage.setItem("jsar:escena-pausa", pausaManual ? "1" : "0"); } catch {}
+      estado();
+    }
+    if (evento.target.closest("#recorrer-escenas") && !reduccion.matches && !administrativa() && sala?.disponible(escenas[indice])) {
+      recorrido = !recorrido;
+      relojRecorrido = 0;
+      if (recorrido) {
+        eleccionManual = true; pausaManual = false;
+        try { localStorage.setItem("jsar:escena-pausa", "0"); } catch {}
+      }
+      estado();
+    }
+    const botonMenu = evento.target.closest(".menu-mando");
+    if (botonMenu) menu(botonMenu.getAttribute("aria-expanded") !== "true");
+    else if (evento.target.closest("nav.menu a") || !evento.target.closest(".barra")) menu(false);
   });
   document.addEventListener("keydown", (evento) => {
     if (evento.key === "Escape" && document.querySelector(".menu-abierto")) menu(false, true);
+    if (["Escape", "PageDown", "PageUp", "ArrowDown", "ArrowUp", "Home", "End"].includes(evento.key)) detenerRecorrido();
   });
-  document.addEventListener("click", (evento) => {
-    if (!(evento.target instanceof Element)) return;
-    if (evento.target.closest("nav.menu a") || !evento.target.closest(".barra")) menu(false);
-  });
-  addEventListener("sitio:navegacion", () => { menu(false); observarEscenas(); });
+  addEventListener("pointermove", (evento) => {
+    if (!fino.matches || !corriendo()) return;
+    puntero.destinoX = (evento.clientX / innerWidth - .5) * 2;
+    puntero.destinoY = (evento.clientY / innerHeight - .5) * 2;
+  }, { passive: true });
+  addEventListener("wheel", detenerRecorrido, { passive: true });
+  addEventListener("touchmove", detenerRecorrido, { passive: true });
+  addEventListener("scroll", desplazar, { passive: true });
+  addEventListener("resize", medir, { passive: true });
+  document.addEventListener("visibilitychange", estado);
+  reduccion.addEventListener("change", estado);
+  addEventListener("pagehide", () => { paginaActiva = false; estado(); });
+  addEventListener("pageshow", () => { paginaActiva = true; medirPortada(); estado(); });
+  addEventListener("sitio:transicion", () => { detenerRecorrido(); menu(false); });
+  addEventListener("sitio:navegacion", () => { menu(false); medirPortada(); observarEscenas(); dibujar(); estado(); });
+
   documento.classList.add("js-cine");
   const puerta = document.getElementById("puerta");
   let visto = false;
   try { visto = sessionStorage.getItem("jsar:entrado") === "1"; sessionStorage.setItem("jsar:entrado", "1"); } catch {}
   if (visto || reduccion.matches) puerta?.remove();
-  else setTimeout(() => puerta?.remove(), 1200);
-  medir();
+  else setTimeout(() => puerta?.remove(), 1800);
+  if (!administrativa()) sala = crearSalaWebGL(lienzo, () => {
+    if (!sala?.disponible(escenas[indice])) {
+      transicion = null;
+      cuerpo.classList.remove("escena-cambiando");
+      detenerRecorrido();
+    }
+    dibujar(); estado();
+  });
   observarEscenas();
-  estado();
+  // La primera imagen manda; las demás se precargan sin frenar el texto.
+  sala?.preparar(escenas[indice]).then(() => {
+    dibujar(); estado();
+    escenas.filter((nombre) => nombre !== escenas[indice]).forEach((nombre) => { sala.preparar(nombre); });
+  });
+  medir(); estado();
 }

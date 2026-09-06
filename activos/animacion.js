@@ -7,11 +7,14 @@
 import { MusicaPersistente } from "./musica.js";
 import { iniciarCinematografia } from "./cinematografia.js";
 import { iniciarLecturaAccesible } from "./lectura-accesible.js";
+import "./cargar-mapa-oro.js";
 
 const preferenciaMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)");
 let quieto = preferenciaMovimiento.matches;
+let detenerTransiciones = () => {};
 preferenciaMovimiento.addEventListener("change", (evento) => {
   quieto = evento.matches;
+  if (quieto) detenerTransiciones();
   reiniciarContenido();
 });
 let vigiaRevelado = null;
@@ -69,7 +72,7 @@ function revelado() {
 
   // El escalonado se calcula por grupo: los hermanos entran uno tras otro.
   document.querySelectorAll("[data-escalonar]").forEach((grupo) => {
-    [...grupo.children].forEach((hijo, i) => hijo.style.setProperty("--i", i));
+    [...grupo.children].forEach((hijo, i) => hijo.style.setProperty("--i", Math.min(i, 4)));
   });
 
   /* El umbral es 0 y no una fracción del elemento. Con `threshold: 0.06`
@@ -102,7 +105,7 @@ function revelado() {
        muestra igualmente. Un texto ilegible es peor que un texto sin
        animación. */
     const caja = p.getBoundingClientRect();
-    if (caja.top < innerHeight && caja.bottom > 0) p.classList.add("visible");
+    if (p.classList.contains("prosa") || (caja.top < innerHeight && caja.bottom > 0)) p.classList.add("visible");
     else vigia.observe(p);
   });
 }
@@ -287,8 +290,10 @@ const SELECTORES_CABEZA = [
   'script[type="application/ld+json"]',
 ].join(",");
 
-function reiniciarContenido() {
+function reiniciarContenido({ entrada = false } = {}) {
   versionContenido++;
+  const principal = document.getElementById("principal");
+  principal?.classList.toggle("entrada-cine", entrada && !quieto);
   componerNombre();
   revelado();
   contadores(versionContenido);
@@ -315,6 +320,45 @@ function navegacion() {
   let rutaMostrada = location.pathname + location.search;
   let guardadoPendiente = false;
   let navegando = false;
+  let transicionActiva = null;
+  let avisoPendiente = 0;
+  const animaciones = new Set();
+
+  const corte = document.createElement("div");
+  corte.className = "corte-proyector";
+  corte.setAttribute("aria-hidden", "true");
+  document.body.append(corte);
+
+  // O(A), A <= 3. Invariante: cancelar deja el documento actual legible y
+  // devuelve el control al último destino; no conserva estilos de WAAPI.
+  detenerTransiciones = () => {
+    transicionActiva?.skipTransition();
+    transicionActiva = null;
+    for (const animacion of animaciones) animacion.cancel();
+    animaciones.clear();
+    document.documentElement.removeAttribute("data-transicion");
+  };
+
+  function animar(elemento, cuadros, opciones) {
+    if (quieto || !elemento?.animate) return Promise.resolve();
+    const animacion = elemento.animate(cuadros, opciones);
+    animaciones.add(animacion);
+    return animacion.finished.catch(() => {}).finally(() => {
+      animaciones.delete(animacion);
+      animacion.cancel();
+    });
+  }
+
+  function cancelarNavegacion() {
+    secuencia++;
+    controlador?.abort();
+    controlador = null;
+    navegando = false;
+    clearTimeout(avisoPendiente);
+    detenerTransiciones();
+    document.documentElement.classList.remove("navegando");
+    document.getElementById("principal")?.removeAttribute("aria-busy");
+  }
 
   const estadoActual = () =>
     history.state && typeof history.state === "object" ? history.state : {};
@@ -344,9 +388,12 @@ function navegacion() {
   anuncio.setAttribute("aria-atomic", "true");
   document.body.append(anuncio);
 
-  const anunciar = () => {
+  const anunciar = (turno) => {
+    clearTimeout(avisoPendiente);
     anuncio.textContent = "";
-    setTimeout(() => { anuncio.textContent = `Página cargada: ${document.title}`; }, 30);
+    avisoPendiente = setTimeout(() => {
+      if (turno === secuencia) anuncio.textContent = `Página cargada: ${document.title}`;
+    }, 30);
   };
 
   const idDesdeHash = (hash) => {
@@ -355,25 +402,34 @@ function navegacion() {
     catch { return document.getElementById(hash.slice(1)); }
   };
 
-  const enfocar = (url, posicion = null) => {
+  const desplazar = (url, posicion = null) => {
+    const destino = idDesdeHash(url.hash);
+    if (Array.isArray(posicion) && posicion.length === 2) {
+      scrollTo({ left: Number(posicion[0]) || 0, top: Number(posicion[1]) || 0, behavior: "instant" });
+    } else if (destino) {
+      destino.scrollIntoView({ behavior: "instant" });
+    } else {
+      scrollTo({ left: 0, top: 0, behavior: "instant" });
+    }
+    actualizarAvance();
+  };
+
+  const enfocar = (url, posicion = null, { turno = secuencia, mover = true, focoInicial = null } = {}) => {
     requestAnimationFrame(() => {
+      if (turno !== secuencia) return;
       const principal = document.getElementById("principal");
       const destino = idDesdeHash(url.hash);
       const foco = destino || principal;
-      if (foco) {
+      const activo = document.activeElement;
+      const otroControl = !mover && activo !== document.body && activo !== focoInicial
+        && activo?.isConnected && !principal?.contains(activo);
+      if (foco && !otroControl) {
         if (!foco.matches("a, button, input, select, textarea, [tabindex]")) foco.tabIndex = -1;
         foco.focus({ preventScroll: true });
       }
 
-      if (Array.isArray(posicion) && posicion.length === 2) {
-        scrollTo(Number(posicion[0]) || 0, Number(posicion[1]) || 0);
-      } else if (destino) {
-        destino.scrollIntoView();
-      } else {
-        scrollTo(0, 0);
-      }
-      actualizarAvance();
-      anunciar();
+      if (mover) desplazar(url, posicion);
+      anunciar(turno);
     });
   };
 
@@ -390,20 +446,26 @@ function navegacion() {
 
     const url = new URL(enlace.href, location.href);
     if (!/^https?:$/.test(url.protocol) || url.origin !== location.origin) return null;
+    if (/^\/(admin|api|activos)(\/|$)/.test(url.pathname)) return null;
+    if (/\.(?!html?$)[a-z\d]{1,8}$/i.test(url.pathname)) return null;
     return url;
   };
 
   async function ir(url, { historial = "push", posicion = null } = {}) {
     const turno = ++secuencia;
+    const focoInicial = document.activeElement;
     controlador?.abort();
-    controlador = new AbortController();
+    detenerTransiciones();
+    clearTimeout(avisoPendiente);
+    const peticion = new AbortController();
+    controlador = peticion;
     navegando = true;
     document.documentElement.classList.add("navegando");
     document.getElementById("principal")?.setAttribute("aria-busy", "true");
 
     try {
       const respuesta = await fetch(url.href, {
-        signal: controlador.signal,
+        signal: peticion.signal,
         credentials: "same-origin",
         headers: { Accept: "text/html, application/xhtml+xml" },
       });
@@ -420,40 +482,93 @@ function navegacion() {
       const nuevoPrincipal = nuevoDocumento.querySelector("main#principal");
       const nuevoMenu = nuevoDocumento.querySelector("nav.menu");
       const nuevoPie = nuevoDocumento.querySelector("footer.pie");
-      if (!nuevoPrincipal || !nuevoMenu || !nuevoPie || !nuevoDocumento.title) {
+      if (!nuevoPrincipal || !nuevoMenu || !nuevoPie || !nuevoDocumento.title
+        || nuevoDocumento.body.classList.contains("pagina-admin")) {
         throw new Error("La página interna no tiene la estructura esperada");
       }
 
       const principal = document.importNode(nuevoPrincipal, true);
+      principal.setAttribute("aria-busy", "true");
       const menu = document.importNode(nuevoMenu, true);
       const pie = document.importNode(nuevoPie, true);
+      let aplicado = false;
+      // O(N) para importar/inicializar N nodos. La comprobación vive DENTRO
+      // del callback: ViewTransition puede ejecutarlo después de otro clic.
+      // Contenido, URL, metadatos y rastro cambian en una sola operación.
       const aplicar = () => {
+        if (aplicado || turno !== secuencia || peticion.signal.aborted) return;
         sincronizarCabeza(nuevoDocumento);
+        for (const clase of [...document.body.classList]) {
+          if (clase.startsWith("pagina-")) document.body.classList.remove(clase);
+        }
+        for (const clase of nuevoDocumento.body.classList) {
+          if (clase.startsWith("pagina-")) document.body.classList.add(clase);
+        }
         document.body.dataset.ruta = nuevoDocumento.body.dataset.ruta || final.pathname;
         document.querySelector("main#principal")?.replaceWith(principal);
         document.querySelector("nav.menu")?.replaceWith(menu);
         document.querySelector("footer.pie")?.replaceWith(pie);
-        reiniciarContenido();
+        rutaMostrada = final.pathname + final.search;
+        if (historial === "push") {
+          history.pushState({ __jsarPjax: true, scroll: [0, 0] }, "", final.href);
+        } else if (final.href !== location.href) {
+          history.replaceState({ ...estadoActual(), __jsarPjax: true }, "", final.href);
+        }
+        // El scroll se resuelve antes de la nueva captura, evitando un salto
+        // de cámara desde la posición que tenía la página anterior.
+        desplazar(final, posicion);
+        reiniciarContenido({ entrada: true });
+        aplicado = true;
+        window.dispatchEvent(new CustomEvent("sitio:navegacion", {
+          detail: { path: final.pathname },
+        }));
       };
 
-      if (!quieto && "startViewTransition" in document) {
-        await document.startViewTransition(aplicar).updateCallbackDone;
-      } else {
+      if (quieto) {
         aplicar();
-      }
+      } else {
+        document.documentElement.dataset.transicion = historial === "pop" ? "regreso" : "avance";
+        window.dispatchEvent(new CustomEvent("sitio:transicion", {
+          detail: { path: final.pathname, duracion: 920 },
+        }));
+        const barrido = animar(corte, [
+          { transform: "translate3d(-160%, 0, 0) skewX(-12deg)", opacity: 0 },
+          { opacity: .8, offset: .23 },
+          { opacity: .55, offset: .65 },
+          { transform: "translate3d(480%, 0, 0) skewX(-12deg)", opacity: 0 },
+        ], { duration: 920, easing: "cubic-bezier(.76, 0, .24, 1)" });
 
-      rutaMostrada = final.pathname + final.search;
-      if (historial === "push") {
-        history.pushState({ __jsarPjax: true, scroll: [0, 0] }, "", final.href);
-      } else if (final.href !== location.href) {
-        history.replaceState({ ...estadoActual(), __jsarPjax: true }, "", final.href);
+        if (typeof document.startViewTransition === "function") {
+          try {
+            const transicion = document.startViewTransition(aplicar);
+            transicionActiva = transicion;
+            // ready rechaza cuando el navegador omite la captura: no es un
+            // error de navegación ni debe dejar un rechazo sin atender.
+            transicion.ready.catch(() => {});
+            await transicion.updateCallbackDone;
+            await transicion.finished.catch(() => {});
+            if (transicionActiva === transicion) transicionActiva = null;
+          } catch {
+            aplicar();
+          }
+        } else {
+          await animar(document.getElementById("principal"), [
+            { clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", transform: "none", opacity: 1 },
+            { clipPath: "polygon(100% 0, 100% 0, 100% 100%, 112% 100%)", transform: "translate3d(-24px, 0, 0) scale(.985)", opacity: .2 },
+          ], { duration: 300, easing: "cubic-bezier(.65, 0, .8, .35)", fill: "forwards" });
+          if (turno !== secuencia) return;
+          aplicar();
+          await animar(principal, [
+            { clipPath: "polygon(0 0, 0 0, -12% 100%, 0 100%)", transform: "translate3d(32px, 0, 0) scale(1.025)", opacity: .25 },
+            { clipPath: "polygon(0 0, 112% 0, 100% 100%, 0 100%)", transform: "none", opacity: 1 },
+          ], { duration: 620, easing: "cubic-bezier(.16, 1, .3, 1)" });
+        }
+        await barrido;
       }
-      window.dispatchEvent(new CustomEvent("sitio:navegacion", {
-        detail: { path: final.pathname },
-      }));
-      enfocar(final, posicion);
+      if (turno !== secuencia || !aplicado) return;
+      enfocar(final, posicion, { turno, mover: false, focoInicial });
     } catch (error) {
-      if (error?.name === "AbortError") return;
+      if (turno !== secuencia || error?.name === "AbortError") return;
       // La mejora es progresiva: si red, CSP, HTML o transiciones fallan, el
       // navegador hace una carga convencional y conserva una página usable.
       if (historial === "pop") location.reload();
@@ -462,8 +577,10 @@ function navegacion() {
       if (turno === secuencia) {
         navegando = false;
         document.documentElement.classList.remove("navegando");
+        document.documentElement.removeAttribute("data-transicion");
         document.getElementById("principal")?.removeAttribute("aria-busy");
         controlador = null;
+        guardarDesplazamiento();
       }
     }
   }
@@ -471,7 +588,9 @@ function navegacion() {
   document.addEventListener("click", (evento) => {
     const url = enlaceElegible(evento);
     if (!url) return;
-    if (url.pathname === location.pathname && url.search === location.search) {
+    if (url.pathname === location.pathname && url.search === location.search
+      && url.pathname + url.search === rutaMostrada) {
+      if (navegando) cancelarNavegacion();
       // Un enlace al documento que ya está visible no debe provocar una carga
       // completa (y con ella cortar el audio). Los cambios reales de fragmento
       // se dejan al comportamiento nativo del navegador.
@@ -489,16 +608,18 @@ function navegacion() {
     const url = new URL(location.href);
     const ruta = url.pathname + url.search;
     if (ruta === rutaMostrada) {
+      cancelarNavegacion();
       enfocar(url, evento.state?.scroll || null);
       return;
     }
     ir(url, { historial: "pop", posicion: evento.state?.scroll || null });
   });
+  addEventListener("pagehide", cancelarNavegacion);
 }
 
 /* ------------------------------------------------------------------ arranque */
 
-reiniciarContenido();
+reiniciarContenido({ entrada: true });
 iniciarCinematografia();
 avance();
 audio();

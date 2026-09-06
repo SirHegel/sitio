@@ -115,6 +115,19 @@ test("el menú móvil se abre con teclado después de desplazarse y Escape devue
 test("una escena elegida permanece durante la navegación y el fondo obedece pausa y movimiento reducido", { timeout: 25_000 }, async () => {
   const pagina = await nuevaPagina(1440);
   try {
+    await pagina.evaluateOnNewDocument(() => {
+      window.cuadrosEscena = 0;
+      for (const tipo of [window.WebGLRenderingContext, window.WebGL2RenderingContext]) {
+        if (!tipo) continue;
+        for (const nombre of ["drawArrays", "drawElements"]) {
+          const dibujar = tipo.prototype[nombre];
+          tipo.prototype[nombre] = function (...argumentos) {
+            if (this.canvas?.id === "lienzo") window.cuadrosEscena++;
+            return dibujar.apply(this, argumentos);
+          };
+        }
+      }
+    });
     await cargar(pagina);
     await pagina.click("#cambiar-escena");
     const escena = await pagina.$eval("body", (e) => e.dataset.escena);
@@ -128,18 +141,23 @@ test("una escena elegida permanece durante la navegación y el fondo obedece pau
 
     await pagina.click("#pausar-escena");
     await pagina.waitForFunction(() => document.body.classList.contains("escena-pausada"));
-    const cuadroPausado = await pagina.$eval("#lienzo", (e) => e.toDataURL());
+    // WebGL puede descartar su buffer tras componer sin dibujar otro cuadro.
+    // Contar comandos comprueba la pausa sin exigir preserveDrawingBuffer.
+    const cuadroPausado = await pagina.evaluate(() => window.cuadrosEscena);
+    if (await pagina.$eval("#lienzo", (e) => e.dataset.motor === "webgl")) {
+      assert.ok(cuadroPausado > 0, "el motor dibujó antes de pausar");
+    }
     await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 150)));
-    assert.ok(cuadroPausado === await pagina.$eval("#lienzo", (e) => e.toDataURL()), "el lienzo deja de dibujar al pausar");
+    assert.equal(await pagina.evaluate(() => window.cuadrosEscena), cuadroPausado, "el lienzo deja de dibujar al pausar");
     await pagina.reload({ waitUntil: "networkidle2" });
     assert.equal(await pagina.$eval("#pausar-escena", (e) => e.getAttribute("aria-pressed")), "true", "la pausa se conserva tras recargar");
     await pagina.click("#pausar-escena");
 
     await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
     await pagina.waitForFunction(() => document.getElementById("pausar-escena").disabled);
-    const cuadroReducido = await pagina.$eval("#lienzo", (e) => e.toDataURL());
+    const cuadroReducido = await pagina.evaluate(() => window.cuadrosEscena);
     await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 150)));
-    assert.ok(cuadroReducido === await pagina.$eval("#lienzo", (e) => e.toDataURL()), "el cambio del sistema detiene el lienzo inmediatamente");
+    assert.equal(await pagina.evaluate(() => window.cuadrosEscena), cuadroReducido, "el cambio del sistema detiene el lienzo inmediatamente");
     assert.equal(await pagina.$eval(".luz-proyector", (e) => getComputedStyle(e).animationName), "none");
     await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "no-preference" }]);
     await pagina.waitForFunction(() => !document.getElementById("pausar-escena").disabled);

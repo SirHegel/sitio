@@ -99,6 +99,8 @@ export function pagina({
 }) {
   const url = SITIO + ruta;
   const ld = { "@context": "https://schema.org", "@graph": grafo };
+  const escenaInicial = ruta.startsWith("/blog/") ? "celuloide"
+    : /^\/(proyectos|contribuciones|academico)\//.test(ruta) ? "nocturno" : "terciopelo";
 
   const enlaces = MENU.map(
     (m) => {
@@ -145,12 +147,16 @@ ${ruta === "/" ? `<meta property="profile:first_name" content="Jhon Steven">
 <link rel="alternate" type="application/rss+xml" title="Escritos de ${esc(PERSONA.nombre)}" href="${SITIO}/feed.xml">
 <link rel="stylesheet" href="/activos/estilos.css">
 <link rel="stylesheet" href="/activos/cinematografia.css">
+<link rel="stylesheet" href="/activos/direccion-arte.css">
+<link rel="stylesheet" href="/activos/transiciones.css">
+${!ruta.startsWith("/admin/") ? `<link rel="preload" as="image" href="/activos/escenas/${escenaInicial}.webp" media="(min-width: 769px)">
+<link rel="preload" as="image" href="/activos/escenas/${escenaInicial}-movil.webp" media="(max-width: 768px)">` : ""}
 
 <script type="application/ld+json">
 ${json(ld)}
 </script>
 </head>
-<body${claseCuerpo ? ` class="${esc(claseCuerpo)}"` : ""} data-ruta="${esc(ruta)}">
+<body${claseCuerpo ? ` class="${esc(claseCuerpo)}"` : ""} data-ruta="${esc(ruta)}" data-escena="${escenaInicial}">
 
 <a class="saltar" href="#principal">Saltar al contenido</a>
 

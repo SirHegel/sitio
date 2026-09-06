@@ -1,0 +1,140 @@
+/* Un cambio de plano dura 920 ms. La escenografía y los mandos permanecen
+   vivos; únicamente se fotografía el contenido. Sin destellos ni estrobo. */
+@view-transition { navigation: none; }
+
+:root, .marca, .barra, #mando, .direccion-escena, .escenografia {
+  view-transition-name: none;
+}
+#principal { view-transition-name: contenido; }
+html.navegando #principal { opacity: 1; transition: none; }
+
+::view-transition,
+::view-transition-group(*),
+::view-transition-image-pair(*),
+::view-transition-old(*),
+::view-transition-new(*) { pointer-events: none; }
+
+::view-transition-group(contenido) {
+  animation: none;
+  overflow: clip;
+}
+::view-transition-image-pair(contenido) { isolation: isolate; }
+::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+::view-transition-old(contenido), ::view-transition-new(contenido) {
+  mix-blend-mode: normal;
+  transform-origin: 50% min(42vh, 24rem);
+  backface-visibility: hidden;
+}
+::view-transition-old(contenido) {
+  animation: proyeccion-salida 920ms cubic-bezier(.76, 0, .24, 1) both;
+}
+::view-transition-new(contenido) {
+  animation: proyeccion-entrada 920ms cubic-bezier(.76, 0, .24, 1) both;
+}
+
+@keyframes proyeccion-salida {
+  from {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, -12% 100%);
+    transform: none;
+    opacity: 1;
+  }
+  to {
+    clip-path: polygon(112% 0, 100% 0, 100% 100%, 100% 100%);
+    transform: translate3d(-2.5rem, 0, 0) scale(.975);
+    opacity: .12;
+  }
+}
+@keyframes proyeccion-entrada {
+  from {
+    clip-path: polygon(0 0, 0 0, -12% 100%, 0 100%);
+    transform: translate3d(3rem, 0, 0) scale(1.025);
+    opacity: .4;
+  }
+  18% { opacity: 1; }
+  to {
+    clip-path: polygon(0 0, 112% 0, 100% 100%, 0 100%);
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* El regreso conserva dirección opuesta, como rebobinar un plano. */
+html[data-transicion="regreso"]::view-transition-old(contenido) {
+  animation-name: proyeccion-regreso-salida;
+}
+html[data-transicion="regreso"]::view-transition-new(contenido) {
+  animation-name: proyeccion-regreso-entrada;
+}
+@keyframes proyeccion-regreso-salida {
+  from { clip-path: inset(0); transform: none; opacity: 1; }
+  to { clip-path: inset(0 100% 0 0); transform: translate3d(2.5rem, 0, 0) scale(.975); opacity: .12; }
+}
+@keyframes proyeccion-regreso-entrada {
+  from { clip-path: inset(0 0 0 100%); transform: translate3d(-3rem, 0, 0) scale(1.025); opacity: .4; }
+  18% { opacity: 1; }
+  to { clip-path: inset(0); transform: none; opacity: 1; }
+}
+
+.corte-proyector {
+  position: fixed;
+  inset: 0 auto 0 -10%;
+  width: 32vw;
+  z-index: 45;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgb(20 5 7 / .22) 35%, rgb(6 5 5 / .68) 70%, transparent);
+  contain: strict;
+}
+
+/* La entrada tiene una jerarquía: título, voz, acceso. Los glifos conservan
+   su agrupación accesible y ceden la animación al título completo. */
+.nombre .g { animation: none; opacity: 1; transform: none; filter: none; }
+.entrada-cine h1 {
+  animation: titulo-en-cuadro 1000ms cubic-bezier(.16, 1, .3, 1) both;
+}
+.entrada-cine .portada :is(.oficio, .entradilla, .intro),
+.entrada-cine .portada-sinopsis > p {
+  animation: voz-en-cuadro 840ms 100ms cubic-bezier(.16, 1, .3, 1) both;
+}
+.entrada-cine .portada .acciones {
+  animation: voz-en-cuadro 840ms 180ms cubic-bezier(.16, 1, .3, 1) both;
+}
+@keyframes titulo-en-cuadro {
+  from { clip-path: inset(0 0 100% 0); transform: translate3d(0, .32em, 0); opacity: .2; }
+  to { clip-path: inset(-.1em -.1em -.1em -.1em); transform: none; opacity: 1; }
+}
+@keyframes voz-en-cuadro {
+  from { transform: translate3d(0, 1.5rem, 0); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+.revelar {
+  will-change: auto;
+  transition:
+    opacity 850ms cubic-bezier(.16, 1, .3, 1) calc(var(--i, 0) * 75ms),
+    transform 1050ms cubic-bezier(.16, 1, .3, 1) calc(var(--i, 0) * 75ms);
+}
+.js-cine .revelar:not(.visible):not(.prosa) {
+  opacity: 0;
+  transform: translate3d(0, 2.4rem, 0) scale(.985);
+}
+.revelar.visible, .revelar.prosa { opacity: 1; transform: none; }
+.prosa.revelar { transition: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  #principal { view-transition-name: none; }
+  ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  .corte-proyector { display: none; }
+  .entrada-cine h1, .entrada-cine .portada :is(.oficio, .entradilla, .intro, .acciones),
+  .entrada-cine .portada-sinopsis > p {
+    animation: none;
+    clip-path: none;
+    opacity: 1;
+    transform: none;
+  }
+  .js-cine .revelar:not(.visible):not(.prosa), .revelar {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

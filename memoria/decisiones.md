@@ -26,6 +26,13 @@ La dirección visual usa tres escenas originales CSS/canvas, tipografía editori
 y música voluntaria. La interfaz conserva el contenido sin JavaScript y respeta
 cambios de movimiento reducido durante la sesión.
 
+La segunda revisión sustituye esos fondos por tres escenografías originales
+generadas, tras inspeccionar los dos vídeos aportados por el autor. La sala
+WebGL usa profundidad aparente 2.5D, acercamiento de 1,8 s y navegación de
+920 ms. No se afirma haber construido los mundos 3D de la referencia. Se
+conservan imágenes de respaldo, pausa y música voluntaria. Detalle, presupuestos
+y prompts en `memoria/direccion-cinematografica-20260906.md`.
+
 La IP se cifra con AES-256-GCM; el panel limita su consulta a siete días. Git
 conserva versiones cifradas históricas. Los mapas se rotulan como aproximaciones
 de red, sin inferir dirección, barrio ni identidad personal.

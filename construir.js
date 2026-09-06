@@ -344,35 +344,53 @@ function inicio() {
   const destacados = proyectosCurados.slice(0, 3).map(fichaProyecto).join("\n");
   const escritosRecientes = ESCRITOS_LISTADOS.slice(0, 3).map(fichaEscrito).join("\n");
 
-  const cuerpo = `    <section class="portada" data-ambiente="terciopelo">
-      <div class="portada-caja">
-        <p class="micro portada-creditos"><span class="punto-vivo" aria-hidden="true"></span> Portafolio personal <span>Neiva, Colombia</span></p>
-        <p class="portada-preludio">Una mirada propia.</p>
-        <h1 class="nombre nombre-editorial"><span>Jhon Steven</span><span>Alvarez <em>Ruiz.</em></span></h1>
-        <p class="titular">${esc(PERSONA.titular)}</p>
-        <p class="subtitular">${esc(PERSONA.subtitular)}</p>
-        <div class="acciones">
-          <a class="boton primario" href="/proyectos/"><span>Explorar proyectos</span><span aria-hidden="true">↗</span></a>
-          <a class="boton" href="/blog/"><span>Leer mis escritos</span><span aria-hidden="true">→</span></a>
-        </div>
-        <div class="portada-enlaces"><a href="/hoja-de-vida/">Hoja de vida ↗</a><span>Disponible para trabajo remoto</span></div>
+  const cuerpo = `    <section class="portada" aria-label="Portafolio de Jhon Steven Alvarez Ruiz">
+      <div class="portada-superior">
+        <p class="micro portada-creditos">Portafolio de autor <span>Neiva, Colombia · ${new Date().getFullYear()}</span></p>
+        <button id="recorrer-escenas" type="button" aria-pressed="false"><span aria-hidden="true">▷</span> <span data-recorrido-etiqueta>Recorrer las escenas</span></button>
       </div>
-      <figure class="retrato retrato-cine">
-        <div class="fotograma-creditos"><span>El autor</span><span>JS / 01</span></div>
-        <div class="fotograma-imagen">
-        <img src="/activos/retrato.jpg" width="800" height="800" fetchpriority="high"
-             alt="Retrato de ${esc(PERSONA.nombre)}, analista de datos y desarrollador de automatización en ${esc(PERSONA.ciudad)}, ${esc(PERSONA.pais)}">
-        <span class="fotograma-esquina" aria-hidden="true">+</span>
+      <div class="portada-caja">
+        <p class="portada-autor">Jhon Steven Alvarez Ruiz</p>
+        <h1 class="nombre nombre-editorial"><span>Una mirada</span><span><em>fuera de campo.</em></span></h1>
+        <div class="portada-sinopsis">
+          <p class="titular">${esc(PERSONA.titular)}</p>
+          <p class="subtitular">El mundo merece una segunda lectura.</p>
+          <div class="acciones">
+            <a class="boton primario" href="/proyectos/"><span>Explorar proyectos</span><span aria-hidden="true">↗</span></a>
+            <a class="boton boton-texto" href="/blog/"><span>Leer mis escritos</span><span aria-hidden="true">→</span></a>
+          </div>
         </div>
-        <figcaption><span>El mundo merece<br>una segunda lectura.</span><span class="fotograma-firma">J. S. Alvarez</span></figcaption>
-      </figure>
-      <a class="portada-continuar" href="#mirada"><span aria-hidden="true">↓</span> Continúa la historia <span>Desplázate para explorar</span></a>
+      </div>
+      <div class="escena-cartela" aria-live="polite" aria-atomic="true">
+        <p class="micro" data-escena-subtitulo data-subtitulo-terciopelo="Acto I / Lo que se oculta" data-subtitulo-nocturno="Acto II / La ciudad despierta" data-subtitulo-celuloide="Acto III / La memoria en luz">Acto I / Lo que se oculta</p>
+        <p data-escena-titulo data-titulo-terciopelo="La habitación roja" data-titulo-nocturno="Después de medianoche" data-titulo-celuloide="La sala de proyección">La habitación roja</p>
+        <span class="escena-formato">35 MM &nbsp; / &nbsp; ESCENOGRAFÍA ORIGINAL</span>
+      </div>
+      <div class="portada-inferior">
+        <a class="portada-continuar" href="#mirada"><span aria-hidden="true">↓</span> Desliza para explorar</a>
+        <div class="escenas-selector" role="group" aria-label="Elegir escenario cinematográfico">
+          <button type="button" data-ir-escena="terciopelo" aria-pressed="true"><span>01</span> Terciopelo</button>
+          <button type="button" data-ir-escena="nocturno" aria-pressed="false"><span>02</span> Nocturno</button>
+          <button type="button" data-ir-escena="celuloide" aria-pressed="false"><span>03</span> Celuloide</button>
+        </div>
+      </div>
     </section>
 
-${franja(`      <div id="mirada" class="scrim columna revelar presentacion-editorial" data-ambiente="nocturno">
+    <div class="cinta-oficios" aria-label="Áreas de trabajo"><span>Análisis de datos</span><i aria-hidden="true">✳</i><span>Economía</span><i aria-hidden="true">✳</i><span>Automatización</span><i aria-hidden="true">✳</i><span>Una mirada propia</span></div>
+    <div class="contenido-editorial">
+
+${franja(`      <div id="mirada" class="mirada-composicion">
+      <div class="scrim columna revelar presentacion-editorial">
         <p class="micro">01 / La mirada</p>
         <h2 class="titulo media">Pensar con los pies<br><em>en la tierra.</em></h2>
 ${PRESENTACION.map((p) => `        <p class="lead">${p.trim()}</p>`).join("\n")}
+      </div>
+      <figure class="retrato retrato-cine revelar">
+        <div class="fotograma-creditos"><span>El autor</span><span>JS / 01</span></div>
+        <div class="fotograma-imagen"><img src="/activos/retrato.jpg" width="800" height="800" loading="lazy" alt="Retrato de ${esc(PERSONA.nombre)}"><span class="fotograma-esquina" aria-hidden="true">+</span></div>
+        <figcaption>Jhon Steven Alvarez Ruiz<br><span>Neiva, Huila. Disponible para trabajo remoto.</span></figcaption>
+        <a class="mas" href="/hoja-de-vida/">Mi hoja de vida <i>↗</i></a>
+      </figure>
       </div>
 
       <hr class="regla">
@@ -402,11 +420,11 @@ ${destacados}
       </div>
       <p class="sep-m"><a class="mas" href="/proyectos/">Los ${PROYECTOS_TODOS.length} proyectos y repositorios <i>→</i></a></p>`)}
 
-${franja(`      <div class="intermedio revelar" data-ambiente="terciopelo">
-        <div class="sala-imaginaria" aria-hidden="true"><div class="sala-telon"></div><div class="sala-piso"></div><div class="sala-umbral"></div><span class="sala-luz"></span><span class="sala-rotulo">INTERMEDIO / 35 MM</span></div>
+${franja(`      <div class="intermedio revelar">
+        <div class="sala-imaginaria" aria-hidden="true"><img src="/activos/escenas/nocturno.webp" width="1674" height="940" loading="lazy" alt=""><span class="sala-rotulo">INTERMEDIO / DESPUÉS DE MEDIANOCHE</span></div>
         <div class="intermedio-texto">
           <p class="micro">Fuera de campo</p>
-          <h2>El cine también<br>es una forma<br><em>de mirar.</em></h2>
+          <h2>Hay películas<br>que nunca<br><em>terminan.</em></h2>
           <p>La conversación de Woody Allen. La extrañeza de David Lynch.
           Me interesa ese cine que termina y se queda dando vueltas en la cabeza.</p>
           <a class="mas" href="/blog/">Mis notas al margen <i>→</i></a>
@@ -429,7 +447,8 @@ ${franja(`      <div class="scrim columna revelar">
         <p class="sep-s"><a class="mas" href="/academico/">Formación completa <i>→</i></a></p>
       </div>`)}
 
-${epigrafe()}`;
+${epigrafe()}
+    </div>`;
 
   return pagina({
     ruta: "/",
@@ -826,8 +845,8 @@ function indiceBlog(categoria = null) {
           <p class="pie-nota">El tema ya está preparado: el próximo texto aparecerá aquí al publicarse desde el panel privado.</p>
         </div>`;
 
-  const cuerpo = `${franja(`      <div class="scrim columna revelar">
-        <p class="micro verde">Archivo</p>
+  const cuerpo = `${franja(`      <div class="scrim columna revelar archivo-cabecera">
+        <p class="micro verde">El archivo / Notas al margen</p>
         <h1 class="titulo grande">${esc(tituloVisible)}</h1>
         <p class="lead">Lecturas del poder, la economía y la vida cotidiana.
         Ensayos para mirar de cerca y discutir con argumentos.</p>
