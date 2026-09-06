@@ -61,7 +61,7 @@ async function procesarCola() {
   evento.enviando = true;
   evento.intentos += 1;
   try {
-    const respuesta = await fetch("/api/visita", {
+    const respuesta = await fetch("/api/visita/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(evento.datos),
