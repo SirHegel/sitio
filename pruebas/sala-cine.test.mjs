@@ -20,6 +20,7 @@ const tipos = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": 
 let navegador;
 let servidor;
 let origen;
+const seguimiento = new WeakMap();
 
 before(async () => {
   execFileSync(process.execPath, ["construir.js"], { cwd: raiz, stdio: "pipe" });
@@ -37,7 +38,9 @@ before(async () => {
   origen = `http://127.0.0.1:${servidor.address().port}`;
   navegador = await puppeteer.launch({
     executablePath: ejecutableChrome(), headless: true,
-    args: ["--no-sandbox", "--disable-dev-shm-usage", "--enable-unsafe-swiftshader"],
+    // Backend idéntico en equipos locales y CI sin GPU física:
+    // https://chromium.googlesource.com/chromium/src/+/main/docs/gpu/swiftshader.md
+    args: ["--no-sandbox", "--disable-dev-shm-usage", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
   });
 });
 
@@ -46,8 +49,25 @@ after(async () => {
   if (servidor) await new Promise((resolver) => servidor.close(resolver));
 });
 
-async function nuevaPagina({ ancho = 390, sinWebGL = false, sinTransicionNativa = false, retenerBlog = false } = {}) {
+async function nuevaPagina(t, { ancho = 390, sinWebGL = false, sinTransicionNativa = false, retenerBlog = false } = {}) {
   const pagina = await navegador.newPage();
+  const traza = { ancho, fase: "crear página", estado: null };
+  seguimiento.set(pagina, traza);
+  const cerrar = () => pagina.isClosed() ? Promise.resolve() : pagina.close().catch(() => {});
+  const cancelar = () => { t.diagnostic(`Página cancelada: ${JSON.stringify(traza)}`); void cerrar(); };
+  t.signal.addEventListener("abort", cancelar, { once: true });
+  t.after(async () => {
+    t.signal.removeEventListener("abort", cancelar);
+    await cerrar();
+  });
+  for (const nombre of ["goto", "click", "waitForFunction", "reload", "goBack"]) {
+    const ejecutar = pagina[nombre].bind(pagina);
+    pagina[nombre] = (...argumentos) => {
+      traza.fase = `${nombre}: ${String(argumentos[0] ?? "").slice(0, 180)}`;
+      return ejecutar(...argumentos);
+    };
+  }
+  await pagina.bringToFront();
   await pagina.setViewport({ width: ancho, height: ancho < 768 ? 844 : 900, deviceScaleFactor: ancho < 768 ? 2 : 1 });
   const solicitudes = [];
   const errores = [];
@@ -98,6 +118,16 @@ async function nuevaPagina({ ancho = 390, sinWebGL = false, sinTransicionNativa 
 async function cargar(pagina) {
   await pagina.goto(origen + "/", { waitUntil: "networkidle2" });
   await pagina.waitForFunction(() => document.documentElement.classList.contains("js-cine") && !document.getElementById("puerta"));
+  seguimiento.get(pagina).estado = await pagina.evaluate(() => {
+    const lienzo = document.getElementById("lienzo");
+    const gl = lienzo.dataset.motor === "webgl" ? lienzo.getContext("webgl") : null;
+    const info = gl?.getExtension("WEBGL_debug_renderer_info");
+    return {
+      visible: document.visibilityState, motor: lienzo.dataset.motor,
+      renderer: info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : null,
+      ancho: lienzo.width, alto: lienzo.height, dibujos: window.__qaSala.dibujados,
+    };
+  });
 }
 
 async function reposar(pagina) {
@@ -114,8 +144,8 @@ test("las escenas publicadas conservan seis imágenes locales bajo 200 kB cada u
   }
 });
 
-test("la selección de escenas funciona con teclado y carga versiones móviles bajo la CSP publicada", { timeout: 30_000 }, async () => {
-  const { pagina, solicitudes, errores } = await nuevaPagina();
+test("la selección de escenas funciona con teclado y carga versiones móviles bajo la CSP publicada", { timeout: 30_000 }, async (t) => {
+  const { pagina, solicitudes, errores } = await nuevaPagina(t);
   try {
     await cargar(pagina);
     const escenas = await pagina.$$eval("[data-ir-escena]", (botones) => botones.map((boton) => boton.dataset.irEscena));
@@ -134,8 +164,8 @@ test("la selección de escenas funciona con teclado y carga versiones móviles b
   } finally { await pagina.close(); }
 });
 
-test("sin WebGL la escena sigue visible y los controles no bloquean navegación ni lectura", { timeout: 25_000 }, async () => {
-  const { pagina, errores } = await nuevaPagina({ sinWebGL: true });
+test("sin WebGL la escena sigue visible y los controles no bloquean navegación ni lectura", { timeout: 25_000 }, async (t) => {
+  const { pagina, errores } = await nuevaPagina(t, { sinWebGL: true });
   try {
     await cargar(pagina);
     await pagina.click('[data-ir-escena="nocturno"]');
@@ -155,8 +185,8 @@ test("sin WebGL la escena sigue visible y los controles no bloquean navegación 
   } finally { await pagina.close(); }
 });
 
-test("el recorrido voluntario se detiene al pausar o pedir movimiento reducido", { timeout: 25_000 }, async () => {
-  const { pagina } = await nuevaPagina({ ancho: 1440 });
+test("el recorrido voluntario se detiene al pausar o pedir movimiento reducido", { timeout: 25_000 }, async (t) => {
+  const { pagina } = await nuevaPagina(t, { ancho: 1440 });
   try {
     await cargar(pagina);
     assert.equal(await pagina.$eval("#recorrer-escenas", (e) => e.getAttribute("aria-pressed")), "false", "no inicia un carrusel automático al cargar");
@@ -181,7 +211,7 @@ test("el recorrido voluntario se detiene al pausar o pedir movimiento reducido",
 });
 
 test("el motor deja de dibujar fuera de portada, vuelve al entrar y conserva la pausa elegida", { timeout: 20_000 }, async (t) => {
-  const { pagina, errores } = await nuevaPagina({ ancho: 1440 });
+  const { pagina, errores } = await nuevaPagina(t, { ancho: 1440 });
   try {
     await cargar(pagina);
     if (await pagina.$eval("#lienzo", (e) => e.dataset.motor !== "webgl")) {
@@ -215,13 +245,13 @@ test("el motor deja de dibujar fuera de portada, vuelve al entrar y conserva la 
     assert.equal(await pagina.$eval("#pausar-escena", (e) => e.getAttribute("aria-pressed")), "true");
     assert.deepEqual(errores, []);
   } finally {
-    await pagina.evaluate(() => localStorage.removeItem("jsar:escena-pausa"));
+    if (!pagina.isClosed()) await pagina.evaluate(() => localStorage.removeItem("jsar:escena-pausa"));
     await pagina.close();
   }
 });
 
 test("perder el contexto gráfico recupera el fondo y mantiene utilizables los controles", { timeout: 25_000 }, async (t) => {
-  const { pagina, errores } = await nuevaPagina({ ancho: 1440 });
+  const { pagina, errores } = await nuevaPagina(t, { ancho: 1440 });
   try {
     await cargar(pagina);
     const disponible = await pagina.evaluate(() => {
@@ -230,6 +260,13 @@ test("perder el contexto gráfico recupera el fondo y mantiene utilizables los c
       return Boolean(window.__qaContexto);
     });
     if (!disponible) { t.skip("Chrome no ofrece WEBGL_lose_context; el caso sin WebGL se cubre aparte"); return; }
+    assert.ok(await pagina.$eval("#lienzo", (e) => e.width * e.height <= 360_000), "SwiftShader respeta el presupuesto de 360000 píxeles");
+    const anchoInicial = await pagina.$eval("#lienzo", (e) => e.width);
+    await pagina.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
+    await pagina.waitForFunction((anterior) => document.getElementById("lienzo").width !== anterior, {}, anchoInicial);
+    assert.ok(await pagina.$eval("#lienzo", (e) => e.width * e.height <= 360_000), "ampliar el viewport conserva el presupuesto del backend software");
+    await pagina.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
+    await pagina.waitForFunction((anterior) => document.getElementById("lienzo").width === anterior, {}, anchoInicial);
     await pagina.click('[data-ir-escena="nocturno"]');
     await pagina.waitForFunction(() => document.body.classList.contains("escena-cambiando"));
     await pagina.evaluate(() => window.__qaContexto.loseContext());
@@ -240,13 +277,14 @@ test("perder el contexto gráfico recupera el fondo y mantiene utilizables los c
     assert.ok(await pagina.$eval(".ambiente-nocturno", (e) => Number(getComputedStyle(e).opacity) > 0));
     await pagina.evaluate(() => window.__qaContexto.restoreContext());
     await pagina.waitForFunction(() => document.body.classList.contains("sala-lista"));
+    assert.ok(await pagina.$eval("#lienzo", (e) => e.width * e.height <= 360_000), "restaurar el contexto conserva el presupuesto");
     assert.deepEqual(errores, []);
   } finally { await pagina.close(); }
 });
 
-test("dos navegaciones rápidas conservan el último destino con y sin View Transitions", { timeout: 30_000 }, async () => {
+test("dos navegaciones rápidas conservan el último destino con y sin View Transitions", { timeout: 30_000 }, async (t) => {
   for (const sinTransicionNativa of [false, true]) {
-    const { pagina, errores, blogRetenido, liberarBlog } = await nuevaPagina({ ancho: 1440, sinTransicionNativa, retenerBlog: true });
+    const { pagina, errores, blogRetenido, liberarBlog } = await nuevaPagina(t, { ancho: 1440, sinTransicionNativa, retenerBlog: true });
     try {
       // Diagnóstico reproducible: CINE_QA_CPU=4 repite el caso con CPU lenta.
       if (process.env.CINE_QA_CPU === "4") {
@@ -276,8 +314,8 @@ test("dos navegaciones rápidas conservan el último destino con y sin View Tran
   }
 });
 
-test("un callback de transición demorado no publica un destino cancelado y el historial restaura el scroll", { timeout: 30_000 }, async () => {
-  const { pagina, errores } = await nuevaPagina({ ancho: 1440 });
+test("un callback de transición demorado no publica un destino cancelado y el historial restaura el scroll", { timeout: 30_000 }, async (t) => {
+  const { pagina, errores } = await nuevaPagina(t, { ancho: 1440 });
   try {
     await cargar(pagina);
     await pagina.evaluate(() => {

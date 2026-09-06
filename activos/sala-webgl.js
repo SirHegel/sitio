@@ -1,7 +1,8 @@
 /* Escenografía sobre planos con profundidad aparente. Un triángulo por cuadro:
    O(W·H) tiempo y O(W·H + I) memoria, I <= 3 imágenes. Sin rAF propio.
    Invariantes: textura sin inversión; DPR móvil <= 1.25; progreso [0,1];
-   la imagen CSS permanece disponible si falla la GPU o la carga de recursos. */
+   rasterización por CPU <= 360000 píxeles; la imagen CSS permanece disponible
+   si falla la GPU o la carga de recursos. Texto y controles conservan su tamaño. */
 const VERTICE = `
 attribute vec2 posicion;
 varying vec2 uv;
@@ -74,6 +75,7 @@ export function crearSalaWebGL(lienzo, alCambiar = () => {}) {
   let programa, buffer, ubicaciones;
   let perdida = false;
   let destruida = false;
+  let renderizadoSoftware = false;
   const imagenes = new Map();
   const texturas = new Map();
   const cargas = new Map();
@@ -92,6 +94,12 @@ export function crearSalaWebGL(lienzo, alCambiar = () => {}) {
   }
 
   function iniciar() {
+    // Consulta local O(1): adapta el coste por cuadro cuando no existe GPU real.
+    // El nombre del dispositivo no se almacena, registra ni envía a servidores.
+    try {
+      const informacion = gl.getExtension("WEBGL_debug_renderer_info");
+      renderizadoSoftware = Boolean(informacion && /swiftshader|llvmpipe|softpipe|software rasterizer/i.test(String(gl.getParameter(informacion.UNMASKED_RENDERER_WEBGL))));
+    } catch { renderizadoSoftware = false; }
     const vertice = compilar(gl.VERTEX_SHADER, VERTICE);
     const fragmento = compilar(gl.FRAGMENT_SHADER, FRAGMENTO);
     programa = gl.createProgram();
@@ -168,8 +176,10 @@ export function crearSalaWebGL(lienzo, alCambiar = () => {}) {
     ancho = Math.max(1, innerWidth);
     alto = Math.max(1, innerHeight);
     const dpr = Math.min(devicePixelRatio || 1, ancho <= 768 ? 1.25 : 1.5);
-    lienzo.width = Math.round(ancho * dpr);
-    lienzo.height = Math.round(alto * dpr);
+    const escala = renderizadoSoftware ? Math.min(dpr, Math.sqrt(360000 / (ancho * alto))) : dpr;
+    const redondear = renderizadoSoftware ? Math.floor : Math.round;
+    lienzo.width = Math.max(1, redondear(ancho * escala));
+    lienzo.height = Math.max(1, redondear(alto * escala));
     if (!perdida) gl.viewport(0, 0, lienzo.width, lienzo.height);
   }
 

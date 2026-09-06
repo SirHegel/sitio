@@ -8,7 +8,11 @@ Presupuesto fijado antes de verificar: cada WebP < 200.000 bytes; desbordamiento
 
 Complejidad: un triángulo por cuadro O(W·H); memoria O(W·H + I), I ≤ 3 imágenes. Bucle de control O(1), limitado a 30 cuadros/s; DPR ≤ 1,25 en móvil y ≤ 1,5 en escritorio. El bucle se detiene cuando la portada queda fuera de pantalla. El CSS conserva la misma composición y punto de recorte si falla WebGL.
 
+Cuando WebGL identifica rasterización por software (SwiftShader, llvmpipe, softpipe o software rasterizer), se limita el fondo a 360.000 píxeles internos. Escala = min(DPR, √(360.000 / (ancho × alto))); se conserva la resolución del texto y los controles HTML. El nombre del dispositivo sólo se consulta localmente y no se guarda ni se envía. En hardware se conserva el DPR anterior. Si el navegador no permite identificar el renderer, esa detección queda sin garantía.
+
 La ejecución CI de `master` del primer commit alcanzó el límite de 180 s de la matriz responsive; la ejecución del mismo commit en la rama de trabajo aprobó. Se eliminó la apertura innecesaria de WebGL cuando el dispositivo pide movimiento reducido desde el inicio, manteniendo habilitación posterior. La regresión nueva observó un contexto antes del arreglo y cero después. Se conserva el límite de 180 s y todas las medidas geométricas; una cancelación ahora cierra Chrome. Otra prueba usaba una demora fija de 350 ms para dos clics y llegó a actuar sobre un menú sustituido: se reemplazó esa demora por una barrera de red. El caso repitió 6/6 recorridos con CPU ralentizada ×4.
+
+Una segunda ejecución local aprobó 80/80 pruebas en 108,8 s; CI aprobó la matriz responsive en 70,9 s, pero agotó los límites de varios casos con fondo animado. Se reprodujo el agotamiento de 25 s con SwiftShader y afinidad de dos CPU, manteniendo `document.hidden=false`. Con el presupuesto de píxeles, el mismo recorrido aprobó en 3,34 s y los ocho casos de sala en 40,8 s, sin aumentar límites ni omitir casos. Se verifica también el presupuesto al redimensionar a 1920 × 1080 y tras restaurar un contexto perdido. El harness usa un backend software explícito y cierra cada página si se cancela su prueba.
 
 ## Activos y procedencia
 
