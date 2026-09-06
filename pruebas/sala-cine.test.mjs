@@ -315,11 +315,38 @@ test("los ornamentos visibles se animan por defecto y la pausa o movimiento redu
 
       await pagina.click("#pausar-escena");
       await pagina.waitForFunction(() => document.body.classList.contains("escena-pausada"));
+      await pagina.evaluate(async () => {
+        // CSS puede indicar paused antes de que el compositor termine su
+        // tarea de pausa. Esperar ready conserva la comparación exacta.
+        await Promise.all(document.getAnimations()
+          .filter((a) => a.effect?.getTiming().iterations === Infinity)
+          .map((a) => a.ready.catch(() => {})));
+        await new Promise((resolver) => requestAnimationFrame(resolver));
+      });
       const congelados = await estado();
       await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 250)));
       assert.deepEqual(await estado(), congelados, "la pausa congela las transformaciones decorativas");
       assert.ok(await pagina.evaluate(() => document.getAnimations().filter((a) => a.effect?.getTiming().iterations === Infinity)
         .every((a) => a.playState === "paused")), "ninguna animación CSS infinita continúa tras pausar");
+      const fases = await pagina.$eval(".pie", async (pie) => {
+        pie.scrollIntoView({ block: "center", behavior: "instant" });
+        const luz = pie.getAnimations({ subtree: true }).find((a) => a.animationName === "luz-en-superficie");
+        if (!luz) throw new Error("El pie debe conservar su animación de luz");
+        const anterior = luz.currentTime;
+        const muestras = [];
+        try {
+          // Cinco fases fijas, O(1): una captura temprana no detecta el
+          // desbordamiento que puede aparecer al final del recorrido.
+          for (const tiempo of [0, 3000, 6000, 9000, 12000]) {
+            luz.currentTime = tiempo;
+            await new Promise((resolver) => requestAnimationFrame(resolver));
+            muestras.push({ tiempo, exceso: document.documentElement.scrollWidth - innerWidth });
+          }
+        } finally { luz.currentTime = anterior; }
+        return muestras;
+      });
+      for (const fase of fases) assert.ok(fase.exceso <= 2,
+        `el haz del pie no desborda a ${ancho}px y ${fase.tiempo}ms (exceso: ${fase.exceso}px)`);
       await pagina.click("#pausar-escena");
       await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
       await pagina.waitForFunction(() => document.getElementById("pausar-escena").disabled);

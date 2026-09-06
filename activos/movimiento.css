@@ -39,8 +39,8 @@ body:not(.pagina-admin) :is(.franja, .pie)::before {
 .js-cine body:not(.pagina-admin) :is(.franja, .pie).movimiento-en-vista::before { animation-play-state: running; }
 body:not(.pagina-admin) .franja:nth-of-type(even)::before { animation-delay: -6s; transform-origin: 25% 70%; }
 @keyframes luz-en-superficie {
-  from { transform: translate3d(-12%, 2%, 0) rotate(-8deg) scale(.86); opacity: .45; }
-  to { transform: translate3d(9%, 10%, 0) rotate(9deg) scale(1.07); opacity: 1; }
+  from { transform: translate3d(-12%, 2%, 0) scale(.86); opacity: .45; }
+  to { transform: translate3d(9%, 10%, 0) scale(1.07); opacity: 1; }
 }
 
 /* Un filete que se proyecta de un extremo al otro da continuidad entre actos. */

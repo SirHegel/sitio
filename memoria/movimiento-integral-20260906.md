@@ -63,3 +63,25 @@ cero en ambos contadores. Se verificaron ratón, teclado, pausa, reducción,
 limpieza PJAX y reinicio idempotente. El parallax del CV pasó de −0,197 a 2,88 px
 al desplazar 250 px; el pie de foto quedó inmóvil. La auditoría de la salida
 estática revisó 95 archivos sin hallazgos privados.
+
+La revisión `f96676b` aprobó las 82 pruebas en CI en 172,6 s. En la corrida
+local una comprobación de pausa leyó el estilo antes de que el compositor
+terminara de congelar el cuadro; se añadió espera de `Animation.ready` y un
+rAF antes de tomar la muestra. Se conserva la igualdad exacta después de
+250 ms. Tres repeticiones con dos CPU aprobaron en 7,34 / 7,10 / 7,35 s.
+
+Revisión visual: inicio, blog y proyectos a 390 y 1.440 px, seis recorridos,
+cero infracciones automáticas WCAG A/AA detectadas por axe. Se verificaron
+también contenido y pie; las capturas conservan legibilidad. Una prueba táctil
+con `pointer: coarse` desplazó el documento y abrió el blog sin inclinar las
+tarjetas; no se confunde ese resultado con el viewport estrecho con ratón de
+la prueba de teclado.
+
+Una pasada de producción reveló desbordamiento intermitente de 8 px. La
+comprobación de fases lo atribuyó al giro del haz decorativo del pie: a 390 px,
+su caja mide 280,797 × 512 px. En `t = 0/3/6/9/12 s` el exceso fue
+`0/0/0/6/28 px`. Se retira exclusivamente la rotación del gradiente, conservando
+paneo y escala. Sin giro, la extensión derecha máxima relativa al ancho de
+sección es `0,68 × (0,09 + 0,07 × 0,75) = 0,0969`, inferior al margen de
+escritorio `0,10`; en móvil es `0,1026 < 0,12`. La prueba mantiene esos cinco
+puntos y el umbral de 2 px, sin ocultar overflow del contenido ni cortar foco.
