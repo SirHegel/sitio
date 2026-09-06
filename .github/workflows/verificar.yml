@@ -28,8 +28,8 @@ jobs:
       - name: Instalar dependencias de prueba
         run: npm ci
 
-      - name: Ejecutar pruebas
-        run: npm test
-
       - name: Construir producción
         run: npm run build
+
+      - name: Ejecutar pruebas sobre los recursos construidos
+        run: npm test
