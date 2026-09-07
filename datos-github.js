@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-09-07T08:38:26.000Z",
+  "actualizadoEn": "2026-09-07T15:27:39.000Z",
   "total": 23,
   "perfilGitHub": {
     "repositoriosPublicos": 43,
@@ -1520,7 +1520,7 @@ export const REPOSITORIOS_GITHUB = {
       "forks": 0,
       "creadoEn": "2026-08-25T15:35:17.000Z",
       "actualizadoEn": "2026-08-28T02:15:40.000Z",
-      "publicadoEn": "2026-08-31T15:13:27.000Z",
+      "publicadoEn": "2026-09-07T15:12:59.000Z",
       "extractoReadme": "HegelFlow\n\nHegelFlow es una aplicación multiusuario para delegar, priorizar y seguir trabajo con Scrum y Kanban. El repositorio contiene una aplicación web funcional con autenticación propia, tableros, backlog, sprints, calendario, reportes, perfiles de trabajo y trazabilidad sobre PostgreSQL.\nProducción disponible en hegelflow.vercel.app, con Vercel Hobby y Neon Free. El despliegue conserva secretos únicamente en el entorno administrado, fuera del repositorio.\nVista del producto\n\nEstas capturas se renderizaron con los componentes reales de HegelFlow sobre un escenario local, aislado y marcado como demostración. Todos los nombres, tareas y valores visibles son ficticios; ninguna imagen contiene credenciales ni datos de producción.\nResumen ejecutivo\n\nReportes ágiles\n\nQué funciona hoy\nInicio y cierre de sesión, sesiones revocables y cambio de contraseña.\nResumen ejecutivo de trabajo abierto, vencimientos, sprint y carga por persona.\nTablero Kanban con drag-and-drop, vista de lista, filtros y límites WIP.\nSincronización automática de cambios visibles entre navegadores, con actualización al recuperar el foco y revisión ligera cada cinco segundos.\nCreación, edición y archivo de tareas con tipo, prioridad, fechas, story points, responsables, etiquetas y sprint.\nBacklog y gestión de sprints: crear, iniciar, completar y devolver pendientes al backlog.\nCalendario mensual de fechas de tareas y sprints.\nReportes base de burndown, velocidad, distribución por estado/prioridad y tiempo de ciclo.\nCronología de actividad, búsqueda global, perfiles de trabajo y capacidad.\nRoles OWNER, ADMIN, MEMBER y VIEWER, separados del cargo laboral.\nAlta atómica de cuenta y perfil, o habilitación posterior de credenciales, reservada al OWNER.\nConsola de administración y auditoría visible únicamente para OWNER, con eventos de seguridad append-only.\nTableros de workspace o privados, con ACL explícita por miembro de tablero.\nEsquema para comentarios, checklists, adjuntos, dependencias, campos personalizados, vistas, notificaciones, invitaciones y automatizaciones. Algunas de estas capacidades aún no tienen flujo completo de interfaz o ejecución; consulte Alcance del producto.\nStack\n\n· Capa · Tecnología ·\n\n· Aplicación · Next.js 16 App Router, React 19 y TypeScript estricto ·\n· Interfaz · Tailwind CSS 4, Lucide, dnd-kit y Recharts ·\n· Servidor · Route Handlers de Next.js y servicios de dominio transaccionales ·\n· Datos · PostgreSQL, postgres.js y migraciones SQL versionadas ·\n· Validación y acceso · Zod 4, bcrypt y sesiones opacas almacenadas por hash ·\n· Calidad · ESLint, TypeScript, Vitest, cobertura V8, auditoría de secretos y npm audit ·\n· Despliegue objetivo · Vercel con PostgreSQL administrado en Neon ·\nDocumentación\nArquitectura actual\nModelo de seguridad\nBenchmark de Trello y alternativas\nAlcance implementado y roadmap\nPuesta en marcha local\nRequisitos\nNode.js 20.9 o posterior, requisito de Next.js 16.\nnpm y una base PostgreSQL accesible.\nPara PostgreSQL remoto, una…",
       "inventario": {
         "revision": "a6585ed16ae67fd4158d08874c2445a5741b0a96",
@@ -1647,7 +1647,7 @@ export const REPOSITORIOS_GITHUB = {
       "forks": 0,
       "creadoEn": "2026-08-22T17:38:15.000Z",
       "actualizadoEn": "2026-08-28T02:56:42.000Z",
-      "publicadoEn": "2026-08-31T14:11:30.000Z",
+      "publicadoEn": "2026-09-07T14:12:29.000Z",
       "extractoReadme": "NÁCAR — Sistemas minerales por Juan\n\nLanding premium para presentar y vender proyectos de tratamiento mineral con magnesio para piscinas. Incluye sitio público, formulario de diagnóstico, CMS privado y bandeja de prospectos.\nPrimer arranque seguro\n\nEl repositorio se entrega sin usuario, contraseña, hash, secreto de sesión, token de almacenamiento ni datos de prospectos. Tampoco existe una cuenta predeterminada.\n\nRequiere Node.js 24 o posterior. El archivo .nvmrc fija la misma línea que CI, los tipos de Node y el despliegue; el .npmrc versionado sólo activa engine-strict, de modo que npm rechaza versiones anteriores incluso si se omiten scripts. Las credenciales de registros privados deben guardarse en la configuración personal de npm, nunca en este repositorio.\n\nnpm run setup solicita en una terminal privada el usuario y una contraseña de al menos 14 caracteres elegidos por el nuevo propietario. La contraseña no se escribe en ningún archivo: se guarda solamente un hash scrypt con sal aleatoria. El comando también genera un secreto de sesión y deja .env.local con permisos 600.\n\nDespués hay que configurar un almacenamiento privado de Vercel Blob y agregar su token como BLOBREADWRITETOKEN en .env.local. Se puede vincular un proyecto propio y descargar sus variables con:\n\nSi .env.local ya contiene un acceso, el comando exige escribir ROTAR antes de reemplazarlo. Conserva las demás variables. Para iniciar:\n\nAbre El panel privado está en /admin/login y permanece bloqueado si falta o es inválida cualquiera de sus variables. El alta inicial se hace solo desde la terminal, nunca desde una ruta pública de Internet.\nVariables de entorno\n\nUsa .env.example como inventario, sin colocar valores reales en ese archivo:\n\nPara producción, define SITEURL con el origen HTTPS completo y registra los valores mediante el gestor de secretos de Vercel o del proveedor elegido. No subas .env.local, no pegues secretos en incidencias o pull requests y no uses variables NEXTPUBLIC para información sensible.\nCMS, acceso y almacenamiento\n\nEl panel permite editar la marca, portada, secciones, tarjetas, proceso, FAQ, SEO, contacto e imagen principal; también permite activar u ocultar módulos completos y publicar los cambios.\n\nLos contenidos y prospectos se guardan como JSON privado en Vercel Blob. Los prospectos tienen estados, notas internas y borrado definitivo desde el panel. La sesión dura diez horas, está firmada mediante HMAC y usa una cookie HttpOnly, SameSite=Strict y Secure en producción. El acceso aplica validación de origen y limitación local de intentos; en despliegues distribuidos también debe activarse el rate limit o firewall del proveedor.\nContactos y entrega de solicitudes\n\nEl formulario valida, evita duplicados por reintento, genera una referencia y guarda cada solicitud en la bandeja privada. El WhatsApp y el correo comercial se configuran desde “Marca y contacto” dentro del panel; el número debe usar formato internacional sin +, espacios ni guiones.…",
       "inventario": {
         "revision": "15975530e44bc1075e6e364ce5d397ea7cf83b8b",
@@ -1700,11 +1700,11 @@ export const REPOSITORIOS_GITHUB = {
         },
         {
           "nombre": "Python",
-          "bytes": 133043
+          "bytes": 140861
         },
         {
           "nombre": "C++",
-          "bytes": 65279
+          "bytes": 65327
         },
         {
           "nombre": "HTML",
@@ -1724,17 +1724,17 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-09-07T03:41:13.000Z",
-      "actualizadoEn": "2026-09-07T08:38:26.000Z",
-      "publicadoEn": "2026-09-07T08:38:22.000Z",
+      "actualizadoEn": "2026-09-07T15:27:39.000Z",
+      "publicadoEn": "2026-09-07T15:27:26.000Z",
       "extractoReadme": "Neiva Abierta\n\nEntrega nativa en preparación: el desarrollo solicitado continúa en\nUnreal Engine, con ejecutable para GitHub, descarga desde el sitio personal\ny visualización local mediante Pixel Streaming. No hay todavía motor instalado,\ncompilación C++ ni ejecutable Unreal verificados. La web 0.4 de abajo es la edición\nanterior. Construcción, transmisión y publicación ·\nProyecto Unreal ·\nRevisar referencias sin usar el teclado o mouse del escritorio.\n\nUna interpretación jugable de Neiva, Huila, Colombia. Acceso gratuito, personaje\nsin nombre, caminata en tercera persona, un carro conducible, tráfico ambiental,\nmapa con destinos y un pequeño estudio ficticio para contactar a Jhon Steven\nÁlvarez Ruiz. Controles de teclado y controles táctiles para celular.\n\nJugar en Vercel ·\nSala de juegos y Bloquitos\n\nAlcance de esta versión\n\nLa edición web usa Three.js/WebGL 2 y funciona como sitio estático en Vercel.\nLas calles, parques y huellas de edificios proceden de datos abiertos. Las\nalturas ausentes, fachadas y árboles son una interpretación visual. La edición\n0.4 usa un personaje humano animado de Microsoft Rocketbox, el automóvil\nCar Concept de Khronos, mapas PBR fotográficos de Poly Haven, iluminación HDR,\nsombras solares y fachadas de apariencia fotográfica generadas con IA. La\nCatedral de la Inmaculada Concepción tiene una malla arquitectónica específica\ncon arcos, torre, reloj y cubiertas. El Palacio de Justicia, el Hotel Neiva Plaza\ny el Templo Colonial tienen modelos específicos apoyados en referencias del\ncentro; el Santander incorpora pavimento, fuente de mosaico y vegetación densa.\nLa revisión de fidelidad registra las fuentes y los detalles\ntodavía estimados. Se corrigieron dos extrusiones residenciales sin respaldo\ndentro del parque y el material de Calle 7 en su borde sur. El resto de edificios\nconserva huellas cartográficas y recibe fachadas, aleros y tejados representativos.\nLa edición 0.4 corrige 22 cubiertas abiertas que se interpretaban como edificios\ncerrados (14 asociadas a gasolineras); conserva sus huellas y estima los soportes.\nSe repara además una huella cuyo redondeo había introducido un autocruce.\nEl suelo del juego es plano. No es una réplica\nfotográfica ni un levantamiento completo de cada barrio e interior de Neiva.\nEl estudio mide 6 × 4 × 3,5 metros de juego y no representa una dirección real.\n\nEl repositorio incluye también un proyecto C++ para Unreal Engine 5.5, con\nLumen, ciudad procedural, personaje, vehículo, interacción y controles táctiles.\nSu código no se ha compilado: Unreal no estaba instalado en el entorno de\nconstrucción. Preparación y límites de Unreal.\n\nGoogle Photorealistic 3D Tiles puede conectarse mediante Cesium para Unreal.\nSe incluye una preparación opcional que requiere plugin, clave API, facturación\ny verificar la cobertura real de Neiva. No se han extraído imágenes, mallas ni\nfachadas de Google Maps/Street View; los datos de Google no se redistribuyen\nbajo la licencia del juego. Publicar Unreal…",
       "inventario": {
-        "revision": "b731ed022ddac1cdb4255f84bb01cc305ec76c6d",
+        "revision": "6a0cc2a7784f684fa1eeb950a024dff84000b863",
         "vacio": false,
         "completo": true,
-        "archivos": 192,
-        "bytesVersionados": 99276789,
+        "archivos": 193,
+        "bytesVersionados": 99286677,
         "archivosFuente": 49,
-        "archivosPrueba": 16,
+        "archivosPrueba": 17,
         "archivosDocumentacion": 17,
         "workflows": 1,
         "manifiestos": [
