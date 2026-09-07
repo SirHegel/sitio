@@ -128,7 +128,7 @@ body.entrada-activa :is(.envoltura, #fondo) *::after { animation-play-state: pau
 .sala-roja-mandos button:hover, .sala-roja-mandos button[aria-pressed="true"] { background: #563023; border-color: #ddc3a3; }
 .sala-roja-mandos button:focus-visible { outline: 2px solid #f9dec0; outline-offset: 4px; }
 .sala-roja-mandos button:disabled { opacity: .55; cursor: default; }
-.sala-roja-instruccion, .sala-roja-estatica { position: absolute; z-index: 1; bottom: 2.6rem; left: var(--gutter); right: var(--gutter); color: #ccbba9; font: .59rem/1.6 var(--mono); }
+.sala-roja-instruccion, .sala-roja-estatica { position: absolute; z-index: 1; top: calc(56% + 4.25rem); left: var(--gutter); right: var(--gutter); color: #ccbba9; font: .59rem/1.6 var(--mono); }
 .sala-roja-instruccion { display: none; }
 .sala-roja-lista .sala-roja-instruccion { display: block; }
 .sala-roja-lista .sala-roja-estatica { display: none; }
@@ -140,7 +140,7 @@ body.entrada-activa :is(.envoltura, #fondo) *::after { animation-play-state: pau
   .sala-roja-cartel > p:last-child { font-size: .75rem; }
   .sala-roja-mandos { left: 1.4rem; right: 1.4rem; top: auto; bottom: 6.8rem; gap: .6rem; display: grid; grid-template-columns: 1fr 1fr; }
   .sala-roja-mandos button { min-width: 0; gap: .5rem; padding: .7rem; font-size: .64rem; }
-  .sala-roja-instruccion, .sala-roja-estatica { bottom: 1.6rem; left: 1.4rem; right: 1.4rem; font-size: .52rem; }
+  .sala-roja-instruccion, .sala-roja-estatica { top: auto; bottom: 5.1rem; left: 1.4rem; right: 1.4rem; font-size: .52rem; }
 }
 @media (prefers-reduced-motion: reduce) { #sala-roja-lienzo { transition: none; } }
 @media print { #sala-roja { display: none; } }

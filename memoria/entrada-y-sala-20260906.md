@@ -95,6 +95,12 @@ cuadros sincronizados: sin MSAA, mediana 17,0 ms y p95 17,6 ms; con MSAA,
 la sección con el fondo. En software pueden verse bordes escalonados; no se
 oculta esa limitación con una afirmación de acabado fotográfico.
 
+La batería local completa aprobó 93 pruebas, cero fallos, cancelaciones u
+omisiones, en 150,44 s. Conserva las 43 rutas en trece anchos. La revisión
+visual final llevó también la instrucción de la sala junto a sus botones,
+fuera de la zona del dock. El pie permite repetir la apertura con
+`/?entrada=1`; al elegir se retira únicamente ese parámetro de la URL.
+
 ## Activo original
 
 Se utilizó la habilidad imagegen, herramienta integrada, para crear el fondo
