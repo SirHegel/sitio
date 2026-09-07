@@ -89,6 +89,15 @@ test("la sala de juegos publica entradas gratuitas, alcance cartográfico y nave
   assert.equal(catalogo.hasPart.length, 2);
   assert.ok(catalogo.hasPart.every((juego) => juego.isAccessibleForFree === true));
   assert.match(readFileSync(archivoRuta("/"), "utf8"), /class="juegos-inicio/);
+
+  const neiva = html.match(/<article[^>]+id="neiva-abierta"[\s\S]*?<\/article>/)?.[0] || "";
+  assert.match(neiva, /<img[^>]+src="\/activos\/neiva-abierta\.webp"[^>]+alt="[^"]+"/);
+  assert.match(neiva, /<figcaption[^>]*>Captura del juego \/ Neiva Abierta<\/figcaption>/);
+  assert.doesNotMatch(neiva, /juego-ilustracion-neiva|juego-ciudad|Ilustración/);
+  assert.match(html, /class="juego-ilustracion juego-ilustracion-bloquitos"/);
+  const captura = readFileSync(`${construido}activos/neiva-abierta.webp`);
+  assert.equal(captura.subarray(0, 4).toString(), "RIFF", "la captura se copia al sitio como imagen WebP");
+  assert.equal(captura.subarray(8, 12).toString(), "WEBP");
 });
 
 test("todas las páginas tienen título, canónico único y marcado de persona", () => {

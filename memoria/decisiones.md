@@ -61,3 +61,10 @@ con edificios interpretados, sin atribuir exactitud de fachadas a OpenStreetMap.
 Bloquitos enlaza a su despliegue Vercel, comprobado con HTTP 200 el 6 de
 septiembre de 2026; GitHub Pages también respondió 200. La nueva página se
 incorpora al sitemap y al catálogo de rutas de auditoría existentes.
+
+La actualización del mismo 6 de septiembre sustituye una de las dos
+ilustraciones por una captura real: la tarjeta de Neiva Abierta. El archivo
+de 319.058 bytes se sirve localmente y declara sus dimensiones para reservar
+espacio. Se retira el dibujo CSS de Neiva; Bloquitos conserva el suyo. La
+captura representa el juego publicado, con arquitectura interpretada; el
+texto no atribuye exactitud de fachadas a los mapas ni ejecución web a Unreal.

@@ -97,3 +97,26 @@ interpretadas. Se comprobaron 17 pruebas de datos/física, caminar, conducir,
 salir del carro, contactar el estudio y controles táctiles a 320/390 px.
 El proyecto Unreal está incluido como fuente sin compilar; el visor oficial
 de Google consultado no marca cobertura fotogramétrica de Neiva.
+
+## Captura de Neiva Abierta, 6 de septiembre de 2026
+
+La tarjeta de Neiva muestra una captura del juego con la recreación de la
+Catedral, edificios y árboles. Se copió `preview.webp` del repositorio del
+juego a `activos/neiva-abierta.webp`: 1.440 × 960 px, 319.058 bytes,
+SHA-256 `693f2e6990f5aea69e964647740d1e641e6798f7a24dfc2196370f90286f6c10`.
+El rótulo identifica la captura; la descripción conserva el carácter
+interpretado de las fachadas y las alturas ausentes.
+
+Modelo: `C = tarjetas de Neiva con captura real / tarjetas de Neiva`.
+Base previa `0/1`; umbral fijado antes de probar `C = 1`; resultado `1/1`.
+Sanidad: la prueba detectó la imagen ausente antes de incorporarla y después
+verificó su formato WebP en el sitio construido. Bloquitos conserva su
+ilustración. La decodificación cuesta `O(P)` tiempo y espacio para
+`P = 1.382.400` píxeles; no se añaden dependencias de ejecución.
+
+Build de 45 páginas y 95/95 pruebas aprobadas en 160,7 segundos, sin omisiones.
+La matriz recorrió 44 rutas en trece anchos: 572 combinaciones sin
+desbordamientos. La navegación desde inicio por el menú cargó la captura
+a 320, 390, 960 y 1.440 px; cuatro casos sin errores JavaScript, HTTP,
+consola ni infracciones WCAG 2/2.1 A/AA detectadas por axe.
+`σ = desconocida`: Chrome headless local, sin medición en dispositivos físicos.

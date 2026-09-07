@@ -8,7 +8,7 @@ export const JUEGOS = [
     tipo: "Exploración 3D · Prototipo",
     titulo: "La ciudad, a tu paso.",
     descripcion: "Recorre Neiva con un personaje sin nombre. Sube a un carro y encuentra un pequeño estudio ficticio donde contactar los servicios de desarrollo de Jhon.",
-    detalle: "Cartografía de OpenStreetMap y Overture; los edificios se interpretan a partir de sus datos. La cobertura y el detalle dependen de los datos disponibles.",
+    detalle: "Personaje y carro con modelos detallados, materiales fotográficos y una ciudad trazada con OpenStreetMap y Overture. Las fachadas y las alturas ausentes son interpretaciones.",
     url: "https://neiva-abierta.vercel.app/",
     repo: "https://github.com/SirHegel/neiva-abierta",
     accion: "Explorar Neiva",
@@ -28,15 +28,12 @@ export const JUEGOS = [
   },
 ];
 
-// Arte editorial CSS: decorativo, determinista, O(1) tiempo y espacio.
-// No representa una captura ni una reconstrucción de la ciudad.
-function ilustracion(slug) {
-  if (slug === "neiva-abierta") return `<div class="juego-ilustracion juego-ilustracion-neiva" aria-hidden="true">
-    <div class="juego-sol"></div><div class="juego-montanas"></div>
-    <div class="juego-ciudad"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    <div class="juego-carretera"></div><div class="juego-estudio">J /</div><div class="juego-personaje"></div>
-    <span class="juego-arte-nota">Ilustración / Neiva, Huila</span>
-  </div>`;
+// Captura del juego Neiva y arte CSS decorativo de Bloquitos; sin animación propia.
+function vistaJuego(slug) {
+  if (slug === "neiva-abierta") return `<figure class="juego-ilustracion juego-captura">
+    <img src="/activos/neiva-abierta.webp" width="1440" height="960" alt="Recreación de la Catedral de Neiva entre edificios y árboles en Neiva Abierta" loading="lazy" decoding="async">
+    <figcaption class="juego-arte-nota">Captura del juego / Neiva Abierta</figcaption>
+  </figure>`;
   return `<div class="juego-ilustracion juego-ilustracion-bloquitos" aria-hidden="true">
     <div class="juego-tablero"><span class="pieza pieza-t"><i></i><i></i><i></i><i></i></span><span class="pieza pieza-l"><i></i><i></i><i></i><i></i></span><span class="pieza pieza-o"><i></i><i></i><i></i><i></i></span><span class="pieza pieza-i"><i></i><i></i><i></i><i></i></span><span class="pieza pieza-s"><i></i><i></i><i></i><i></i></span></div>
     <span class="juego-arte-nota">Ilustración / Una partida pendiente</span>
@@ -46,7 +43,7 @@ function ilustracion(slug) {
 export function tarjetasJuegos() {
   return `<div class="juegos-rejilla" data-escalonar>
 ${JUEGOS.map((juego) => `        <article class="juego-tarjeta revelar" id="${juego.slug}" aria-labelledby="${juego.slug}-titulo">
-          ${ilustracion(juego.slug)}
+          ${vistaJuego(juego.slug)}
           <div class="juego-ficha">
             <p class="micro juego-tipo">${esc(juego.tipo)}</p>
             <h2 id="${juego.slug}-titulo">${esc(juego.nombre)}</h2>

@@ -1,5 +1,5 @@
-/* La sala comparte paleta y tipografía del sitio. Arte CSS estático original;
-   cero recursos de terceros y ningún bucle de animación adicional. */
+/* La sala comparte paleta y tipografía del sitio. Captura local del juego Neiva
+   y arte CSS estático de Bloquitos, sin bucles de animación adicionales. */
 .juegos-cabecera { padding-block: 1rem 3.5rem; }
 .juegos-cabecera > .micro { color: #d6b98f; letter-spacing: .17em; }
 .juegos-cabecera h1 { margin: 1.7rem 0 2rem; font: 400 clamp(4rem, 10vw, 9rem)/.94 var(--serif); letter-spacing: -.055em; }
@@ -28,17 +28,8 @@
 .juego-ilustracion { position: relative; width: 100%; aspect-ratio: 1.55; overflow: hidden; isolation: isolate; border-bottom: 1px solid #dbc19b35; }
 .juego-arte-nota { position: absolute; bottom: 1rem; left: 1.2rem; right: 1rem; z-index: 4; font: .55rem/1.6 var(--mono); text-transform: uppercase; letter-spacing: .13em; color: #f4e6cd; }
 .juego-ilustracion::after { content: ''; position: absolute; inset: 65% 0 0; z-index: 3; background: linear-gradient(transparent, #0b0c0ded); }
-.juego-ilustracion-neiva { background: linear-gradient(#657e83, #d7b68a 60%, #665e4b 61%, #1b3233); }
-.juego-sol { position: absolute; width: 14%; aspect-ratio: 1; border-radius: 50%; left: 65%; top: 13%; background: #ffdf9e; box-shadow: 0 0 65px #ffdbaa80; }
-.juego-montanas { position: absolute; inset: 15% -5% 26%; background: #556a60; clip-path: polygon(0 52%, 9% 61%, 21% 27%, 32% 50%, 42% 10%, 55% 39%, 67% 22%, 85% 53%, 100% 30%, 100% 100%, 0 100%); opacity: .58; }
-.juego-ciudad { position: absolute; inset: 44% 6% 23%; display: flex; gap: 2%; align-items: end; }
-.juego-ciudad i { width: 12%; height: 58%; background: repeating-linear-gradient(0deg, transparent 0 13px, #687778 13px 16px), repeating-linear-gradient(90deg, #b8b0a0 0 12px, #b6a085 12px 16px); border-top: 3px solid #e2c9a3; box-shadow: 8px 2px 0 #4d5e5b; }
-.juego-ciudad i:nth-child(3n) { height: 100%; }
-.juego-ciudad i:nth-child(3n + 1) { height: 72%; }
-.juego-carretera { position: absolute; inset: 71% -10% -25%; transform: rotate(-10deg); border-block: 9px solid #b7a891; background: linear-gradient(transparent 47%, #d5c59a 47% 49%, transparent 49%), #303936; }
-.juego-estudio { position: absolute; bottom: 22%; left: 20%; width: 18%; height: 17%; padding-top: 4%; background: #a06443; border-top: 5px solid #e2c194; border-bottom: 16px solid #533d30; color: #ffedc7; text-align: center; font: 700 clamp(.7rem, 2vw, 1.2rem)/1 var(--serif); box-shadow: 9px 2px 0 #604b3c; }
-.juego-personaje { position: absolute; width: 3%; height: 11%; bottom: 18%; left: 65%; background: #233e43; border-radius: 30% 30% 0 0; box-shadow: 5px 7px 0 #183435; }
-.juego-personaje::before { content: ''; position: absolute; width: 85%; aspect-ratio: 1; left: 8%; top: -27%; background: #c09975; border-radius: 50%; }
+.juego-captura { margin: 0; background: #101817; }
+.juego-captura img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
 .juego-ilustracion-bloquitos { background: radial-gradient(ellipse at 75% 10%, #69365d50, transparent 60%), radial-gradient(ellipse at 15% 90%, #29777750, transparent 60%), #111523; }
 .juego-tablero { position: absolute; top: 10%; left: 24%; width: 52%; height: 90%; transform: rotate(-9deg); background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), #bba6dc17 calc(10% - 1px) 10%), repeating-linear-gradient(0deg, transparent 0 calc(8.33% - 1px), #bba6dc17 calc(8.33% - 1px) 8.33%); border: 1px solid #ccbae02f; border-radius: 6px; box-shadow: 0 16px 55px #0007; }
 .pieza { position: absolute; display: grid; grid-template-columns: repeat(3, 1fr); width: 42%; filter: drop-shadow(0 8px 6px #0008); }
