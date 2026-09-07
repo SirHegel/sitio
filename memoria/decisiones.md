@@ -86,3 +86,17 @@ que participa en el manifiesto de la hoja de vida. La evidencia se fija a
 reemplaza la anterior y conserva sus dimensiones. Los pendientes de rendimiento
 se limitan a otros computadores y celulares físicos, pues el Intel UHD ya
 cuenta con una medición documentada.
+
+El encargo posterior del 7 de septiembre exige Unreal para el desarrollo
+actual. La tarjeta principal enlaza al estado nativo y conserva el prototipo
+Three.js 0.4 como antecedente identificado. Se mantiene su captura sin usarla
+como evidencia de Unreal. No se inventa una release ni un ejecutable.
+
+`DESCARGA_NEIVA_UNREAL` usa `{url, sha256, bytes, platform, verification}`,
+todos nulos al publicar esta preparación. Antes de completarlo se descarga
+el activo real desde GitHub, se calcula SHA-256 y tamaño y se comprueba su
+ejecución en la plataforma indicada. `verification` debe conservar esos cuatro
+datos, `httpStatus:200`, `launchPassed:true` y `checkedAt` ISO. El enlace se
+habilita sólo con coincidencia de valores; el comprobante no se fabrica con
+los fixtures de prueba. Windows x64 y Linux x64 son opciones del contrato,
+sin afirmar que exista actualmente un binario para alguna de ellas.

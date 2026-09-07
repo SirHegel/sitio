@@ -83,7 +83,8 @@ test("la sala de juegos publica entradas gratuitas, alcance cartográfico y nave
   for (const texto of ["Neiva Abierta", "Bloquitos", "OpenStreetMap", "personaje sin nombre", "estudio ficticio", "Controles táctiles"]) {
     assert.ok(html.includes(texto), `la sala de juegos omite ${texto}`);
   }
-  assert.doesNotMatch(html, /hiperrealista|ultrarrealista|cada barrio reconstruido|Unreal Engine/i);
+  assert.doesNotMatch(html, /hiperrealista|ultrarrealista|cada barrio reconstruido/i);
+  assert.match(html, /Descarga Unreal pendiente de compilación/);
   const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
   const catalogo = ld["@graph"].find((nodo) => nodo["@type"] === "CollectionPage");
   assert.equal(catalogo.hasPart.length, 2);
@@ -92,7 +93,7 @@ test("la sala de juegos publica entradas gratuitas, alcance cartográfico y nave
 
   const neiva = html.match(/<article[^>]+id="neiva-abierta"[\s\S]*?<\/article>/)?.[0] || "";
   assert.match(neiva, /<img[^>]+src="\/activos\/neiva-abierta\.webp"[^>]+alt="[^"]+"/);
-  assert.match(neiva, /<figcaption[^>]*>Captura del juego \/ Neiva Abierta<\/figcaption>/);
+  assert.match(neiva, /<figcaption[^>]*>Prototipo web anterior \/ Three.js 0\.4<\/figcaption>/);
   assert.doesNotMatch(neiva, /juego-ilustracion-neiva|juego-ciudad|Ilustración/);
   assert.match(html, /class="juego-ilustracion juego-ilustracion-bloquitos"/);
   const captura = readFileSync(`${construido}activos/neiva-abierta.webp`);

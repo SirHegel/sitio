@@ -22,6 +22,7 @@ import { leerContinuidadOro } from "./lib/continuidad-publicacion.js";
 import { cargarEstudioOro } from "./estudio-oro.js";
 import { indiceJuegos } from "./juegos.js";
 import { NEIVA_ABIERTA } from "./neiva-abierta.js";
+import { descargaNeiva } from "./descarga-neiva.js";
 
 const raiz = dirname(fileURLToPath(import.meta.url));
 const salida = join(raiz, "publico");
@@ -665,8 +666,9 @@ ${auditoria.releases.map((release) => `        <article class="ficha revelar">
         <p class="cifras-sueltas">${esc(p.cifras)}</p>
         <div class="acciones">
           ${p.repo ? `<a class="boton primario" href="${p.repo}" rel="noopener" target="_blank"><span>Código en GitHub</span></a>` : `<span class="boton desactivado"><span>${esc(p.visibilidad || "Proyecto no público")}</span></span>`}
-          ${p.demo ? `<a class="boton" href="${p.demo}" rel="noopener" target="_blank"><span>Probarlo</span></a>` : ""}
+          ${p.demo ? `<a class="boton" href="${p.demo}" rel="noopener" target="_blank"><span>${esc(p.demoEtiqueta || "Probarlo")}</span></a>` : ""}
         </div>
+        ${p.slug === "neiva-abierta" ? descargaNeiva() : ""}
       </div>`)}
 
 ${franja(`      <div class="scrim columna revelar proyecto-razon prosa-ancha">

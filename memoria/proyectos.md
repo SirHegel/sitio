@@ -181,3 +181,33 @@ secciones de auditoría conservan fuente, métrica con denominador, error,
 sanidad, costo y pendientes. Se enlaza la medición publicada del Intel UHD;
 permanecen pendientes otros computadores y celulares físicos. La ficha no
 extrapola ese resultado a todos los equipos.
+
+## Entrega nativa de Neiva, 7 de septiembre de 2026
+
+El encargo actual concentra Neiva Abierta en Unreal Engine. La tarjeta y la
+ficha muestran «Descarga Unreal pendiente de compilación»: todavía no hay un
+ejecutable nativo publicado. La captura existente se conserva, identificada
+como prototipo web anterior Three.js 0.4, y su SHA no cambia. La evidencia del
+prototipo anterior no se presenta como ejecución o rendimiento de Unreal.
+
+El contrato de descarga en `descarga-neiva.js` conserva URL, SHA-256, tamaño,
+plataforma y comprobante en `null`. El enlace descargable exige un activo de
+una release del repositorio y un comprobante coincidente de descarga HTTP 200
+y ejecución aprobada. El validador comprueba esos campos; la descarga y prueba
+del ejecutable deberán realizarse antes de completarlos. Los valores positivos
+de las pruebas son fixtures sintéticos, no releases existentes.
+
+Modelo de esta corrección: `C = superficies con estado nativo explícito / 2`.
+Base editorial anterior `0/2`, umbral fijado antes de probar `C = 1`, resultado
+local `2/2`; cero botones de descarga sin archivo validado. Build: 46 páginas.
+Pasaron 22 pruebas de sitio/contrato y la navegación a Juegos en cuatro anchos.
+QA local de tarjeta y ficha: 320, 390, 960 y 1.440 px, ocho combinaciones con
+cero desbordamientos, errores JS/HTTP e infracciones axe WCAG A/AA detectadas.
+Como en la revisión anterior, el servidor local simula los dos endpoints de
+analítica; la versión pública se verifica tras desplegar.
+
+Sanidad: sin artefacto no se produce un enlace de descarga; una huella o tamaño
+que difieran del comprobante tampoco lo habilitan. Bloquitos y el archivo de
+captura se conservan. `σ = desconocida`: QA de navegador automatizado, sin
+ejecución del juego Unreal. Validar el contrato cuesta O(L), L ≤ 1.024 caracteres
+de URL; se reutilizan las dependencias actuales del sitio.

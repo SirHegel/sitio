@@ -260,7 +260,7 @@ test("Juegos se alcanza con menú móvil y conserva navegación, escena y enlace
         overflow: document.documentElement.scrollWidth - innerWidth,
       }));
       assert.deepEqual(estado.titulos, ["Neiva Abierta", "Bloquitos"]);
-      assert.deepEqual(estado.enlaces.map((e) => e.url), ["https://neiva-abierta.vercel.app/", "https://bloquitos.vercel.app/"]);
+      assert.deepEqual(estado.enlaces.map((e) => e.url), [new URL("/proyectos/neiva-abierta/#descarga-unreal", pagina.url()).href, "https://bloquitos.vercel.app/"]);
       assert.ok(estado.captura.ancho > 0 && estado.captura.alto > 0, `captura visible a ${ancho}px`);
       assert.ok(estado.captura.x >= 0 && estado.captura.derecha <= estado.ancho, `captura cabe a ${ancho}px`);
       assert.ok(estado.overflow <= 2, `sin desbordamiento horizontal a ${ancho}px`);
