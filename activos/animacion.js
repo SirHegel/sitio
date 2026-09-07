@@ -8,6 +8,8 @@ import { MusicaPersistente } from "./musica.js";
 import { iniciarCinematografia } from "./cinematografia.js";
 import { iniciarLecturaAccesible } from "./lectura-accesible.js";
 import { iniciarMovimientoInterfaz } from "./movimiento-interfaz.js";
+import { iniciarEntrada, entradaPendiente } from "./entrada.js";
+import { iniciarSalaInteractiva } from "./sala-interactiva.js";
 import "./cargar-mapa-oro.js";
 
 const preferenciaMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -201,6 +203,7 @@ function audio() {
   const guardarPreferencia = (encendida) => {
     try { localStorage.setItem(LLAVE, encendida ? "1" : "0"); } catch {}
   };
+  const eligiendoEntrada = () => entradaPendiente() || Boolean(document.getElementById("puerta")?.open);
 
   function reflejar() {
     if (!mando) return;
@@ -253,7 +256,8 @@ function audio() {
 
   if (preferida()) {
     musica.solicitada = true;
-    const reanudarConGesto = async () => {
+    const reanudarConGesto = async (evento) => {
+      if (eligiendoEntrada() || evento.target?.closest?.("#mando")) return;
       if (!preferida()) {
         removeEventListener("pointerdown", reanudarConGesto);
         removeEventListener("keydown", reanudarConGesto);
@@ -272,13 +276,17 @@ function audio() {
   // medio, al volver se solicita reanudarlo; un rechazo de autoplay queda en
   // silencio real y el mando sigue disponible para un gesto explícito.
   document.addEventListener("visibilitychange", () => {
-    if (!document.hidden && preferida()) intentarTocar();
+    if (!document.hidden && preferida() && !eligiendoEntrada()) intentarTocar();
   });
   addEventListener("pageshow", () => {
-    if (preferida() && !musica.sonando) intentarTocar();
+    if (preferida() && !musica.sonando && !eligiendoEntrada()) intentarTocar();
   });
 
   reflejar();
+  return {
+    tocar: () => { guardarPreferencia(true); return intentarTocar(); },
+    silenciar: () => { guardarPreferencia(false); musica.callar(); reflejar(); },
+  };
 }
 
 /* ---------------------------------------- navegación progresiva persistente */
@@ -628,9 +636,11 @@ function navegacion() {
 /* ------------------------------------------------------------------ arranque */
 
 reiniciarContenido({ entrada: true });
+iniciarEntrada(audio());
 iniciarCinematografia();
 if (movimientoQuieto()) reiniciarContenido();
 iniciarMovimientoInterfaz();
+iniciarSalaInteractiva();
 avance();
-audio();
 navegacion();
+addEventListener("sitio:entrada-finalizada", () => reiniciarContenido({ entrada: true }));

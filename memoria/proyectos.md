@@ -57,3 +57,11 @@ y respaldo sin WebGL. Se añaden lluvia, haces móviles, deriva de cámara,
 decoraciones por sección e interacción limitada en tarjetas y fotografías.
 La regresión del fondo detenido después del hero falló antes del cambio.
 Modelo y presupuestos en `memoria/movimiento-integral-20260906.md`.
+
+## Entrada elegida y sala interactiva, 6 de septiembre de 2026
+
+Se recupera la primera elección de música o silencio. El autor confirmó
+Beethoven, Quinta Sinfonía. La apertura utiliza un portal original con torsión
+en profundidad; una nueva sección incorpora telones, muebles y lámpara como
+geometría independiente. Se mantienen fotografías globales y lectura estable.
+Modelo, referencias, prompt y comprobaciones en `memoria/entrada-y-sala-20260906.md`.

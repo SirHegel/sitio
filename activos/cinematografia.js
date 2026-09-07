@@ -1,4 +1,5 @@
 import { crearSalaWebGL } from "./sala-webgl.js";
+import { dibujarSalaInteractiva } from "./sala-interactiva.js";
 
 /* Cámara y controles: un solo rAF, máximo 30 fps, en todas las rutas públicas.
    Pausa, movimiento reducido, pestaña oculta y administración detienen el bucle.
@@ -34,7 +35,7 @@ export function iniciarCinematografia() {
   try { pausaManual = localStorage.getItem("jsar:escena-pausa") === "1"; } catch {}
 
   function administrativa() { return cuerpo.classList.contains("pagina-admin"); }
-  function corriendo() { return paginaActiva && !administrativa() && !pausaManual && !reduccion.matches && !document.hidden; }
+  function corriendo() { return paginaActiva && !administrativa() && !cuerpo.classList.contains("entrada-activa") && !pausaManual && !reduccion.matches && !document.hidden; }
 
   function reflejar() {
     const nombre = escenas[indice];
@@ -74,6 +75,7 @@ export function iniciarCinematografia() {
   }
 
   function dibujar() {
+    dibujarSalaInteractiva(tiempo);
     const lista = !administrativa() && sala?.dibujar({
       escena: escenas[indice], anterior: transicion?.anterior,
       progreso: transicion ? Math.min(1, transicion.tiempo / 1.8) : 1,
@@ -148,7 +150,7 @@ export function iniciarCinematografia() {
   function iniciarSala() {
     // La lectura estática usa la fotografía CSS sin abrir un contexto GPU.
     // Un cambio posterior de preferencia habilita un único intento de creación.
-    if (salaIntentada || administrativa() || reduccion.matches || !paginaActiva || document.hidden) return;
+    if (salaIntentada || administrativa() || cuerpo.classList.contains("entrada-activa") || reduccion.matches || !paginaActiva || document.hidden) return;
     salaIntentada = true;
     sala = crearSalaWebGL(lienzo, () => {
       if (!sala?.disponible(escenas[indice])) {
@@ -261,13 +263,10 @@ export function iniciarCinematografia() {
   addEventListener("pageshow", () => { paginaActiva = true; estado(); });
   addEventListener("sitio:transicion", () => { detenerRecorrido(); menu(false); });
   addEventListener("sitio:navegacion", () => { menu(false); observarEscenas(); dibujar(); estado(); });
+  addEventListener("sitio:entrada-finalizada", () => { medir(); estado(); });
+  addEventListener("sitio:sala-interactiva", dibujar);
 
   documento.classList.add("js-cine");
-  const puerta = document.getElementById("puerta");
-  let visto = false;
-  try { visto = sessionStorage.getItem("jsar:entrado") === "1"; sessionStorage.setItem("jsar:entrado", "1"); } catch {}
-  if (visto || reduccion.matches) puerta?.remove();
-  else setTimeout(() => puerta?.remove(), 1800);
   observarEscenas();
   medir(); estado();
 }

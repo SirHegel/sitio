@@ -40,6 +40,8 @@ after(async () => {
 async function nuevaPagina(ancho = 390) {
   const pagina = await navegador.newPage();
   await pagina.setViewport({ width: ancho, height: ancho < 768 ? 844 : 900 });
+  // Geometría y movimiento del contenido; la elección inicial tiene su batería.
+  await pagina.evaluateOnNewDocument(() => sessionStorage.setItem("jsar:entrada-v2", "1"));
   await pagina.setRequestInterception(true);
   pagina.on("request", (peticion) => {
     if (peticion.url().includes("/_vercel/") || peticion.url().includes("/api/visita") || peticion.resourceType() === "media") peticion.abort();

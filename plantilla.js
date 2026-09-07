@@ -150,6 +150,7 @@ ${ruta === "/" ? `<meta property="profile:first_name" content="Jhon Steven">
 <link rel="stylesheet" href="/activos/direccion-arte.css">
 <link rel="stylesheet" href="/activos/transiciones.css">
 <link rel="stylesheet" href="/activos/movimiento.css">
+<link rel="stylesheet" href="/activos/entrada.css">
 ${!ruta.startsWith("/admin/") ? `<link rel="preload" as="image" href="/activos/escenas/${escenaInicial}.webp" media="(min-width: 769px)">
 <link rel="preload" as="image" href="/activos/escenas/${escenaInicial}-movil.webp" media="(max-width: 768px)">` : ""}
 
@@ -200,6 +201,7 @@ ${cuerpo}
       </div>
       <div>
         <h4>Sitio</h4>
+        <a href="/?entrada=1" data-navegacion="normal">Ver la presentación</a>
         ${MENU.map((m) => `<a href="${m.ruta}">${esc(m.texto)}</a>`).join("\n        ")}
         <a href="/privacidad/">Privacidad</a>
         <a href="/admin/" rel="nofollow" data-navegacion="normal">Administrar</a>
@@ -242,5 +244,32 @@ ${scripts.map((src) => `<script type="module" src="${esc(src)}"></script>`).join
 }
 
 function puertaHTML() {
-  return `<div id="puerta" aria-hidden="true"><span class="inicio-sello">JS /<small>Una mirada propia.</small></span></div>`;
+  return `<dialog id="puerta" aria-labelledby="umbral-titulo" aria-describedby="umbral-descripcion">
+  <div class="umbral-fondo" aria-hidden="true"></div>
+  <canvas id="umbral-lienzo" aria-hidden="true"></canvas>
+  <div class="umbral-velo" aria-hidden="true"></div>
+  <div class="umbral-marco" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="umbral-composicion">
+    <header class="umbral-cabecera">
+      <span class="umbral-firma">JS /</span>
+      <span>Jhon Steven<br>Alvarez Ruiz</span>
+      <span class="umbral-edicion">Archivo personal<br>Una mirada propia</span>
+    </header>
+    <div class="umbral-presentacion">
+      <p class="umbral-supertitulo">Antes del primer plano</p>
+      <h2 id="umbral-titulo">Al otro lado<br><em>de lo evidente.</em></h2>
+      <p id="umbral-descripcion">El mundo merece una segunda lectura.</p>
+    </div>
+    <div class="umbral-coordenada" aria-hidden="true"><span>00 / El umbral</span><i></i><span>La función comienza contigo</span></div>
+    <footer class="umbral-acceso">
+      <div class="umbral-partitura"><span class="umbral-nota" aria-hidden="true">♫</span><p>Beethoven <span>Sinfonía n.º 5</span></p><small>Elige cómo entrar.</small></div>
+      <div class="umbral-opciones">
+        <button id="entrar-con-musica" type="button"><span class="umbral-ondas" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Entrar con música</span><span aria-hidden="true">↗</span></button>
+        <button id="entrar-en-silencio" type="button"><span>Entrar en silencio</span><span aria-hidden="true">→</span></button>
+      </div>
+      <button id="pausar-umbral" type="button" aria-pressed="false" aria-label="Pausar animación de entrada">Ⅱ</button>
+      <p class="umbral-aviso">La música sólo comienza si tú la eliges.</p>
+    </footer>
+  </div>
+</dialog>`;
 }

@@ -377,6 +377,21 @@ function inicio() {
     </section>
 
     <div class="cinta-oficios" aria-label="Áreas de trabajo"><span>Análisis de datos</span><i aria-hidden="true">✳</i><span>Economía</span><i aria-hidden="true">✳</i><span>Automatización</span><i aria-hidden="true">✳</i><span>Una mirada propia</span></div>
+    <section id="sala-roja" aria-labelledby="sala-roja-titulo" data-motor="imagen">
+      <picture><source media="(max-width: 768px)" srcset="/activos/escenas/terciopelo-movil.webp"><img class="sala-roja-respaldo" src="/activos/escenas/terciopelo.webp" width="1672" height="941" loading="lazy" alt="Escenografía de terciopelo rojo con suelo geométrico y una abertura iluminada"></picture>
+      <canvas id="sala-roja-lienzo" aria-hidden="true"></canvas>
+      <div class="sala-roja-cartel">
+        <p class="micro">Intermedio / Una escena habitable</p>
+        <h2 id="sala-roja-titulo">La habitación<br><em>roja.</em></h2>
+        <p>Una reverencia a <i>Twin Peaks</i>.<br>Hay algo al otro lado del telón.</p>
+      </div>
+      <div class="sala-roja-mandos" role="group" aria-label="Interactuar con la habitación roja">
+        <button id="abrir-telon" type="button" aria-pressed="false" disabled><span>Abrir el telón</span><i aria-hidden="true">↗</i></button>
+        <button id="luz-sala" type="button" aria-pressed="true" disabled><span>Apagar la lámpara</span><i aria-hidden="true">◉</i></button>
+      </div>
+      <p class="sala-roja-instruccion">Usa los controles o recorre la escena con el cursor.</p>
+      <p class="sala-roja-estatica">Vista estática cuando el navegador no dispone de WebGL.</p>
+    </section>
     <div class="contenido-editorial">
 
 ${franja(`      <div id="mirada" class="mirada-composicion">

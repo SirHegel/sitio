@@ -44,3 +44,11 @@ conjunto visual. Se conserva el límite de 360.000 píxeles en software, 30
 cuadros/s y la exclusión del panel administrativo. La nueva regresión midió
 cero dibujos fuera de portada antes de este cambio; se documenta su sustitución
 en `memoria/movimiento-integral-20260906.md`.
+
+La petición posterior recupera una entrada que espera la elección del visitante.
+Se utiliza una llave de sesión nueva; una preferencia musical anterior no
+activa audio durante el diálogo. La apertura dura 1,8 s y conserva salida
+inmediata con movimiento reducido. La sala tridimensional tiene sección propia
+para conservar el acabado fotográfico de la portada. Comparte el reloj general
+y agrega una llamada de dibujo sólo mientras está visible. No se incorporan
+vídeos de terceros ni nuevas dependencias.

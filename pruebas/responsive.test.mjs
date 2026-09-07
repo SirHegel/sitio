@@ -96,6 +96,8 @@ test("ningún contenido público abandona su caja en móvil ni al cambiar de bre
   t.signal.addEventListener("abort", alAbortar, { once: true });
 
   try {
+    // Esta matriz audita las páginas tras entrar; entrada-cine mide el diálogo.
+    await pagina.evaluateOnNewDocument(() => sessionStorage.setItem("jsar:entrada-v2", "1"));
     await pagina.setRequestInterception(true);
     pagina.on("request", (peticion) => {
       const url = peticion.url();

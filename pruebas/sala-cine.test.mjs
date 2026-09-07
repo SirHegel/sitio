@@ -104,6 +104,8 @@ async function nuevaPagina(t, { ancho = 390, sinWebGL = false, sinTransicionNati
     if (!peticion.isInterceptResolutionHandled() && !peticion.failure()) await peticion.continue();
   });
   await pagina.evaluateOnNewDocument(({ sinWebGL, sinTransicionNativa }) => {
+    // Esta batería recorre el contenido; entrada-cine prueba la primera visita.
+    sessionStorage.setItem("jsar:entrada-v2", "1");
     window.__qaSala = { dibujados: 0, bloqueos: [], navegaciones: [] };
     document.addEventListener("securitypolicyviolation", (evento) => {
       window.__qaSala.bloqueos.push({ directiva: evento.violatedDirective, uri: evento.blockedURI });

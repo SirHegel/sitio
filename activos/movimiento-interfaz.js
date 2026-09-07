@@ -38,6 +38,7 @@ export function iniciarMovimientoInterfaz() {
 
   function permitido() {
     return paginaActiva && !document.hidden && !reduccion.matches
+      && !cuerpo.classList.contains("entrada-activa")
       && !cuerpo.classList.contains("escena-pausada")
       && !cuerpo.classList.contains("escena-oculta")
       && !cuerpo.classList.contains("pagina-admin");
