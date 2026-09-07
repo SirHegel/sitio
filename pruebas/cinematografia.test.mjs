@@ -201,11 +201,11 @@ test("movimiento reducido inicial usa imágenes y solicita WebGL sólo al habili
   } finally { await pagina.close(); }
 });
 
-test("sin JavaScript se pueden leer inicio y blog, usar navegación y omitir la entrada", { timeout: 15_000 }, async () => {
+test("sin JavaScript se pueden leer inicio, blog y juegos, usar navegación y omitir la entrada", { timeout: 15_000 }, async () => {
   const pagina = await nuevaPagina();
   try {
     await pagina.setJavaScriptEnabled(false);
-    for (const ruta of ["/", "/blog/"]) {
+    for (const ruta of ["/", "/blog/", "/juegos/"]) {
       await pagina.goto(origen + ruta, { waitUntil: "networkidle2" });
       const estado = await pagina.evaluate(() => ({
         puerta: document.getElementById("puerta") ? getComputedStyle(document.getElementById("puerta")).display : "none",
@@ -221,4 +221,39 @@ test("sin JavaScript se pueden leer inicio y blog, usar navegación y omitir la 
       assert.equal(estado.controles, "none");
     }
   } finally { await pagina.close(); }
+});
+
+test("Juegos se alcanza con menú móvil y conserva navegación, escena y enlaces jugables", { timeout: 35_000 }, async () => {
+  for (const ancho of [320, 390, 960, 1440]) {
+    const pagina = await nuevaPagina(ancho);
+    try {
+      await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+      await cargar(pagina, "/blog/");
+      await pagina.evaluate(() => { window.marcaJuegos = "mismo-documento"; });
+      if (ancho < 768) await pagina.click(".menu-mando");
+      const enlace = 'nav.menu a[href="/juegos/"]';
+      await pagina.focus(enlace);
+      await pagina.keyboard.press("Enter");
+      await pagina.waitForFunction(() => document.body.dataset.ruta === "/juegos/");
+      await terminarTransicion(pagina);
+      assert.equal(await pagina.evaluate(() => window.marcaJuegos), "mismo-documento");
+      assert.equal(await pagina.$eval(enlace, (e) => e.getAttribute("aria-current")), "page");
+      assert.equal(await pagina.$eval("body", (e) => e.dataset.escena), "nocturno");
+      if (ancho < 768) assert.equal(await pagina.$eval(".menu-mando", (e) => e.getAttribute("aria-expanded")), "false");
+      const estado = await pagina.evaluate(() => ({
+        titulos: [...document.querySelectorAll(".juego-ficha h2")].map((e) => e.textContent),
+        enlaces: [...document.querySelectorAll(".juego-acciones .boton")].map((e) => ({
+          url: e.href, alto: e.getBoundingClientRect().height, ancho: e.getBoundingClientRect().width,
+          x: e.getBoundingClientRect().x, derecha: e.getBoundingClientRect().right,
+        })),
+        ancho: innerWidth,
+      }));
+      assert.deepEqual(estado.titulos, ["Neiva Abierta", "Bloquitos"]);
+      assert.deepEqual(estado.enlaces.map((e) => e.url), ["https://neiva-abierta.vercel.app/", "https://bloquitos.vercel.app/"]);
+      for (const boton of estado.enlaces) {
+        assert.ok(boton.alto >= 44 && boton.ancho >= 44, `objetivo táctil a ${ancho}px`);
+        assert.ok(boton.x >= 0 && boton.derecha <= estado.ancho, `acción accesible completa a ${ancho}px`);
+      }
+    } finally { await pagina.close(); }
+  }
 });

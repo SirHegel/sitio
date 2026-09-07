@@ -1,0 +1,77 @@
+/* La sala comparte paleta y tipografía del sitio. Arte CSS estático original;
+   cero recursos de terceros y ningún bucle de animación adicional. */
+.juegos-cabecera { padding-block: 1rem 3.5rem; }
+.juegos-cabecera > .micro { color: #d6b98f; letter-spacing: .17em; }
+.juegos-cabecera h1 { margin: 1.7rem 0 2rem; font: 400 clamp(4rem, 10vw, 9rem)/.94 var(--serif); letter-spacing: -.055em; }
+.juegos-cabecera h1 em { color: #dfc39a; }
+.juegos-entrada { display: flex; justify-content: space-between; align-items: end; gap: 2rem; }
+.juegos-entrada > p { margin: 0; color: #e1d5c5; font-size: clamp(.95rem, 1.6vw, 1.15rem); }
+.juegos-sello { flex-shrink: 0; border-left: 1px solid #b4976c77; padding-left: 1.2rem; font: .65rem/1.9 var(--mono); text-transform: uppercase; color: #d8cbb8; letter-spacing: .08em; }
+.juegos-rejilla { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.2rem, 3vw, 3rem); }
+.juego-tarjeta { min-width: 0; display: flex; flex-direction: column; background: #141414; border: 1px solid #dbc19b35; }
+.juego-ficha { flex: 1; display: flex; flex-direction: column; align-items: start; padding: clamp(1.4rem, 3vw, 2.7rem); }
+.juego-tipo { color: #d4bc99; font-size: .65rem; letter-spacing: .1em; }
+.juego-ficha h2 { margin: 1rem 0 .45rem; font: 400 clamp(2rem, 3.3vw, 3.5rem)/1.08 var(--serif); letter-spacing: -.04em; }
+.juego-ficha > p { font-size: .9rem; color: #d0c7ba; line-height: 1.8; margin: 0 0 1.1rem; }
+.juego-ficha > .juego-lema { font: italic 1.15rem/1.5 var(--serif); color: #e6ccaa; margin-bottom: 1.5rem; }
+.juego-ficha > .juego-tipo { color: #d4bc99; font: .65rem/1.6 var(--mono); }
+.juego-ficha > .juego-detalle { color: #bcb3a7; font-size: .8rem; }
+.juego-ficha > .juego-controles { margin-top: auto; padding-top: .5rem; font: .63rem/1.7 var(--mono); color: #dbd3c8; }
+.juego-acciones { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 1.25rem; width: 100%; margin-top: .65rem; }
+.juego-acciones .boton { min-height: 48px; }
+.juego-codigo { display: inline-flex; align-items: center; min-height: 44px; gap: .65rem; color: #e2d1b9; font-size: .72rem; text-decoration: underline; text-underline-offset: .35em; }
+.juegos-nota { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #d3b48c35; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.2rem, 3vw, 3rem); }
+.juegos-nota .micro { color: #ddc5a3; }
+.juegos-nota p:not(.micro) { font-size: .82rem; line-height: 1.9; color: #c8bfb3; }
+.juegos-nota a:not(.mas) { text-decoration: underline; text-underline-offset: .2em; }
+.juegos-nota .mas { font-size: .72rem; }
+.juego-ilustracion { position: relative; width: 100%; aspect-ratio: 1.55; overflow: hidden; isolation: isolate; border-bottom: 1px solid #dbc19b35; }
+.juego-arte-nota { position: absolute; bottom: 1rem; left: 1.2rem; right: 1rem; z-index: 4; font: .55rem/1.6 var(--mono); text-transform: uppercase; letter-spacing: .13em; color: #f4e6cd; }
+.juego-ilustracion::after { content: ''; position: absolute; inset: 65% 0 0; z-index: 3; background: linear-gradient(transparent, #0b0c0ded); }
+.juego-ilustracion-neiva { background: linear-gradient(#657e83, #d7b68a 60%, #665e4b 61%, #1b3233); }
+.juego-sol { position: absolute; width: 14%; aspect-ratio: 1; border-radius: 50%; left: 65%; top: 13%; background: #ffdf9e; box-shadow: 0 0 65px #ffdbaa80; }
+.juego-montanas { position: absolute; inset: 15% -5% 26%; background: #556a60; clip-path: polygon(0 52%, 9% 61%, 21% 27%, 32% 50%, 42% 10%, 55% 39%, 67% 22%, 85% 53%, 100% 30%, 100% 100%, 0 100%); opacity: .58; }
+.juego-ciudad { position: absolute; inset: 44% 6% 23%; display: flex; gap: 2%; align-items: end; }
+.juego-ciudad i { width: 12%; height: 58%; background: repeating-linear-gradient(0deg, transparent 0 13px, #687778 13px 16px), repeating-linear-gradient(90deg, #b8b0a0 0 12px, #b6a085 12px 16px); border-top: 3px solid #e2c9a3; box-shadow: 8px 2px 0 #4d5e5b; }
+.juego-ciudad i:nth-child(3n) { height: 100%; }
+.juego-ciudad i:nth-child(3n + 1) { height: 72%; }
+.juego-carretera { position: absolute; inset: 71% -10% -25%; transform: rotate(-10deg); border-block: 9px solid #b7a891; background: linear-gradient(transparent 47%, #d5c59a 47% 49%, transparent 49%), #303936; }
+.juego-estudio { position: absolute; bottom: 22%; left: 20%; width: 18%; height: 17%; padding-top: 4%; background: #a06443; border-top: 5px solid #e2c194; border-bottom: 16px solid #533d30; color: #ffedc7; text-align: center; font: 700 clamp(.7rem, 2vw, 1.2rem)/1 var(--serif); box-shadow: 9px 2px 0 #604b3c; }
+.juego-personaje { position: absolute; width: 3%; height: 11%; bottom: 18%; left: 65%; background: #233e43; border-radius: 30% 30% 0 0; box-shadow: 5px 7px 0 #183435; }
+.juego-personaje::before { content: ''; position: absolute; width: 85%; aspect-ratio: 1; left: 8%; top: -27%; background: #c09975; border-radius: 50%; }
+.juego-ilustracion-bloquitos { background: radial-gradient(ellipse at 75% 10%, #69365d50, transparent 60%), radial-gradient(ellipse at 15% 90%, #29777750, transparent 60%), #111523; }
+.juego-tablero { position: absolute; top: 10%; left: 24%; width: 52%; height: 90%; transform: rotate(-9deg); background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), #bba6dc17 calc(10% - 1px) 10%), repeating-linear-gradient(0deg, transparent 0 calc(8.33% - 1px), #bba6dc17 calc(8.33% - 1px) 8.33%); border: 1px solid #ccbae02f; border-radius: 6px; box-shadow: 0 16px 55px #0007; }
+.pieza { position: absolute; display: grid; grid-template-columns: repeat(3, 1fr); width: 42%; filter: drop-shadow(0 8px 6px #0008); }
+.pieza i { display: block; aspect-ratio: 1; border: 1px solid #ffffff55; border-radius: 18%; background: linear-gradient(145deg, #d8b8f0, #aa64d4 43%, #7a3cad); box-shadow: inset 0 3px 0 #ffffff60, inset 0 -4px 0 #41195d40; }
+.pieza-t { left: 33%; top: 10%; transform: rotate(8deg); }
+.pieza-t i:first-child { grid-column: 2; }.pieza-t i:nth-child(2) { grid-column: 1; }
+.pieza-l { left: 0; bottom: 7%; grid-template-columns: repeat(2, 1fr); width: 28%; }
+.pieza-l i { background: linear-gradient(145deg, #f1c5a1, #dc954b 43%, #a85c31); }.pieza-l i:first-child, .pieza-l i:nth-child(2) { grid-column: 1; }
+.pieza-o { right: 2%; bottom: 7%; grid-template-columns: repeat(2, 1fr); width: 28%; }
+.pieza-o i { background: linear-gradient(145deg, #f4e6a7, #dcbe59 43%, #b08538); }
+.pieza-i { left: 28%; bottom: 7%; grid-template-columns: 1fr; width: 14%; }.pieza-i i { background: linear-gradient(145deg, #b1edf0, #58c0d3 43%, #398695); }
+.pieza-s { right: 2%; bottom: 38%; }.pieza-s i { background: linear-gradient(145deg, #d6edd7, #81bc9b 43%, #447d70); }.pieza-s i:first-child { grid-column: 2; }.pieza-s i:nth-child(3) { grid-column: 1; }
+.juegos-inicio { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2rem; padding: clamp(1.5rem, 4vw, 3.5rem); background: #1a1e1b; border: 1px solid #bca78245; }
+.juegos-inicio .titulo { margin-block: .8rem 1rem; font: 400 clamp(2rem, 4vw, 3.5rem)/1.1 var(--serif); letter-spacing: -.04em; }
+.juegos-inicio p:not(.micro) { font-size: .9rem; color: #d2c9bb; margin-bottom: 0; }
+.juegos-inicio .boton { min-height: 48px; }
+@media (min-width: 48.01rem) and (max-width: 68rem) {
+  .marca-nombre { display: none; }
+}
+@media (max-width: 48rem) {
+  .juegos-cabecera { padding-block: .5rem 2.5rem; }
+  .juegos-cabecera h1 { font-size: clamp(3.8rem, 15vw, 6rem); margin-block: 1.4rem 1.6rem; }
+  .juegos-entrada { align-items: start; gap: 1rem; flex-direction: column; }
+  .juegos-sello { padding-left: .8rem; font-size: .58rem; }
+  .juegos-rejilla, .juegos-nota, .juegos-inicio { grid-template-columns: minmax(0, 1fr); }
+  .juegos-rejilla { gap: 2rem; }
+  .juego-ficha { padding: 1.4rem; }
+  .juego-ficha h2 { font-size: clamp(2rem, 8vw, 3rem); }
+  .juego-arte-nota { font-size: .45rem; left: .8rem; letter-spacing: .06em; }
+  .juegos-inicio { gap: 1.5rem; justify-items: start; }
+}
+@media (max-width: 22rem) {
+  .juego-ficha { padding: 1.1rem; }
+  .juego-acciones { flex-direction: column; align-items: stretch; gap: .4rem; }
+  .juego-acciones .boton { padding-inline: 1rem; justify-content: space-between; }
+}

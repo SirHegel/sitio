@@ -111,7 +111,7 @@ export function iniciarCinematografia() {
   function escenaDeRuta() {
     if (eleccionManual) return;
     const ruta = cuerpo.dataset.ruta || location.pathname;
-    escena(ruta.startsWith("/blog/") ? "celuloide" : /^\/(proyectos|contribuciones|academico)\//.test(ruta) ? "nocturno" : "terciopelo", false);
+    escena(ruta.startsWith("/blog/") ? "celuloide" : /^\/(proyectos|juegos|contribuciones|academico)\//.test(ruta) ? "nocturno" : "terciopelo", false);
   }
 
   function animar(ahora) {

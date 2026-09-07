@@ -24,6 +24,7 @@ npm run sync:activity     # actualiza el agregado del ledger local
 | `escritos/*.md` | Fuente editorial del blog. |
 | `plantilla.js` | Cabecera, navegación, SEO y JSON-LD comunes. |
 | `construir.js` | Blog, proyectos, actividad, feed, sitemap y HTML estático. |
+| `juegos.js` y `activos/juegos.css` | Catálogo `/juegos/`: Neiva Abierta y Bloquitos, enlaces directos y presentación adaptable al celular. |
 | `api/` y `lib/` | Autenticación, CMS y auditoría en funciones de Vercel. |
 | `activos/animacion.js` | Movimiento, audio persistente y navegación progresiva. |
 | `activos/cinematografia.js` y `.css` | Escenas originales, luz de proyección, menú móvil y pausa accesible. |

@@ -20,6 +20,7 @@ import { notaInvestigacionHtml } from "./herramientas/nota-investigacion.js";
 import { auditarPublicacionOro, auditarSalidaEstaticaOro } from "./herramientas/validar-publicacion-oro.mjs";
 import { leerContinuidadOro } from "./lib/continuidad-publicacion.js";
 import { cargarEstudioOro } from "./estudio-oro.js";
+import { indiceJuegos } from "./juegos.js";
 
 const raiz = dirname(fileURLToPath(import.meta.url));
 const salida = join(raiz, "publico");
@@ -434,6 +435,13 @@ ${franja(`<div data-ambiente="celuloide">${rotulo("02 / Obra seleccionada", "Pro
 ${destacados}
       </div>
       <p class="sep-m"><a class="mas" href="/proyectos/">Los ${PROYECTOS_TODOS.length} proyectos y repositorios <i>→</i></a></p>`)}
+
+${franja(`      <section class="juegos-inicio revelar" aria-labelledby="juegos-inicio-titulo">
+        <div><p class="micro">Sala de juegos / Acceso gratuito</p>
+        <h2 class="titulo" id="juegos-inicio-titulo">Te toca moverte.</h2>
+        <p>Recorre Neiva Abierta o entra a una partida de Bloquitos. También en tu celular.</p></div>
+        <a class="boton primario" href="/juegos/"><span>Entrar a los juegos</span><span aria-hidden="true">↗</span></a>
+      </section>`)}
 
 ${franja(`      <div class="intermedio revelar">
         <div class="sala-imaginaria" aria-hidden="true"><img src="/activos/escenas/nocturno.webp" width="1674" height="940" loading="lazy" alt=""><span class="sala-rotulo">INTERMEDIO / DESPUÉS DE MEDIANOCHE</span></div>
@@ -1349,6 +1357,7 @@ const RUTAS = [
   ["/", inicio],
   ["/academico/", academico],
   ["/proyectos/", indiceProyectos],
+  ["/juegos/", indiceJuegos],
   ["/contribuciones/", contribuciones],
   ["/blog/", () => indiceBlog()],
   ["/actividad/", actividad],

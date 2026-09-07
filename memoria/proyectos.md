@@ -65,3 +65,35 @@ Beethoven, Quinta Sinfonía. La apertura utiliza un portal original con torsión
 en profundidad; una nueva sección incorpora telones, muebles y lámpara como
 geometría independiente. Se mantienen fotografías globales y lectura estable.
 Modelo, referencias, prompt y comprobaciones en `memoria/entrada-y-sala-20260906.md`.
+
+## Sala de juegos, 6 de septiembre de 2026
+
+El catálogo incorpora Neiva Abierta y Bloquitos en `/juegos/`, con acceso
+desde portada y navegación global. Modelo: `C = juegos enlazados / juegos
+solicitados`; base del catálogo anterior `0/2`, umbral `C = 1`, resultado
+local `2/2`. Esta métrica mide acceso desde el sitio; no certifica el alcance
+de la ciudad ni el rendimiento de los juegos.
+
+Verificación local: build de 45 páginas y 95/95 pruebas integrales aprobadas,
+sin omisiones, en 157,5 segundos. La matriz responsive recorrió 44 rutas
+públicas en trece anchos entre 280 y 1.440 px: 572 combinaciones, cero
+desbordamientos.
+La prueba de navegación usa 320, 390, 960 y 1.440 px; exige continuidad del
+documento al entrar, escena correcta y objetivos táctiles de al menos 44 px.
+Las capturas locales de 320, 390 y 1.440 px no registran desbordamiento del
+documento. Axe WCAG 2/2.1 A/AA no detectó infracciones en esos tres anchos.
+`σ = desconocida`: Chrome automatizado, sin dispositivos físicos.
+Sanidad: sin JavaScript permanecen ambos enlaces y la navegación.
+
+El render del catálogo cuesta `O(J)` tiempo y espacio, `J = 2` juegos; el arte
+CSS es estático. Se reutilizan las dependencias del sitio. Las horas humanas
+y costo en pesos siguen en los pendientes generales. La publicación debe
+verificarse sobre la revisión final.
+
+Neiva Abierta quedó publicado en `https://neiva-abierta.vercel.app/` y
+el código abierto en `https://github.com/SirHegel/neiva-abierta`. El juego
+combina 6.137 tramos OSM y 35.875 huellas OSM/Overture con alturas y fachadas
+interpretadas. Se comprobaron 17 pruebas de datos/física, caminar, conducir,
+salir del carro, contactar el estudio y controles táctiles a 320/390 px.
+El proyecto Unreal está incluido como fuente sin compilar; el visor oficial
+de Google consultado no marca cobertura fotogramétrica de Neiva.

@@ -18,6 +18,7 @@ export const MENU = [
   { ruta: "/hoja-de-vida/", texto: "Hoja de vida" },
   { ruta: "/academico/", texto: "Académico" },
   { ruta: "/proyectos/", texto: "Proyectos" },
+  { ruta: "/juegos/", texto: "Juegos" },
   { ruta: "/contribuciones/", texto: "Contribuciones" },
   { ruta: "/blog/", texto: "Blog" },
   { ruta: "/trayectoria/", texto: "Trayectoria" },
@@ -100,7 +101,7 @@ export function pagina({
   const url = SITIO + ruta;
   const ld = { "@context": "https://schema.org", "@graph": grafo };
   const escenaInicial = ruta.startsWith("/blog/") ? "celuloide"
-    : /^\/(proyectos|contribuciones|academico)\//.test(ruta) ? "nocturno" : "terciopelo";
+    : /^\/(proyectos|juegos|contribuciones|academico)\//.test(ruta) ? "nocturno" : "terciopelo";
 
   const enlaces = MENU.map(
     (m) => {
@@ -151,6 +152,7 @@ ${ruta === "/" ? `<meta property="profile:first_name" content="Jhon Steven">
 <link rel="stylesheet" href="/activos/transiciones.css">
 <link rel="stylesheet" href="/activos/movimiento.css">
 <link rel="stylesheet" href="/activos/entrada.css">
+<link rel="stylesheet" href="/activos/juegos.css">
 ${!ruta.startsWith("/admin/") ? `<link rel="preload" as="image" href="/activos/escenas/${escenaInicial}.webp" media="(min-width: 769px)">
 <link rel="preload" as="image" href="/activos/escenas/${escenaInicial}-movil.webp" media="(max-width: 768px)">` : ""}
 

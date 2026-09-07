@@ -52,3 +52,12 @@ inmediata con movimiento reducido. La sala tridimensional tiene sección propia
 para conservar el acabado fotográfico de la portada. Comparte el reloj general
 y agrega una llamada de dibujo sólo mientras está visible. No se incorporan
 vídeos de terceros ni nuevas dependencias.
+
+La sección `/juegos/` reúne dos accesos jugables: Neiva Abierta y Bloquitos.
+El catálogo usa navegación y pie comunes, una entrada en portada y tarjetas
+con controles táctiles de al menos 44 px. El arte de las tarjetas se rotula
+como ilustración. El alcance cartográfico de Neiva se describe como prototipo
+con edificios interpretados, sin atribuir exactitud de fachadas a OpenStreetMap.
+Bloquitos enlaza a su despliegue Vercel, comprobado con HTTP 200 el 6 de
+septiembre de 2026; GitHub Pages también respondió 200. La nueva página se
+incorpora al sitemap y al catálogo de rutas de auditoría existentes.

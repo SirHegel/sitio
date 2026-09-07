@@ -23,6 +23,8 @@ const CAJAS = [
   ".escrito-card",
   ".cv-retrato",
   ".epigrafe .plancha",
+  ".juego-tarjeta",
+  ".juegos-inicio",
 ].join(",");
 
 const tipos = new Map([

@@ -73,6 +73,24 @@ test("el sitemap enumera rutas únicas que existen", () => {
   for (const ruta of rutasPublicas) assert.ok(existsSync(archivoRuta(ruta)), `sitemap promete ${ruta}`);
 });
 
+test("la sala de juegos publica entradas gratuitas, alcance cartográfico y navegación global", () => {
+  assert.ok(rutasPublicas.includes("/juegos/"));
+  const html = readFileSync(archivoRuta("/juegos/"), "utf8");
+  for (const ruta of rutasPublicas) {
+    const pagina = readFileSync(archivoRuta(ruta), "utf8");
+    assert.match(pagina.match(/<nav class="menu"[\s\S]*?<\/nav>/)?.[0] || "", /href="\/juegos\/"/);
+  }
+  for (const texto of ["Neiva Abierta", "Bloquitos", "OpenStreetMap", "personaje sin nombre", "estudio ficticio", "Controles táctiles"]) {
+    assert.ok(html.includes(texto), `la sala de juegos omite ${texto}`);
+  }
+  assert.doesNotMatch(html, /hiperrealista|ultrarrealista|cada barrio reconstruido|Unreal Engine/i);
+  const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  const catalogo = ld["@graph"].find((nodo) => nodo["@type"] === "CollectionPage");
+  assert.equal(catalogo.hasPart.length, 2);
+  assert.ok(catalogo.hasPart.every((juego) => juego.isAccessibleForFree === true));
+  assert.match(readFileSync(archivoRuta("/"), "utf8"), /class="juegos-inicio/);
+});
+
 test("todas las páginas tienen título, canónico único y marcado de persona", () => {
   const canonicos = new Set();
   for (const ruta of rutasPublicas) {
