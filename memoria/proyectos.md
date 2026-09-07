@@ -145,3 +145,39 @@ pruebas pertinentes aprobadas:
 catálogo estático, acceso sin JavaScript y navegación hacia Juegos. Los cuatro
 anchos del control local cumplieron los umbrales; axe WCAG 2/2.1 A/AA no
 detectó infracciones. La imagen construida coincide con el SHA del juego.
+
+## Ficha de Neiva 0.4, revisión del 7 de septiembre de 2026
+
+La preparación editorial actualiza la tarjeta de `/juegos/` y da a
+`/proyectos/neiva-abierta/` una ficha propia. Describe la conducción, las
+paradas de observación y el inspector de edificios; documenta las 22 cubiertas
+abiertas de OSM, incluidas 14 de gasolineras. Mantiene separadas las dimensiones
+de una huella del mapa y las dimensiones físicas sin medición de campo.
+
+La evidencia enlaza la revisión publicada del juego
+`5fd5188fb125309eae3f0b76af3e4755948d07d6`. La tarjeta incorpora su captura
+en calidad Alta, 1.440 × 960 px y 223.406 bytes; SHA-256
+`34b77ce574aeb271864e53f9ac01e3bd358964ef6b4ecba1542f7f20e0c372d5`.
+Se copia el WebP original, sin retoque. El texto alternativo indica la versión,
+el ajuste de calidad y los elementos visibles.
+
+Modelo: `C = superficies editoriales actualizadas / 2` —tarjeta y ficha—;
+base `0/2`, umbral previo a la comprobación `C = 1`, resultado local `2/2`.
+El build produjo 46 páginas. Pasaron 19 regresiones del sitio y una prueba
+de navegación hacia Juegos en cuatro anchos. La revisión adicional de tarjeta
+y ficha cubrió 320, 390, 960 y 1.440 px: ocho combinaciones, cero desbordamientos,
+cero errores JavaScript/HTTP de recursos públicos y cero infracciones
+WCAG 2/2.1 A/AA detectadas por axe. El servidor local simuló las respuestas de
+analítica y `/api/visita/`; esos servicios requieren verificación en producción.
+Sanidad: Bloquitos conserva su registro, arte y enlaces; el snapshot automático
+GitHub y las fuentes firmadas de la hoja de vida no se modifican.
+`σ = desconocida`: estos controles de Chrome no miden la fluidez del juego.
+La ficha es contenido estático; su generación cuesta O(T) tiempo y espacio
+para T caracteres de salida, sin nuevas dependencias de ejecución.
+
+El código de la ficha está en `neiva-abierta.js`, separado de `datos.js` para
+evitar alterar el perfil y la huella documental de la hoja de vida. Las
+secciones de auditoría conservan fuente, métrica con denominador, error,
+sanidad, costo y pendientes. Se enlaza la medición publicada del Intel UHD;
+permanecen pendientes otros computadores y celulares físicos. La ficha no
+extrapola ese resultado a todos los equipos.

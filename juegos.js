@@ -5,10 +5,10 @@ export const JUEGOS = [
   {
     slug: "neiva-abierta",
     nombre: "Neiva Abierta",
-    tipo: "Exploración 3D · Prototipo",
+    tipo: "Exploración 3D · Versión 0.4",
     titulo: "La ciudad, a tu paso.",
-    descripcion: "Recorre Neiva con un personaje sin nombre. Sube a un carro y encuentra un pequeño estudio ficticio donde contactar los servicios de desarrollo de Jhon.",
-    detalle: "Personaje y carro con modelos detallados, materiales fotográficos y una ciudad trazada con OpenStreetMap y Overture. Las fachadas y las alturas ausentes son interpretaciones.",
+    descripcion: "Recorre Neiva con un personaje sin nombre. Conduce por la ciudad o sigue las paradas del centro a pie; en un pequeño estudio ficticio puedes contactar los servicios de desarrollo de Jhon.",
+    detalle: "El carro acelera y frena antes de cambiar de sentido. Un inspector muestra la huella del edificio que tienes delante y distingue su altura estimada. Las fachadas siguen siendo interpretaciones.",
     url: "https://neiva-abierta.vercel.app/",
     repo: "https://github.com/SirHegel/neiva-abierta",
     accion: "Explorar Neiva",
@@ -31,7 +31,7 @@ export const JUEGOS = [
 // Captura del juego Neiva y arte CSS decorativo de Bloquitos; sin animación propia.
 function vistaJuego(slug) {
   if (slug === "neiva-abierta") return `<figure class="juego-ilustracion juego-captura">
-    <img src="/activos/neiva-abierta.webp" width="1440" height="960" alt="Personaje en el Parque Santander frente a la recreación de la Catedral de Neiva, con árboles y fuente" loading="lazy" decoding="async">
+    <img src="/activos/neiva-abierta.webp" width="1440" height="960" alt="Captura de Neiva Abierta 0.4 en calidad Alta: personaje en el Parque Santander frente a la Catedral recreada, árboles y fuente" loading="lazy" decoding="async">
     <figcaption class="juego-arte-nota">Captura del juego / Neiva Abierta</figcaption>
   </figure>`;
   return `<div class="juego-ilustracion juego-ilustracion-bloquitos" aria-hidden="true">
@@ -85,7 +85,7 @@ export function indiceJuegos() {
         </header>
         ${tarjetasJuegos()}
         <aside class="juegos-nota revelar" aria-label="Sobre estos juegos">
-          <div><p class="micro">Del mapa a la calle</p><p>Neiva Abierta es una interpretación jugable en desarrollo. Los datos proceden de <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap y sus colaboradores</a> y de <a href="https://docs.overturemaps.org/attribution/" target="_blank" rel="noopener">Overture Maps</a>. Las fachadas, alturas ausentes y el estudio de Jhon son recreaciones; consulta el alcance y la fecha de los mapas dentro del juego.</p></div>
+          <div><p class="micro">Del mapa a la calle</p><p>Neiva Abierta es una interpretación jugable en desarrollo, trazada con <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap y sus colaboradores</a> y <a href="https://docs.overturemaps.org/attribution/" target="_blank" rel="noopener">Overture Maps</a>. La revisión recupera 22 cubiertas abiertas que antes aparecían cerradas. El inspector muestra las dimensiones del mapa y su procedencia; las alturas carecen de medición de campo.</p><a class="mas" href="/proyectos/neiva-abierta/">Desarrollo y límites del juego <i aria-hidden="true">→</i></a></div>
           <div><p class="micro">También en el celular</p><p>Abre el juego y usa sus controles en pantalla. Neiva Abierta requiere un navegador con gráficos 3D; su fluidez depende del equipo. Bloquitos también admite gestos táctiles.</p><a class="mas" href="mailto:${esc(PERSONA.email)}">Hablemos de tu proyecto <i aria-hidden="true">↗</i></a></div>
         </aside>
       </div>

@@ -21,6 +21,7 @@ import { auditarPublicacionOro, auditarSalidaEstaticaOro } from "./herramientas/
 import { leerContinuidadOro } from "./lib/continuidad-publicacion.js";
 import { cargarEstudioOro } from "./estudio-oro.js";
 import { indiceJuegos } from "./juegos.js";
+import { NEIVA_ABIERTA } from "./neiva-abierta.js";
 
 const raiz = dirname(fileURLToPath(import.meta.url));
 const salida = join(raiz, "publico");
@@ -173,7 +174,7 @@ function proyectoDesdeGitHub(repo) {
 
 const repositoriosGitHubVigentes = REPOSITORIOS_GITHUB.repositorios.map(repoConPerfilActual);
 const githubPorNombre = new Map(repositoriosGitHubVigentes.map((r) => [r.nombre.toLowerCase(), r]));
-const proyectosCurados = PROYECTOS.map((proyecto) => {
+const proyectosCurados = [...PROYECTOS, NEIVA_ABIERTA].map((proyecto) => {
   const vivo = proyecto.repo ? githubPorNombre.get(nombreRepo(proyecto.repo)) : null;
   return { ...proyecto, github: vivo || null };
 });
@@ -644,7 +645,7 @@ function proyecto(p) {
   const razon = p.automatico
     ? parrafosEscapados(p.porQue)
     : `<p class="lead">${p.porQue.trim()}</p>`;
-  const auditoria = auditoriaProyecto(p);
+  const auditoria = { ...auditoriaProyecto(p), ...(p.auditoria || {}) };
   const releases = auditoria.releases.length
     ? `      <div class="rejilla sep-m" data-escalonar>
 ${auditoria.releases.map((release) => `        <article class="ficha revelar">

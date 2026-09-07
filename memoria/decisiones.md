@@ -76,3 +76,13 @@ El personaje aparece frente a la Catedral y la fuente del Parque Santander;
 la imagen se obtiene dentro del juego. Se conserva el tamaño de 1.440 × 960
 px para mantener el espacio de la tarjeta. El archivo de 319.616 bytes se
 comparte con la portada del repositorio del juego; Bloquitos conserva su arte.
+
+La preparación de Neiva 0.4 separa su ficha editorial del inventario automático
+de GitHub. `neiva-abierta.js` reúne propósito, cambios de juego, auditoría de
+22 cubiertas y límites dimensionales. El catálogo mantiene dos juegos y la
+misma ruta del proyecto. No se editan el inventario sincronizado ni `datos.js`,
+que participa en el manifiesto de la hoja de vida. La evidencia se fija a
+`5fd5188fb125309eae3f0b76af3e4755948d07d6`; la captura 0.4 en calidad Alta
+reemplaza la anterior y conserva sus dimensiones. Los pendientes de rendimiento
+se limitan a otros computadores y celulares físicos, pues el Intel UHD ya
+cuenta con una medición documentada.
