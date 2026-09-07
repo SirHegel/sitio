@@ -120,3 +120,28 @@ desbordamientos. La navegación desde inicio por el menú cargó la captura
 a 320, 390, 960 y 1.440 px; cuatro casos sin errores JavaScript, HTTP,
 consola ni infracciones WCAG 2/2.1 A/AA detectadas por axe.
 `σ = desconocida`: Chrome headless local, sin medición en dispositivos físicos.
+
+## Captura del centro revisado, 7 de septiembre de 2026
+
+La tarjeta usa ahora una captura directa de Neiva Abierta 0.3: el personaje
+en el Parque Santander, con Catedral, hotel y fuente en el encuadre. Proviene
+del canvas del juego, después de caminar por el parque; conversión de PNG a
+WebP con calidad 90, sin retoque ni recorte. Resolución: 1.440 × 960 px;
+319.616 bytes; SHA-256
+`a581e0aabaf9145611d0d33223aabb0f2842e7d8b6495e58899ca52877f3c27f`.
+El texto alternativo identifica personaje, parque, Catedral y fuente.
+
+Modelo: `C = capturas de la versión actual / tarjetas de Neiva`; base `0/1`,
+umbral fijado antes de probar `C = 1`; resultado `1/1`. Sanidad: ambas copias
+tienen la misma huella y el navegador carga las dimensiones declaradas.
+La prueba de navegación usa 320, 390, 960 y 1.440 px; umbral: cero
+desbordamientos y cero errores JavaScript/HTTP. Decodificación `O(P)` tiempo
+y espacio, `P = 1.382.400` píxeles. `σ = desconocida`: no se mide rendimiento
+en dispositivos físicos. Esta captura conserva la arquitectura interpretada
+del juego; no acredita un levantamiento completo de la ciudad.
+
+Build de 46 páginas tras integrar la sincronización pública de GitHub y tres
+pruebas pertinentes aprobadas:
+catálogo estático, acceso sin JavaScript y navegación hacia Juegos. Los cuatro
+anchos del control local cumplieron los umbrales; axe WCAG 2/2.1 A/AA no
+detectó infracciones. La imagen construida coincide con el SHA del juego.

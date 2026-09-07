@@ -68,3 +68,11 @@ de 319.058 bytes se sirve localmente y declara sus dimensiones para reservar
 espacio. Se retira el dibujo CSS de Neiva; Bloquitos conserva el suyo. La
 captura representa el juego publicado, con arquitectura interpretada; el
 texto no atribuye exactitud de fachadas a los mapas ni ejecución web a Unreal.
+
+## 2026-09-07
+
+Se renueva la captura de Neiva con la versión 0.3 y su revisión del centro.
+El personaje aparece frente a la Catedral y la fuente del Parque Santander;
+la imagen se obtiene dentro del juego. Se conserva el tamaño de 1.440 × 960
+px para mantener el espacio de la tarjeta. El archivo de 319.616 bytes se
+comparte con la portada del repositorio del juego; Bloquitos conserva su arte.

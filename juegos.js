@@ -31,7 +31,7 @@ export const JUEGOS = [
 // Captura del juego Neiva y arte CSS decorativo de Bloquitos; sin animación propia.
 function vistaJuego(slug) {
   if (slug === "neiva-abierta") return `<figure class="juego-ilustracion juego-captura">
-    <img src="/activos/neiva-abierta.webp" width="1440" height="960" alt="Recreación de la Catedral de Neiva entre edificios y árboles en Neiva Abierta" loading="lazy" decoding="async">
+    <img src="/activos/neiva-abierta.webp" width="1440" height="960" alt="Personaje en el Parque Santander frente a la recreación de la Catedral de Neiva, con árboles y fuente" loading="lazy" decoding="async">
     <figcaption class="juego-arte-nota">Captura del juego / Neiva Abierta</figcaption>
   </figure>`;
   return `<div class="juego-ilustracion juego-ilustracion-bloquitos" aria-hidden="true">
