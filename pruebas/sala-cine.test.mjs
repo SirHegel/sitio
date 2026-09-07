@@ -21,6 +21,7 @@ let navegador;
 let servidor;
 let origen;
 const seguimiento = new WeakMap();
+let versionChrome;
 
 before(async () => {
   execFileSync(process.execPath, ["construir.js"], { cwd: raiz, stdio: "pipe" });
@@ -45,6 +46,7 @@ before(async () => {
     args: ["--no-sandbox", "--disable-dev-shm-usage", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader",
       "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4"],
   });
+  versionChrome = await navegador.version();
 });
 
 after(async () => {
@@ -54,7 +56,7 @@ after(async () => {
 
 async function nuevaPagina(t, { ancho = 390, sinWebGL = false, sinTransicionNativa = false, retenerBlog = false } = {}) {
   const pagina = await navegador.newPage();
-  const traza = { ancho, fase: "crear página", estado: null };
+  const traza = { ancho, chrome: versionChrome, fase: "crear página", estado: null };
   seguimiento.set(pagina, traza);
   const cerrar = () => pagina.isClosed() ? Promise.resolve() : pagina.close().catch(() => {});
   const cancelar = () => { t.diagnostic(`Página cancelada: ${JSON.stringify(traza)}`); void cerrar(); };
@@ -63,7 +65,7 @@ async function nuevaPagina(t, { ancho = 390, sinWebGL = false, sinTransicionNati
     t.signal.removeEventListener("abort", cancelar);
     await cerrar();
   });
-  for (const nombre of ["goto", "click", "waitForFunction", "reload", "goBack"]) {
+  for (const nombre of ["goto", "click", "waitForFunction", "reload", "goBack", "evaluate", "$eval", "$$eval", "emulateMediaFeatures"]) {
     const ejecutar = pagina[nombre].bind(pagina);
     pagina[nombre] = (...argumentos) => {
       traza.fase = `${nombre}: ${String(argumentos[0] ?? "").slice(0, 180)}`;
@@ -78,8 +80,11 @@ async function nuevaPagina(t, { ancho = 390, sinWebGL = false, sinTransicionNati
     width: ancho, height: ancho < 768 ? 844 : 900,
     deviceScaleFactor: ancho < 768 ? 2 : 1, mobile: false,
   });
+  // Diagnóstico reproducible para cualquier caso: CINE_QA_CPU=4.
+  if (process.env.CINE_QA_CPU === "4") await sesionViewport.send("Emulation.setCPUThrottlingRate", { rate: 4 });
   const solicitudes = [];
   const errores = [];
+  traza.errores = errores;
   let confirmarBlog;
   let liberarBlog;
   const blogRetenido = new Promise((resolver) => { confirmarBlog = resolver; });
@@ -349,6 +354,15 @@ test("los ornamentos visibles se animan por defecto y la pausa o movimiento redu
         `el haz del pie no desborda a ${ancho}px y ${fase.tiempo}ms (exceso: ${fase.exceso}px)`);
       await pagina.click("#pausar-escena");
       await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+      const preferencia = await pagina.evaluate(() => ({
+        reducido: matchMedia("(prefers-reduced-motion: reduce)").matches,
+        visible: document.visibilityState, cuerpo: document.body.className,
+        deshabilitado: document.getElementById("pausar-escena").disabled,
+        dibujos: window.__qaSala.dibujados,
+      }));
+      seguimiento.get(pagina).movimiento = preferencia;
+      assert.equal(preferencia.reducido, true,
+        "la emulación del navegador aplica la preferencia antes de comprobar su control");
       await pagina.waitForFunction(() => document.getElementById("pausar-escena").disabled);
       assert.ok((await estado()).every((e) => e.animacion === "none" || e.estado === "paused"));
       assert.equal((await medirDibujos(pagina)).cantidad, 0, "reducir movimiento detiene también el fondo");
@@ -444,11 +458,6 @@ test("dos navegaciones rápidas conservan el último destino con y sin View Tran
   for (const sinTransicionNativa of [false, true]) {
     const { pagina, errores, blogRetenido, liberarBlog } = await nuevaPagina(t, { ancho: 1440, sinTransicionNativa, retenerBlog: true });
     try {
-      // Diagnóstico reproducible: CINE_QA_CPU=4 repite el caso con CPU lenta.
-      if (process.env.CINE_QA_CPU === "4") {
-        const sesion = await pagina.createCDPSession();
-        await sesion.send("Emulation.setCPUThrottlingRate", { rate: 4 });
-      }
       await cargar(pagina);
       await pagina.evaluate(() => { window.__qaDocumento = document; window.__qaAudio = document.querySelector("audio"); });
       await pagina.evaluate(() => document.querySelector('nav.menu a[href="/blog/"]').click());

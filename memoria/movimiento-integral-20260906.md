@@ -85,3 +85,17 @@ paneo y escala. Sin giro, la extensión derecha máxima relativa al ancho de
 sección es `0,68 × (0,09 + 0,07 × 0,75) = 0,0969`, inferior al margen de
 escritorio `0,10`; en móvil es `0,1026 < 0,12`. La prueba mantiene esos cinco
 puntos y el umbral de 2 px, sin ocultar overflow del contenido ni cortar foco.
+
+La revisión `ac60d85` aprobó 82 pruebas locales en 134,25 s; en CI quedó
+cancelada por tiempo la comprobación de movimiento reducido. Se reprodujo
+con Chrome 152.0.7977.64, dos CPU y ralentización ×4: las consultas reales
+de medios leían `matches: true`, pero el objeto del motor no recibía su
+evento `change`. El bucle se detenía por su guardia, dejando el control sin
+sincronizar. Ahora esa salida llama a `estado()` antes de retornar: refleja
+la pausa en controles y decoración, sin crear otro bucle, temporizador ni
+sondeo. Costo adicional `O(1)` exclusivamente al detenerse. La prueba exige
+la preferencia real aplicada, botón deshabilitado y cero dibujos posteriores;
+conserva su límite de 25 s. Las trazas de navegador pertenecen sólo al test.
+La repetición con dos CPU y ralentización ×4 aprobó en 9,83 s; después de
+retirar observadores de diagnóstico adicionales, aprobó en 10,07 s. Se
+conservan únicamente versión, errores, fase e instantánea de la preferencia.

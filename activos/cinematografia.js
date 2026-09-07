@@ -114,7 +114,10 @@ export function iniciarCinematografia() {
 
   function animar(ahora) {
     cuadro = 0;
-    if (!corriendo() || !sala?.disponible(escenas[indice])) return;
+    // La preferencia puede cambiar antes de que llegue el evento de media.
+    // Reflejar la detención mantiene el control y la decoración sincronizados.
+    if (!corriendo()) { estado(); return; }
+    if (!sala?.disponible(escenas[indice])) return;
     const transcurrido = ahora - ultimo;
     if (transcurrido >= 1000 / 30) {
       const delta = Math.min(transcurrido / 1000, .08);
