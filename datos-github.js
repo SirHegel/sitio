@@ -3,13 +3,13 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-09-07T04:47:36.000Z",
+  "actualizadoEn": "2026-09-07T08:38:26.000Z",
   "total": 23,
   "perfilGitHub": {
     "repositoriosPublicos": 43,
     "repositoriosPropios": 23,
     "forksPublicos": 20,
-    "seguidores": 5,
+    "seguidores": 6,
     "seguidos": 2
   },
   "forks": [
@@ -1696,19 +1696,19 @@ export const REPOSITORIOS_GITHUB = {
       "lenguajes": [
         {
           "nombre": "JavaScript",
-          "bytes": 101886
-        },
-        {
-          "nombre": "C++",
-          "bytes": 38694
+          "bytes": 333896
         },
         {
           "nombre": "Python",
-          "bytes": 30257
+          "bytes": 133043
+        },
+        {
+          "nombre": "C++",
+          "bytes": 65279
         },
         {
           "nombre": "HTML",
-          "bytes": 9562
+          "bytes": 14288
         },
         {
           "nombre": "C#",
@@ -1724,18 +1724,18 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-09-07T03:41:13.000Z",
-      "actualizadoEn": "2026-09-07T04:28:52.000Z",
-      "publicadoEn": "2026-09-07T04:28:48.000Z",
-      "extractoReadme": "Neiva Abierta\n\nUna interpretación jugable de Neiva, Huila, Colombia. Acceso gratuito, personaje\nsin nombre, caminata en tercera persona, un carro conducible, tráfico ambiental,\nmapa con destinos y un pequeño estudio ficticio para contactar a Jhon Steven\nÁlvarez Ruiz. Controles de teclado y controles táctiles para celular.\n\nJugar en Vercel ·\nSala de juegos y Bloquitos\n\nAlcance de esta versión\n\nLa edición web usa Three.js/WebGL 2 y funciona como sitio estático en Vercel.\nLas calles, parques y huellas de edificios proceden de datos abiertos. Las\nalturas ausentes, fachadas y árboles son una interpretación visual. La edición\n0.2 usa un personaje humano animado de Microsoft Rocketbox, el automóvil\nCar Concept de Khronos, mapas PBR fotográficos de Poly Haven, iluminación HDR,\nsombras solares y fachadas de apariencia fotográfica generadas con IA. La\nCatedral de la Inmaculada Concepción tiene una malla arquitectónica específica\ncon arcos, torre, reloj y cubiertas. Los demás edificios conservan huellas reales\ny reciben fachadas, aleros y tejados representativos. El suelo del juego es plano. No es una réplica\nfotográfica ni un levantamiento completo de cada barrio e interior de Neiva.\nEl estudio mide 6 × 4 × 3,5 metros de juego y no representa una dirección real.\n\nEl repositorio incluye también un proyecto C++ para Unreal Engine 5.5, con\nLumen, ciudad procedural, personaje, vehículo, interacción y controles táctiles.\nSu código no se ha compilado: Unreal no estaba instalado en el entorno de\nconstrucción. Preparación y límites de Unreal.\n\nGoogle Photorealistic 3D Tiles puede conectarse mediante Cesium para Unreal.\nSe incluye una preparación opcional que requiere plugin, clave API, facturación\ny verificar la cobertura real de Neiva. No se han extraído imágenes, mallas ni\nfachadas de Google Maps/Street View; los datos de Google no se redistribuyen\nbajo la licencia del juego. Publicar Unreal interactivo en navegador requiere\nademás un servidor GPU y Pixel Streaming; Vercel aloja la edición web.\nJugar\n\n· Acción · Computador · Celular ·\n\n· Caminar / conducir · WASD o flechas · Palanca izquierda ·\n· Mirar · Arrastrar sobre la ciudad · Deslizar sobre la ciudad ·\n· Correr · Shift · Mantener ⇧ ·\n· Subir / bajar del carro, visitar estudio · E o botón contextual · E ·\n· Frenar carro · Espacio · Soltar acelerador ·\n· Mapa y viaje a un destino · M o Mapa · Mapa ·\n· Pausar / continuar · Esc o menú · Menú ·\n\nEl carro dorado es conducible. Los demás vehículos son tráfico ambiental de\nrecorrido simple; no son una simulación vial completa. Los edificios tienen\ncolisión de huella; el estudio abre un panel de servicios. Las demás fachadas\nno tienen interiores. El botón Inicio recupera una posición transitable.\n\nHay tres luces del día, calidad gráfica ajustable y descarga de una foto del\nrecorrido. Los lugares visitados se guardan sólo en localStorage del dispositivo;\nsi ese almacenamiento no está disponible, se puede seguir jugando. Cambiar de\npestaña limpia las entradas y pausa…",
+      "actualizadoEn": "2026-09-07T08:38:26.000Z",
+      "publicadoEn": "2026-09-07T08:38:22.000Z",
+      "extractoReadme": "Neiva Abierta\n\nEntrega nativa en preparación: el desarrollo solicitado continúa en\nUnreal Engine, con ejecutable para GitHub, descarga desde el sitio personal\ny visualización local mediante Pixel Streaming. No hay todavía motor instalado,\ncompilación C++ ni ejecutable Unreal verificados. La web 0.4 de abajo es la edición\nanterior. Construcción, transmisión y publicación ·\nProyecto Unreal ·\nRevisar referencias sin usar el teclado o mouse del escritorio.\n\nUna interpretación jugable de Neiva, Huila, Colombia. Acceso gratuito, personaje\nsin nombre, caminata en tercera persona, un carro conducible, tráfico ambiental,\nmapa con destinos y un pequeño estudio ficticio para contactar a Jhon Steven\nÁlvarez Ruiz. Controles de teclado y controles táctiles para celular.\n\nJugar en Vercel ·\nSala de juegos y Bloquitos\n\nAlcance de esta versión\n\nLa edición web usa Three.js/WebGL 2 y funciona como sitio estático en Vercel.\nLas calles, parques y huellas de edificios proceden de datos abiertos. Las\nalturas ausentes, fachadas y árboles son una interpretación visual. La edición\n0.4 usa un personaje humano animado de Microsoft Rocketbox, el automóvil\nCar Concept de Khronos, mapas PBR fotográficos de Poly Haven, iluminación HDR,\nsombras solares y fachadas de apariencia fotográfica generadas con IA. La\nCatedral de la Inmaculada Concepción tiene una malla arquitectónica específica\ncon arcos, torre, reloj y cubiertas. El Palacio de Justicia, el Hotel Neiva Plaza\ny el Templo Colonial tienen modelos específicos apoyados en referencias del\ncentro; el Santander incorpora pavimento, fuente de mosaico y vegetación densa.\nLa revisión de fidelidad registra las fuentes y los detalles\ntodavía estimados. Se corrigieron dos extrusiones residenciales sin respaldo\ndentro del parque y el material de Calle 7 en su borde sur. El resto de edificios\nconserva huellas cartográficas y recibe fachadas, aleros y tejados representativos.\nLa edición 0.4 corrige 22 cubiertas abiertas que se interpretaban como edificios\ncerrados (14 asociadas a gasolineras); conserva sus huellas y estima los soportes.\nSe repara además una huella cuyo redondeo había introducido un autocruce.\nEl suelo del juego es plano. No es una réplica\nfotográfica ni un levantamiento completo de cada barrio e interior de Neiva.\nEl estudio mide 6 × 4 × 3,5 metros de juego y no representa una dirección real.\n\nEl repositorio incluye también un proyecto C++ para Unreal Engine 5.5, con\nLumen, ciudad procedural, personaje, vehículo, interacción y controles táctiles.\nSu código no se ha compilado: Unreal no estaba instalado en el entorno de\nconstrucción. Preparación y límites de Unreal.\n\nGoogle Photorealistic 3D Tiles puede conectarse mediante Cesium para Unreal.\nSe incluye una preparación opcional que requiere plugin, clave API, facturación\ny verificar la cobertura real de Neiva. No se han extraído imágenes, mallas ni\nfachadas de Google Maps/Street View; los datos de Google no se redistribuyen\nbajo la licencia del juego. Publicar Unreal…",
       "inventario": {
-        "revision": "930a2aa6aa8b6e6020cec918952419fb5bcc40c2",
+        "revision": "b731ed022ddac1cdb4255f84bb01cc305ec76c6d",
         "vacio": false,
         "completo": true,
-        "archivos": 121,
-        "bytesVersionados": 71460144,
-        "archivosFuente": 22,
-        "archivosPrueba": 3,
-        "archivosDocumentacion": 9,
+        "archivos": 192,
+        "bytesVersionados": 99276789,
+        "archivosFuente": 49,
+        "archivosPrueba": 16,
+        "archivosDocumentacion": 17,
         "workflows": 1,
         "manifiestos": [
           "package-lock.json",
@@ -1748,11 +1748,13 @@ export const REPOSITORIOS_GITHUB = {
           ".vercelignore",
           "LICENSE",
           "README.md",
+          "data",
           "docs",
           "index.html",
           "package-lock.json",
           "package.json",
           "public",
+          "publishing",
           "scripts",
           "src",
           "tests",
@@ -2290,7 +2292,7 @@ export const REPOSITORIOS_GITHUB = {
       "lenguajes": [
         {
           "nombre": "JavaScript",
-          "bytes": 848387
+          "bytes": 860184
         },
         {
           "nombre": "CSS",
@@ -2298,7 +2300,7 @@ export const REPOSITORIOS_GITHUB = {
         },
         {
           "nombre": "HTML",
-          "bytes": 109663
+          "bytes": 109666
         },
         {
           "nombre": "MDX",
@@ -2323,17 +2325,17 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-08-20T23:00:55.000Z",
-      "actualizadoEn": "2026-09-07T04:29:16.000Z",
-      "publicadoEn": "2026-09-07T04:29:12.000Z",
+      "actualizadoEn": "2026-09-07T08:02:17.000Z",
+      "publicadoEn": "2026-09-07T08:02:08.000Z",
       "extractoReadme": "Sitio de Jhon Steven Alvarez Ruiz\n\nSitio personal, blog y portafolio de Jhon Steven Alvarez Ruiz — analista de\ndatos y desarrollador de automatización en Neiva, Colombia. Genera HTML estático;\nReact/Preact y MapLibre se cargan para los mapas del estudio. Las funciones privadas\nde Vercel permiten publicar escritos y consultar registros de seguridad en /admin/.\n\nArquitectura\n\n· Pieza · Responsabilidad ·\n\n· datos.js · Perfil, experiencia y proyectos seleccionados. ·\n· datos-github.js · Snapshot seguro de repositorios propios, inventarios, releases, PR externas, logros y métricas fijadas a revisión. ·\n· datos-actividad.js · Totales anónimos de tokens, llamadas, tareas y proveedores. ·\n· escritos/.md · Fuente editorial del blog. ·\n· plantilla.js · Cabecera, navegación, SEO y JSON-LD comunes. ·\n· construir.js · Blog, proyectos, actividad, feed, sitemap y HTML estático. ·\n· juegos.js y activos/juegos.css · Catálogo /juegos/: Neiva Abierta y Bloquitos, enlaces directos y presentación adaptable al celular. ·\n· api/ y lib/ · Autenticación, CMS y auditoría en funciones de Vercel. ·\n· activos/animacion.js · Movimiento, audio persistente y navegación progresiva. ·\n· activos/cinematografia.js y .css · Escenas originales, luz de proyección, menú móvil y pausa accesible. ·\n· activos/lectura-accesible.js · Desplazamiento de tablas y fórmulas mediante teclado. ·\n· datos/continuidad-publicacion-oro.json · Estado del artículo ya publicado y SHA del manuscrito revisado. ·\n\nLa navegación interna reemplaza únicamente el contenido principal. El elemento\npermanece vivo, por lo que cambiar de Inicio a Blog o Proyectos no\nreinicia ni apaga la obra.\n\nTerciopelo, Nocturno y Celuloide cambian según la sección o la elección del lector.\nEl canvas está limitado a 45 partículas y 30 cuadros por segundo; se pausa cuando\nla pestaña está oculta. El movimiento reducido se respeta también al cambiar la\npreferencia durante la visita. La entrada nunca exige un clic para acceder al contenido.\nMúsica\n\nLa obra es la Sinfonía n.º 5 en do menor, op. 67 de Beethoven, interpretada\npor la Skidmore College Orchestra. Es una grabación real completa de 35:41,\nalmacenada localmente como MP3; el navegador no sintetiza notas ni consulta un\nservicio de terceros.\n\nLa procedencia, los cuatro movimientos originales, la declaración de dominio\npúblico y la huella SHA-256 están en\nactivos/beethoven-quinta-sinfonia.LICENCIA.md.\nBlog y panel privado\n\nCada escrito es Markdown con un encabezado pequeño y validado:\n\nEl panel /admin/ permite crear y actualizar estos archivos mediante la API de\ncontenidos de GitHub. Cada publicación queda versionada en master; la\nintegración GitHub–Vercel vuelve a construir automáticamente el sitio.\nSolo master despliega automáticamente; las demás ramas están deshabilitadas.\nEl artículo especial de oro conserva su fuente MDX y mapas. Su acta de continuidad\npermite reconstruir una publicación existente sin declarar cerrado el derecho de\nréplica. Un manuscrito que no coincida con su…",
       "inventario": {
-        "revision": "45c4ac1355fddc4995b67eb6c1f7b4939eeecc24",
+        "revision": "589d033b5b152b0dce19fae4854c0f6e4dcf2647",
         "vacio": false,
         "completo": true,
-        "archivos": 133,
-        "bytesVersionados": 38551741,
-        "archivosFuente": 57,
-        "archivosPrueba": 17,
+        "archivos": 136,
+        "bytesVersionados": 38459253,
+        "archivosFuente": 59,
+        "archivosPrueba": 18,
         "archivosDocumentacion": 22,
         "workflows": 2,
         "manifiestos": [
@@ -2355,6 +2357,7 @@ export const REPOSITORIOS_GITHUB = {
           "datos-github.js",
           "datos-hoja-de-vida.js",
           "datos.js",
+          "descarga-neiva.js",
           "despliegue",
           "documentos",
           "escritos",
@@ -2364,6 +2367,7 @@ export const REPOSITORIOS_GITHUB = {
           "juegos.js",
           "lib",
           "memoria",
+          "neiva-abierta.js",
           "package-lock.json",
           "package.json",
           "plantilla.js",
