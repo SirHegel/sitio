@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-09-07T15:27:39.000Z",
+  "actualizadoEn": "2026-09-07T18:36:22.000Z",
   "total": 23,
   "perfilGitHub": {
     "repositoriosPublicos": 43,
@@ -312,6 +312,28 @@ export const REPOSITORIOS_GITHUB = {
     ]
   },
   "releases": [
+    {
+      "repositorio": "neiva-abierta",
+      "etiqueta": "unreal-v0.1.0-linux-alpha",
+      "nombre": "Neiva Abierta · Unreal 0.1.0 · Alfa Linux",
+      "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.1.0-linux-alpha",
+      "publicadoEn": "2026-09-07T18:36:22.000Z",
+      "preliminar": true,
+      "activos": [
+        {
+          "nombre": "Neiva-Abierta-Unreal-0.1.0-Linux-x64.tar.gz",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.1.0-linux-alpha/Neiva-Abierta-Unreal-0.1.0-Linux-x64.tar.gz",
+          "bytes": 596976129,
+          "descargas": 1
+        },
+        {
+          "nombre": "SHA256SUMS",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.1.0-linux-alpha/SHA256SUMS",
+          "bytes": 110,
+          "descargas": 0
+        }
+      ]
+    },
     {
       "repositorio": "gh-achievement-audit",
       "etiqueta": "v0.1.0",
@@ -1696,19 +1718,23 @@ export const REPOSITORIOS_GITHUB = {
       "lenguajes": [
         {
           "nombre": "JavaScript",
-          "bytes": 333896
+          "bytes": 388038
         },
         {
           "nombre": "Python",
-          "bytes": 140861
+          "bytes": 193203
         },
         {
           "nombre": "C++",
-          "bytes": 65327
+          "bytes": 86990
         },
         {
           "nombre": "HTML",
           "bytes": 14288
+        },
+        {
+          "nombre": "Shell",
+          "bytes": 1436
         },
         {
           "nombre": "C#",
@@ -1724,18 +1750,18 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-09-07T03:41:13.000Z",
-      "actualizadoEn": "2026-09-07T15:27:39.000Z",
-      "publicadoEn": "2026-09-07T15:27:26.000Z",
-      "extractoReadme": "Neiva Abierta\n\nEntrega nativa en preparación: el desarrollo solicitado continúa en\nUnreal Engine, con ejecutable para GitHub, descarga desde el sitio personal\ny visualización local mediante Pixel Streaming. No hay todavía motor instalado,\ncompilación C++ ni ejecutable Unreal verificados. La web 0.4 de abajo es la edición\nanterior. Construcción, transmisión y publicación ·\nProyecto Unreal ·\nRevisar referencias sin usar el teclado o mouse del escritorio.\n\nUna interpretación jugable de Neiva, Huila, Colombia. Acceso gratuito, personaje\nsin nombre, caminata en tercera persona, un carro conducible, tráfico ambiental,\nmapa con destinos y un pequeño estudio ficticio para contactar a Jhon Steven\nÁlvarez Ruiz. Controles de teclado y controles táctiles para celular.\n\nJugar en Vercel ·\nSala de juegos y Bloquitos\n\nAlcance de esta versión\n\nLa edición web usa Three.js/WebGL 2 y funciona como sitio estático en Vercel.\nLas calles, parques y huellas de edificios proceden de datos abiertos. Las\nalturas ausentes, fachadas y árboles son una interpretación visual. La edición\n0.4 usa un personaje humano animado de Microsoft Rocketbox, el automóvil\nCar Concept de Khronos, mapas PBR fotográficos de Poly Haven, iluminación HDR,\nsombras solares y fachadas de apariencia fotográfica generadas con IA. La\nCatedral de la Inmaculada Concepción tiene una malla arquitectónica específica\ncon arcos, torre, reloj y cubiertas. El Palacio de Justicia, el Hotel Neiva Plaza\ny el Templo Colonial tienen modelos específicos apoyados en referencias del\ncentro; el Santander incorpora pavimento, fuente de mosaico y vegetación densa.\nLa revisión de fidelidad registra las fuentes y los detalles\ntodavía estimados. Se corrigieron dos extrusiones residenciales sin respaldo\ndentro del parque y el material de Calle 7 en su borde sur. El resto de edificios\nconserva huellas cartográficas y recibe fachadas, aleros y tejados representativos.\nLa edición 0.4 corrige 22 cubiertas abiertas que se interpretaban como edificios\ncerrados (14 asociadas a gasolineras); conserva sus huellas y estima los soportes.\nSe repara además una huella cuyo redondeo había introducido un autocruce.\nEl suelo del juego es plano. No es una réplica\nfotográfica ni un levantamiento completo de cada barrio e interior de Neiva.\nEl estudio mide 6 × 4 × 3,5 metros de juego y no representa una dirección real.\n\nEl repositorio incluye también un proyecto C++ para Unreal Engine 5.5, con\nLumen, ciudad procedural, personaje, vehículo, interacción y controles táctiles.\nSu código no se ha compilado: Unreal no estaba instalado en el entorno de\nconstrucción. Preparación y límites de Unreal.\n\nGoogle Photorealistic 3D Tiles puede conectarse mediante Cesium para Unreal.\nSe incluye una preparación opcional que requiere plugin, clave API, facturación\ny verificar la cobertura real de Neiva. No se han extraído imágenes, mallas ni\nfachadas de Google Maps/Street View; los datos de Google no se redistribuyen\nbajo la licencia del juego. Publicar Unreal…",
+      "actualizadoEn": "2026-09-07T18:32:33.000Z",
+      "publicadoEn": "2026-09-07T18:36:21.000Z",
+      "extractoReadme": "Neiva Abierta\n\nDesarrollo actual: Unreal Engine 5.5.4. La distribución oficial de Linux\nestá instalada; el proyecto C++ compila y la importación de activos pasó sus\ncomprobaciones. La partida de desarrollo cargó 35.873/35.873 edificios bajo\nXvfb, con Vulkan SM6 y una NVIDIA RTX 4050 Laptop. Se comprobó vídeo real\nmediante Pixel Streaming con VP8, además de entrar, conducir, frenar y salir\ndel coche. La prueba recibió unos 30 FPS a 1280 × 720 durante 18,56 segundos;\nes una medición breve del vídeo recibido, no del rendimiento máximo del motor.\nEl paquete Linux descargable está en construcción y todavía no está validado.\nConstrucción, transmisión y publicación ·\nProyecto Unreal ·\nRevisar referencias sin usar el teclado o mouse del escritorio.\nPrototipo web anterior 0.4 · Three.js\n\nLa descripción, captura, controles y mediciones web siguientes corresponden\nal prototipo Three.js 0.4. Sus pruebas no acreditan el ejecutable Unreal.\n\nUna interpretación jugable de Neiva, Huila, Colombia. Acceso gratuito, personaje\nsin nombre, caminata en tercera persona, un carro conducible, tráfico ambiental,\nmapa con destinos y un pequeño estudio ficticio para contactar a Jhon Steven\nÁlvarez Ruiz. Controles de teclado y controles táctiles para celular.\n\nJugar al prototipo web anterior ·\nSala de juegos y Bloquitos\n\nAlcance del prototipo web 0.4\n\nLa edición web usa Three.js/WebGL 2 y funciona como sitio estático en Vercel.\nLas calles, parques y huellas de edificios proceden de datos abiertos. Las\nalturas ausentes, fachadas y árboles son una interpretación visual. La edición\n0.4 usa un personaje humano animado de Microsoft Rocketbox, el automóvil\nCar Concept de Khronos, mapas PBR fotográficos de Poly Haven, iluminación HDR,\nsombras solares y fachadas de apariencia fotográfica generadas con IA. La\nCatedral de la Inmaculada Concepción tiene una malla arquitectónica específica\ncon arcos, torre, reloj y cubiertas. El Palacio de Justicia, el Hotel Neiva Plaza\ny el Templo Colonial tienen modelos específicos apoyados en referencias del\ncentro; el Santander incorpora pavimento, fuente de mosaico y vegetación densa.\nLa revisión de fidelidad registra las fuentes y los detalles\ntodavía estimados. Se corrigieron dos extrusiones residenciales sin respaldo\ndentro del parque y el material de Calle 7 en su borde sur. El resto de edificios\nconserva huellas cartográficas y recibe fachadas, aleros y tejados representativos.\nLa edición 0.4 corrige 22 cubiertas abiertas que se interpretaban como edificios\ncerrados (14 asociadas a gasolineras); conserva sus huellas y estima los soportes.\nSe repara además una huella cuyo redondeo había introducido un autocruce.\nEl suelo del juego es plano. No es una réplica\nfotográfica ni un levantamiento completo de cada barrio e interior de Neiva.\nEl estudio mide 6 × 4 × 3,5 metros de juego y no representa una dirección real.\n\nEl desarrollo nativo usa Unreal Engine 5.5.4, con Lumen, ciudad procedural,\npersonaje, vehículo e interacción. Se comprobaron…",
       "inventario": {
-        "revision": "6a0cc2a7784f684fa1eeb950a024dff84000b863",
+        "revision": "52ebd7fa55ff73c317fbb17134668b8398ec12eb",
         "vacio": false,
         "completo": true,
-        "archivos": 193,
-        "bytesVersionados": 99286677,
-        "archivosFuente": 49,
-        "archivosPrueba": 17,
-        "archivosDocumentacion": 17,
+        "archivos": 210,
+        "bytesVersionados": 99457753,
+        "archivosFuente": 57,
+        "archivosPrueba": 22,
+        "archivosDocumentacion": 19,
         "workflows": 1,
         "manifiestos": [
           "package-lock.json",
@@ -1762,7 +1788,30 @@ export const REPOSITORIOS_GITHUB = {
           "vercel.json"
         ]
       },
-      "releases": []
+      "releases": [
+        {
+          "repositorio": "neiva-abierta",
+          "etiqueta": "unreal-v0.1.0-linux-alpha",
+          "nombre": "Neiva Abierta · Unreal 0.1.0 · Alfa Linux",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.1.0-linux-alpha",
+          "publicadoEn": "2026-09-07T18:36:22.000Z",
+          "preliminar": true,
+          "activos": [
+            {
+              "nombre": "Neiva-Abierta-Unreal-0.1.0-Linux-x64.tar.gz",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.1.0-linux-alpha/Neiva-Abierta-Unreal-0.1.0-Linux-x64.tar.gz",
+              "bytes": 596976129,
+              "descargas": 1
+            },
+            {
+              "nombre": "SHA256SUMS",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.1.0-linux-alpha/SHA256SUMS",
+              "bytes": 110,
+              "descargas": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "slug": "orquesta-ia",
