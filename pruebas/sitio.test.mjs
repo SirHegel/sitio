@@ -20,7 +20,7 @@ import {
 } from "../datos.js";
 import { ARCHIVO_HOJA_DE_VIDA, EVIDENCIA_TECNICA, HOJA_DE_VIDA } from "../datos-hoja-de-vida.js";
 import { cargarEscritos, slugificar } from "../escritos.js";
-import { descargaUnrealValidada, DESCARGA_NEIVA_UNREAL } from "../descarga-neiva.js";
+import { entregaNeivaLista as descargaUnrealValidada, DESCARGA_NEIVA_UNREAL, NEIVA_MEDIOS_VERIFICADOS } from "../descarga-neiva.js";
 
 const raiz = fileURLToPath(new URL("..", import.meta.url));
 const construido = fileURLToPath(new URL("../publico/", import.meta.url));
@@ -81,10 +81,10 @@ test("la sala de juegos publica entradas gratuitas, alcance cartográfico y nave
     const pagina = readFileSync(archivoRuta(ruta), "utf8");
     assert.match(pagina.match(/<nav class="menu"[\s\S]*?<\/nav>/)?.[0] || "", /href="\/juegos\/"/);
   }
-  for (const texto of ["Neiva Abierta", "Bloquitos", "OpenStreetMap", "personaje sin nombre", "estudio ficticio", "Controles táctiles"]) {
+  for (const texto of ["Neiva Abierta", "Bloquitos", "OpenStreetMap", "personaje sin nombre", "voz sintética", "Controles táctiles"]) {
     assert.ok(html.includes(texto), `la sala de juegos omite ${texto}`);
   }
-  assert.doesNotMatch(html, /hiperrealista|ultrarrealista|cada barrio reconstruido/i);
+  assert.doesNotMatch(html, /hiperrealista|ultrarrealista|cada barrio reconstruido|estudio ficticio/i);
   if (descargaUnrealValidada()) assert.ok(html.includes(DESCARGA_NEIVA_UNREAL.url));
   else assert.match(html, /Descarga Linux x64 en preparación/);
   const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
@@ -95,7 +95,7 @@ test("la sala de juegos publica entradas gratuitas, alcance cartográfico y nave
 
   const neiva = html.match(/<article[^>]+id="neiva-abierta"[\s\S]*?<\/article>/)?.[0] || "";
   assert.match(neiva, /<img[^>]+src="\/activos\/neiva-unreal-linux\.png"[^>]+alt="[^"]+"/);
-  assert.match(neiva, descargaUnrealValidada() ? /<figcaption[^>]*>Unreal \/ Alfa 0\.2 para Linux<\/figcaption>/ : /<figcaption[^>]*>Unreal \/ Alfa en desarrollo<\/figcaption>/);
+  assert.match(neiva, NEIVA_MEDIOS_VERIFICADOS ? /<figcaption[^>]*>Unreal \/ Alfa 0\.3 para Linux<\/figcaption>/ : /<figcaption[^>]*>Unreal \/ Alfa 0\.3 · Captura en revisión<\/figcaption>/);
   assert.doesNotMatch(neiva, /juego-ilustracion-neiva|juego-ciudad|Ilustración/);
   assert.match(html, /class="juego-ilustracion juego-ilustracion-bloquitos"/);
   const captura = readFileSync(`${construido}activos/neiva-unreal-linux.png`);

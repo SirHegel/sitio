@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { DESCARGA_NEIVA_UNREAL, descargaUnrealValidada, descargaNeiva } from "../descarga-neiva.js";
+import { DESCARGA_NEIVA_UNREAL, descargaUnrealValidada, descargaNeiva, entregaNeivaLista, NEIVA_REVISION_NATIVA, NEIVA_RUTA_RECIBO } from "../descarga-neiva.js";
 import { paginaNeiva } from '../neiva-abierta.js';
 import { indiceJuegos } from '../juegos.js';
 
@@ -16,13 +16,13 @@ test("sin ejecutable validado hay estado pendiente y cero botones de descarga", 
   assert.equal(descargaUnrealValidada(pending), false);
   assert.match(descargaNeiva(pending), /Descarga Linux x64 en preparación/);
   assert.doesNotMatch(descargaNeiva(pending), /<a\b|data-descarga-unreal/);
-  assert.match(descargaNeiva(pending), /alfa 0\.2 está en desarrollo/);
+  assert.match(descargaNeiva(pending), /alfa 0\.3 está en desarrollo/);
   assert.doesNotMatch(descargaNeiva(pending), /archivo Linux está publicado/);
 });
 
 test("el contrato exige release del repositorio y comprobantes coherentes de archivo y ejecución", () => {
   assert.equal(descargaUnrealValidada(artifact()), true);
-  assert.match(descargaNeiva(artifact()), /data-descarga-unreal/);
+  assert.doesNotMatch(descargaNeiva(artifact()), /data-descarga-unreal/, "Un recibo genérico no acredita la entrega anunciada.");
   for (const change of [
     value => { value.verification = null; },
     value => { value.verification.sha256 = "b".repeat(64); },
@@ -40,9 +40,9 @@ test("el contrato exige release del repositorio y comprobantes coherentes de arc
 
 test('las plantillas reflejan el contrato activo sin anunciar una descarga pendiente', () => {
   for (const html of [paginaNeiva(), indiceJuegos()]) {
-    if (descargaUnrealValidada()) {
+    if (entregaNeivaLista()) {
       assert.ok(html.includes(DESCARGA_NEIVA_UNREAL.url));
-      assert.match(html, /Alfa 0\.2 (?:disponible|para Linux)/);
+      assert.match(html, /Alfa 0\.3 (?:disponible|para Linux)/);
       assert.doesNotMatch(html, /próxima alfa|Próxima alfa|descarga Linux x64 en preparación|Descarga Linux x64 en preparación|entrega prevista/i);
     } else {
       assert.match(html, /Alfa en desarrollo/);
@@ -52,9 +52,27 @@ test('las plantillas reflejan el contrato activo sin anunciar una descarga pendi
   }
 });
 
+test('una entrega anterior o evidencia incompleta no habilitan el botón de la alfa anunciada', () => {
+  // Metadatos sintéticos: sólo prueban la selección de versión, no una publicación real.
+  const value = artifact();
+  value.url = value.verification.url = 'https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/fixture.tar.gz';
+  const publication = { revision: 'b'.repeat(40), receiptPath: 'data/verification/fixture.json', mediaVerified: true };
+  assert.equal(entregaNeivaLista(value, publication), true);
+  const previous = structuredClone(value);
+  previous.url = previous.verification.url = previous.url.replace('unreal-v0.3.0', 'unreal-v0.2.0');
+  assert.equal(descargaUnrealValidada(previous), true);
+  assert.equal(entregaNeivaLista(previous, publication), false);
+  for (const incomplete of [null, { ...publication, revision: null },
+    { ...publication, receiptPath: '../fixture.json' }, { ...publication, mediaVerified: false }])
+    assert.equal(entregaNeivaLista(value, incomplete), false);
+  const untested = structuredClone(value);
+  untested.verification.launchPassed = false;
+  assert.equal(entregaNeivaLista(untested, publication), false);
+});
+
 test("páginas construidas presentan el juego Linux con descarga condicionada y antecedente web identificado", () => {
-  const lista = descargaUnrealValidada();
-  if (!lista) assert.ok(Object.values(DESCARGA_NEIVA_UNREAL).every(value => value === null));
+  const lista = entregaNeivaLista();
+  if (lista) assert.match(DESCARGA_NEIVA_UNREAL.url, /unreal-v0\.3\.0-linux-alpha/);
   for (const route of ["juegos", "proyectos/neiva-abierta"]) {
     const html = readFileSync(new URL(`../publico/${route}/index.html`, import.meta.url), "utf8");
     assert.match(html, /Unreal Engine 5\.5\.4/);
@@ -68,12 +86,28 @@ test("páginas construidas presentan el juego Linux con descarga condicionada y 
   }
   const ficha = readFileSync(new URL('../publico/proyectos/neiva-abierta/index.html', import.meta.url), 'utf8');
   assert.match(ficha, /Registro técnico de pruebas/);
-  assert.match(ficha, /\/data\/verification\/unreal-visual-download\.json/);
+  if (lista) {
+    assert.ok(ficha.includes(NEIVA_REVISION_NATIVA));
+    assert.ok(ficha.includes(NEIVA_RUTA_RECIBO));
+  }
   assert.match(ficha, /<video\b[^>]*controls[^>]*playsinline[^>]*preload="none"/);
   assert.match(ficha, /src="\/activos\/neiva-unreal-linux\.webm"/);
   assert.doesNotMatch(ficha, /<video\b[^>]*autoplay|game05|WALKING|Editor-game|cuadros decodificados|<h3>Ecuación/);
   assert.match(ficha, /\.\/Jugar-Neiva\.sh/);
   assert.match(ficha, lista ? /Esta descarga corresponde a Linux/ : /La entrega prevista corresponde a Linux/);
-  assert.match(ficha, lista ? /Alfa 0\.2 disponible para Linux/ : /Alfa en desarrollo/);
-  assert.match(ficha, /árboles de copa ancha y bancos/);
+  assert.match(ficha, lista ? /Alfa 0\.3 disponible para Linux/ : /Alfa en desarrollo/);
+  assert.match(ficha, /ocho peatones/);
+  assert.match(ficha, /siete clips/);
+  assert.match(ficha, /17\.697/);
+  assert.match(ficha, /17\.696/);
+  assert.match(ficha, /una revisión manual/);
+  assert.match(ficha, /se bloquean el movimiento, el salto y el reinicio/);
+  assert.match(ficha, /Windows y macOS/);
+  assert.doesNotMatch(ficha, /estudio ficticio|desde el estudio/);
+  assert.match(ficha, /<track kind="captions"[^>]+srclang="es"/);
+  assert.match(ficha, /Se recodificó/);
+  const captions = readFileSync(new URL('../activos/neiva-unreal-linux-es.vtt', import.meta.url), 'utf8');
+  assert.match(captions, /^WEBVTT/);
+  assert.match(captions, /00:00\.100 --> 00:12\.000/);
+  assert.match(captions, /Se llama Jhon Steven Álvarez Ruiz/);
 });

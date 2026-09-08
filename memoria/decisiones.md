@@ -127,3 +127,13 @@ al commit `247e28ae25e243eaa9700dfd1f1bd525c93e6239`.
 Los medios con advertencias sirvieron sólo para pruebas locales de plantilla.
 La QA se repitió con los medios finales y el contrato activo: 26 pruebas de
 contenido/contrato, dos de navegador y ocho combinaciones responsive aprobadas.
+
+La entrega web 0.3 exige comprobante de la misma release: el contrato genérico
+admite formatos anteriores, pero la ficha añade control explícito de versión,
+Linux x64, recibo público y medios aprobados. Una regresión cubre el recibo
+válido 0.2 rechazado para 0.3. El recibo final de la descarga se fija al commit
+`73f34183af717941cd709e98e38e813c7db39d88`; pruebas posteriores del sitio no
+cambian esa referencia. El vídeo final incluye audio sintético y subtítulo
+literal de tiempos aproximados. Se informa de su recodificación en un detalle
+expandible, sin atribuir sus 30 fps al rendimiento del motor. Las cifras de
+altura se separan en 17.696 automáticas y una revisión manual estimada.

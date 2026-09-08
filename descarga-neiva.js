@@ -5,6 +5,23 @@ import descarga from "./datos/descarga-neiva.json" with { type: "json" };
 // El comprobante repite URL, SHA, tamaño y plataforma para detectar datos desactualizados.
 export const DESCARGA_NEIVA_UNREAL = Object.freeze(descarga);
 
+// Recibo público y medios aprobados del paquete 0.3 descargado y ejecutado.
+export const NEIVA_REVISION_NATIVA = '73f34183af717941cd709e98e38e813c7db39d88';
+export const NEIVA_RUTA_RECIBO = 'data/verification/unreal-03-download.json';
+export const NEIVA_MEDIOS_VERIFICADOS = true;
+
+// O(L) tiempo y espacio, L <= 1.024. Un recibo 0.2 no habilita una ficha 0.3.
+export function entregaNeivaLista(artifact = DESCARGA_NEIVA_UNREAL, publication = {
+  revision: NEIVA_REVISION_NATIVA, receiptPath: NEIVA_RUTA_RECIBO, mediaVerified: NEIVA_MEDIOS_VERIFICADOS,
+}) {
+  return descargaUnrealValidada(artifact)
+    && new URL(artifact.url).pathname.startsWith('/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/')
+    && artifact.platform === 'Linux x64'
+    && /^[a-f0-9]{40}$/.test(publication?.revision || '')
+    && /^data\/verification\/[a-z0-9-]+\.json$/.test(publication?.receiptPath || '')
+    && publication?.mediaVerified === true;
+}
+
 // O(L) tiempo y espacio para L caracteres de URL, limitado a 1.024.
 // Invariantes: activo del repositorio, huella/tamaño coincidentes y prueba de ejecución.
 export function descargaUnrealValidada(artifact = DESCARGA_NEIVA_UNREAL) {
@@ -24,9 +41,9 @@ export function descargaUnrealValidada(artifact = DESCARGA_NEIVA_UNREAL) {
 }
 
 export function descargaNeiva(artifact = DESCARGA_NEIVA_UNREAL) {
-  if (!descargaUnrealValidada(artifact)) return `<section id="descarga-unreal" class="sep-m" aria-labelledby="descarga-unreal-titulo">
+  if (!entregaNeivaLista(artifact)) return `<section id="descarga-unreal" class="sep-m" aria-labelledby="descarga-unreal-titulo">
     <h2 id="descarga-unreal-titulo">Descarga Linux x64 en preparación</h2>
-    <p>La alfa 0.2 está en desarrollo. La próxima descarga se habilitará cuando el paquete publicado haya sido descargado y probado.</p>
+    <p>La alfa 0.3 está en desarrollo. La próxima descarga se habilitará cuando el paquete publicado haya sido descargado y probado.</p>
   </section>`;
   const hash = artifact.sha256.match(/.{1,16}/g).map(esc).join("<wbr>");
   return `<section id="descarga-unreal" class="sep-m" aria-labelledby="descarga-unreal-titulo">

@@ -1,119 +1,107 @@
-# Publicar una descarga verificada de Neiva
+# Descarga verificada de Neiva Unreal 0.3
 
-La ficha preparada describe la **alfa 0.2 disponible para Linux x64**, con
-Unreal 5.5.4, personaje, vehículo y vegetación. El contrato local se activó el
-8 de septiembre de 2026: el archivo publicado y descargado mide 741.359.235 bytes,
-con SHA-256 `2fd09f22b18a790f44876a5b87ae1a0e50d517c17853c1df831d0fd8821d7c5d`.
-El recibo confirma HTTP 200 y ejecución aprobada del paquete descargado.
-La evidencia pública quedó fijada al commit
-`247e28ae25e243eaa9700dfd1f1bd525c93e6239`. La captura y el vídeo finales
-aprobados se incorporaron sin retoques, recodificación ni cambio de tamaño.
+La ficha ofrece la alfa 0.3 para Linux x64, publicada el 8 de septiembre de
+2026. El archivo público se descargó y ejecutó antes de activar el contrato.
+El recibo contiene HTTP 200, `launchPassed: true`, 19 comprobaciones de juego
+y salida nativa 0. El preparador cotejó los bytes locales con ese recibo.
+Windows y macOS siguen pendientes de compilación y pruebas en equipos nativos.
 
-## Antes de completar el comprobante
-
-1. Terminar el paquete nativo y validar sus binarios, datos e informe. Crear el
-   archivo que se distribuirá, con licencias y atribuciones.
-2. Publicar ese archivo real como activo de una release de
-   `SirHegel/neiva-abierta`. Conservar la URL estable de GitHub Releases;
-   no copiar enlaces temporales firmados de CDN.
-3. Descargar el activo publicado de nuevo. Medir sus bytes y SHA-256 y compararlos
-   con el archivo que se subió. Confirmar respuesta HTTP 200 de esa descarga.
-4. Extraer en una carpeta nueva y probar ese paquete descargado: inicio, caminar,
-   cámara, coche, freno, salida y cierre. Guardar el resultado y la fecha real.
-   Confirmar controles y transmisión aparte si se anuncian para otros dispositivos.
-
-Para futuras entregas, el comprobante de entrada es un JSON con este contrato:
-
-| Campo | Evidencia necesaria |
+| Dato | Valor comprobado |
 | --- | --- |
-| `url` | URL HTTPS de un activo real bajo `github.com/SirHegel/neiva-abierta/releases/download/`, sin consulta ni fragmento |
-| `sha256` | Huella del archivo descargado, 64 caracteres hexadecimales minúsculos |
-| `bytes` | Entero positivo con el tamaño exacto del archivo descargado |
-| `platform` | `Linux x64` o `Windows x64`, correspondiente a la ejecución probada |
-| `verification` | Objeto que repite URL, SHA, bytes y plataforma, con `httpStatus`, `launchPassed` y fecha ISO `checkedAt` |
+| Archivo | `Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz` |
+| Tamaño | 743.035.069 bytes |
+| SHA-256 | `65a11768f536f81d9c47ab62788d28e054007e6eb7ec05c4bd9ce28f1cda4cfb` |
+| Fuente del juego | `e7a7e280e3e9887df70557ac56aa89318617aeab` |
+| Revisión del recibo | `73f34183af717941cd709e98e38e813c7db39d88` |
+| Recibo | `data/verification/unreal-03-download.json` |
+| Fecha del recibo | `2026-09-08T09:28:06.243231+00:00` |
 
-`httpStatus: 200` y `launchPassed: true` sólo proceden de las comprobaciones
-realizadas. El script no los deduce de un binario presente, de una importación
-exitosa ni del nombre del archivo.
+[Release pública](https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.3.0-linux-alpha),
+[recibo fijado](https://github.com/SirHegel/neiva-abierta/blob/73f34183af717941cd709e98e38e813c7db39d88/data/verification/unreal-03-download.json)
+y [registro de juego y medios](https://github.com/SirHegel/neiva-abierta/blob/73f34183af717941cd709e98e38e813c7db39d88/data/verification/unreal-03.json).
+Las afirmaciones de lluvia, siete clips de voz sintética y alturas estimadas
+proceden de esa entrega. Las fachadas son interpretadas; las alturas revisadas
+no son mediciones físicas certificadas ni acreditan un escaneo exacto.
 
-## Preparar y aplicar
+## Contrato y actualización
 
-Primero cotejar el recibo con los bytes del archivo descargado:
+`datos/descarga-neiva.json` contiene `url`, `sha256`, `bytes`, `platform` y
+`verification`. Este último repite esos cuatro valores e incorpora
+`httpStatus: 200`, `launchPassed: true` y `checkedAt` ISO, tomados de la prueba
+real. La URL debe ser un activo estable de `SirHegel/neiva-abierta` en GitHub
+Releases, sin firmas temporales ni consultas.
+
+El recibo público 0.3 organiza los datos bajo `download` y la fecha bajo
+`checkedAtUtc`. Para el preparador se normalizan esos campos al contrato
+anterior, conservando literalmente sus valores; no se deduce una ejecución
+correcta de la presencia del binario ni se usan fixtures como comprobantes.
 
 ```sh
 node herramientas/preparar-descarga-neiva.mjs \
-  --comprobante /ruta/recibo-real.json --archivo /ruta/paquete-descargado.tar.gz
+  --comprobante /ruta/recibo-normalizado-real.json \
+  --archivo /ruta/paquete-publico-descargado.tar.gz
 ```
 
-Este comando calcula el hash en flujo y muestra los campos públicos, sin
-modificar el sitio. Rechaza diferencias de tamaño o huella y comprobantes
-incompletos. No descarga, ejecuta ni publica Unreal. El trabajo cuesta O(N)
-tiempo y memoria adicional acotada por el stream, con N bytes del archivo.
+El comando calcula SHA-256 en flujo y rechaza diferencias de tamaño o hash.
+No descarga, ejecuta ni publica Unreal. Añadir `--aplicar` reemplaza únicamente
+el contrato público mediante un archivo temporal. El costo es O(N) tiempo y
+memoria adicional acotada por el stream, para N bytes del archivo.
 
-Después de revisar el resultado real, aplicar explícitamente:
+`entregaNeivaLista` exige además la release **0.3** y plataforma Linux x64,
+una revisión pública de 40 caracteres, ruta de recibo válida y medios
+aprobados. Un recibo válido de la alfa 0.2 no habilita una ficha 0.3. La
+regresión automatizada comprueba ese caso, ejecución rechazada y evidencia
+ausente. Completar también `NEIVA_REVISION_NATIVA`, `NEIVA_RUTA_RECIBO` y
+`NEIVA_MEDIOS_VERIFICADOS`; revisar las dos plantillas antes de publicar.
+No se editan los snapshots de GitHub ni el perfil de la hoja de vida.
+
+## Medios de la entrega
+
+Se copiaron los archivos finales aprobados a `activos/` sin modificarlos.
+La captura procede del paquete descargado, sin retoques ni cambio de tamaño.
+El vídeo fue recodificado previamente para su publicación: VP8 con audio
+Vorbis, 1.920 × 1.080, 18,500 segundos y 555 cuadros a 30 fps normalizados.
+Esa cadencia del archivo no es una medición del rendimiento nativo del juego.
+
+| Archivo del sitio | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `neiva-unreal-linux.png` | 2.864.670 | `5753ac5f47428afd5899eb07f6cc837dbc1715bdef955a0890d4166e8ed953e3` |
+| `neiva-unreal-linux.webm` | 19.522.814 | `98701845b7bd3006d69ff333b0f77ca8734ba8191f5b65e5ddc9039fce6a3247` |
+
+El vídeo contiene conversación sobre Jhon, lluvia y recorrido a pie. El
+reproductor requiere pulsación, tiene controles, `playsinline` y
+`preload="none"`. `neiva-unreal-linux-es.vtt` transcribe literalmente el clip
+`jhon` del manifiesto del juego; su único cue usa tiempos aproximados de
+0,1 a 12,0 segundos. No certifica una transcripción alineada palabra a palabra.
+La prueba automatizada comprueba pista de audio decodificada, volumen no
+silenciado y subtítulo cargado; no evalúa percepción humana del sonido.
+
+## Comprobación del sitio
 
 ```sh
-node herramientas/preparar-descarga-neiva.mjs \
-  --comprobante /ruta/recibo-real.json --archivo /ruta/paquete-descargado.tar.gz --aplicar
 npm run build
-node --test --test-concurrency=1 pruebas/descarga-neiva.test.mjs \
-  pruebas/preparar-descarga-neiva.test.mjs pruebas/sitio.test.mjs
+npm test
 ```
 
-`--aplicar` reemplaza únicamente `datos/descarga-neiva.json` mediante un archivo
-temporal. Descarga, ficha y tarjeta consumen ese contrato en el build. Antes de
-publicar, revisar también los textos de `neiva-abierta.js`, `juegos.js` y la
-entrada de portada en `construir.js`: deben describir la entrega verificada.
-Los snapshots automáticos de GitHub y el perfil de la hoja de vida no se editan.
+El build genera 46 páginas. La batería completa pasó 103 pruebas, sin fallos
+ni casos omitidos, en 169,29 segundos; incluye 45 rutas en trece anchos de
+280 a 1.440 px. La revisión local de la ficha y `/juegos/` cubre
+320, 390, 960 y 1.440 px: ocho casos, con umbral cero para desbordamientos,
+errores JS/HTTP e infracciones axe WCAG 2/2.1 A/AA. Resultado: ocho aprobados,
+vídeo con audio y subtítulo decodificado en los cuatro anchos. La navegación
+parte del inicio y abre el menú móvil cuando corresponde. Bloquitos conserva
+su enlace y arte. La analítica se excluye para no registrar visitas sintéticas.
 
-Los medios finales esperados son `activos/neiva-unreal-linux.png` y
-`activos/neiva-unreal-linux.webm`. La plantilla reserva 1.920 × 1.080 píxeles y
-usa un reproductor voluntario, con controles, `playsinline` y `preload="none"`.
-Incorporar una captura y un vídeo originales aprobados de la nueva entrega,
-con sus hashes y procedencia; ajustar dimensiones y texto alternativo si cambia
-el encuadre. También fijar `NEIVA_REVISION_NATIVA` al commit público que contenga
-el registro de la nueva verificación.
-Para 0.2, el comprobante corresponde a
-`data/verification/unreal-visual-download.json`; el detalle está en
-`data/verification/unreal-visual-upgrade.json` y `docs/MEJORA-VISUAL-0.2.md`.
-`unreal-native.json` acredita la entrega histórica 0.1.
+Modelo: C = casos aprobados / 8; base anterior, ocho casos de la alfa 0.2;
+umbral C = 1 y resultado local 8/8. La generación de las plantillas cuesta
+O(T), T caracteres emitidos; la validación de URL y revisión cuesta O(L),
+L acotada a 1.024 caracteres. Sanidad: versión anterior, metadatos ausentes y
+comprobante discordante conservan la descarga desactivada. `σ = desconocida`:
+Chrome automatizado, sin dispositivos físicos. `TODO(dato)`: rendimiento y
+requisitos mínimos en otros computadores; fuente necesaria, pruebas nativas.
 
-La captura final 0.2 ya se incorporó sin retoques: PNG de 1.920 × 1.080,
-3.632.115 bytes, SHA-256
-`49d93585ed0bcd9457e381db6e70fc48bed82b40f5fc8fc8a927ee5092f0eb5f`.
-Muestra al personaje, el coche rojo, vegetación y edificios de la ciudad
-interpretada. El vídeo VP8 nativo contiene 529 cuadros decodificables en
-17,206 segundos, a 1.920 × 1.080: 18.486.318 bytes, SHA-256
-`7790e20d2102de6db45dde5af2d77d8448c700ca036082c228ea883d3f7308bc`.
-Se conserva el contenido codificado original de la observación `tROZAC`.
-
-Las imágenes de desarrollo con avisos del motor no se aprobaron para publicar.
-La QA de preparación utilizó temporalmente la captura `mjWR8q` y el vídeo
-`on4WtW`: comprobaron diseño y reproducción, no la calidad final ni el paquete
-0.2. Se retiraron sus copias temporales de `activos/` y del build después de
-probar. Tampoco incorporar los dos PNG antiguos `neiva-unreal-game05.png` y
-`neiva-unreal-coche-game05.png` a la entrega final. No retocar una advertencia
-para hacer pasar una captura por aprobada ni presentar Three.js como Unreal.
-
-Verificar la navegación y la ficha a 320, 390 y 1.440 px antes del despliegue.
-Una vez publicado, comprobar la URL canónica, las imágenes y la descarga desde
-`/juegos/` y `/proyectos/neiva-abierta/`. El preparador no hace commit, push,
-release ni despliegue Vercel.
-
-Preparación del 8 de septiembre de 2026: build de 46 páginas; 25 pruebas de
-contenido/contrato/preparador y dos de navegador aprobadas. Revisión adicional
-de ficha y Juegos en 320/390/960/1.440 px: ocho casos con cero desbordamientos,
-errores JS/HTTP e infracciones axe WCAG A/AA. El vídeo VP8 1.920 × 1.080 se
-decodificó tras pulsar su control en los cuatro anchos. Son pruebas locales
-con medios provisionales; deben repetirse con los medios finales antes de
-publicar. Los servicios de analítica se simularon localmente.
-
-La revisión final con descarga activa y medios aprobados volvió a construir
-46 páginas y pasó 26 pruebas de contenido/contrato/preparador y dos de
-navegador. Ficha y Juegos se comprobaron a 320/390/960/1.440 px: ocho casos sin
-desbordamientos, errores JS/HTTP ni infracciones axe WCAG A/AA. El vídeo se
-decodificó tras pulsar su control en los cuatro anchos. La revisión local usa
-Chrome automatizado y no establece compatibilidad con equipos físicos.
-Tras incorporar por fast-forward las actualizaciones públicas del inventario,
-la batería completa `npm test` pasó sus 102 pruebas, incluida la geometría de
-45 rutas públicas en 13 anchos de 280 a 1.440 px.
+La publicación usa el build de Vercel y `herramientas/sanear-salida-vercel.mjs`
+antes de `vercel deploy --prebuilt --prod`. Después se repiten las ocho
+combinaciones en el dominio canónico y se cotejan HTTP, bytes y hashes de
+PNG, WebM y VTT. La descarga del juego se comprueba con una petición Range;
+no hace falta transferir de nuevo sus 743 MB para validar el enlace del sitio.

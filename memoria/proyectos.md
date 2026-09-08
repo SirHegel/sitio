@@ -284,3 +284,29 @@ release anterior. La generación de ambas plantillas cuesta O(T), T caracteres
 emitidos; no hay nuevas dependencias. `σ = desconocida`: Chrome automatizado,
 sin dispositivos físicos; la analítica local se simuló. Ningún commit, push
 o despliegue se ejecutó en esta preparación.
+
+## Alfa Unreal 0.3, actualización del 8 de septiembre de 2026
+
+La tarjeta y la ficha incorporan la entrega Linux 0.3 verificada: lluvia
+periódica con secado gradual, ocho peatones y siete clips de voz sintética.
+Se retira el estudio ficticio. La ciudad conserva fachadas interpretadas;
+17.697 alturas revisadas son estimaciones de datos de 2023, no medidas
+físicas certificadas. Windows y macOS siguen sin descarga comprobada.
+
+El contrato se aplicó tras cotejar 743.035.069 bytes y SHA-256 del archivo
+público descargado. Recibo fijado a `73f34183af717941cd709e98e38e813c7db39d88`,
+`data/verification/unreal-03-download.json`: HTTP 200 y ejecución aprobada.
+Los medios finales muestran el paquete descargado; el vídeo VP8+Vorbis fue
+recodificado para publicación. Sus 30 fps normalizados no miden el juego.
+Incluye subtítulo español del clip sobre Jhon, con tiempos aproximados.
+
+Build de 46 páginas, batería completa de 103 pruebas aprobadas sin omisiones
+y ocho casos locales en 320/390/960/1.440 px aprobados:
+ficha y Juegos, cero desbordamientos, errores JS/HTTP e infracciones axe
+WCAG A/AA; vídeo, audio y subtítulo decodificados. Modelo C = aprobados / 8,
+base de la entrega anterior 8/8, umbral C = 1, resultado 8/8. Sanidad: un
+recibo 0.2 válido no habilita la ficha 0.3. Generación O(T) en caracteres;
+hash del paquete O(N) en bytes con memoria acotada por el stream.
+`σ = desconocida`: Chrome automatizado; pendientes equipos físicos y
+verificación canónica posterior al despliegue. Detalles y hashes en
+`documentos/neiva-descarga.md`.
