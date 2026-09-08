@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-09-07T18:36:22.000Z",
+  "actualizadoEn": "2026-09-08T09:47:18.000Z",
   "total": 23,
   "perfilGitHub": {
     "repositoriosPublicos": 43,
@@ -312,6 +312,74 @@ export const REPOSITORIOS_GITHUB = {
     ]
   },
   "releases": [
+    {
+      "repositorio": "neiva-abierta",
+      "etiqueta": "unreal-v0.3.0-linux-alpha",
+      "nombre": "Neiva Abierta · Unreal 0.3.0 · Linux (alfa)",
+      "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.3.0-linux-alpha",
+      "publicadoEn": "2026-09-08T09:10:42.000Z",
+      "preliminar": true,
+      "activos": [
+        {
+          "nombre": "Neiva-Abierta-0.3-Linux-1080p.png",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-0.3-Linux-1080p.png",
+          "bytes": 2864670,
+          "descargas": 1
+        },
+        {
+          "nombre": "Neiva-Abierta-0.3-Linux-1080p.webm",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-0.3-Linux-1080p.webm",
+          "bytes": 19522814,
+          "descargas": 1
+        },
+        {
+          "nombre": "Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
+          "bytes": 743035069,
+          "descargas": 1
+        },
+        {
+          "nombre": "SHA256SUMS",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/SHA256SUMS",
+          "bytes": 110,
+          "descargas": 0
+        }
+      ]
+    },
+    {
+      "repositorio": "neiva-abierta",
+      "etiqueta": "unreal-v0.2.0-linux-alpha",
+      "nombre": "Neiva Abierta 0.2 · Unreal Engine · Linux x64",
+      "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.2.0-linux-alpha",
+      "publicadoEn": "2026-09-08T05:39:26.000Z",
+      "preliminar": true,
+      "activos": [
+        {
+          "nombre": "Neiva-Abierta-0.2-Linux-1080p.png",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-0.2-Linux-1080p.png",
+          "bytes": 3632115,
+          "descargas": 0
+        },
+        {
+          "nombre": "Neiva-Abierta-0.2-Linux-1080p.webm",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-0.2-Linux-1080p.webm",
+          "bytes": 18486318,
+          "descargas": 1
+        },
+        {
+          "nombre": "Neiva-Abierta-Unreal-0.2.0-Linux-x64.tar.gz",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-Unreal-0.2.0-Linux-x64.tar.gz",
+          "bytes": 741359235,
+          "descargas": 3
+        },
+        {
+          "nombre": "SHA256SUMS",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/SHA256SUMS",
+          "bytes": 110,
+          "descargas": 0
+        }
+      ]
+    },
     {
       "repositorio": "neiva-abierta",
       "etiqueta": "unreal-v0.1.0-linux-alpha",
@@ -1718,15 +1786,15 @@ export const REPOSITORIOS_GITHUB = {
       "lenguajes": [
         {
           "nombre": "JavaScript",
-          "bytes": 388038
+          "bytes": 449976
         },
         {
           "nombre": "Python",
-          "bytes": 193203
+          "bytes": 386508
         },
         {
           "nombre": "C++",
-          "bytes": 86990
+          "bytes": 147676
         },
         {
           "nombre": "HTML",
@@ -1750,22 +1818,23 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-09-07T03:41:13.000Z",
-      "actualizadoEn": "2026-09-07T18:32:33.000Z",
-      "publicadoEn": "2026-09-07T18:36:21.000Z",
-      "extractoReadme": "Neiva Abierta\n\nDesarrollo actual: Unreal Engine 5.5.4. La distribución oficial de Linux\nestá instalada; el proyecto C++ compila y la importación de activos pasó sus\ncomprobaciones. La partida de desarrollo cargó 35.873/35.873 edificios bajo\nXvfb, con Vulkan SM6 y una NVIDIA RTX 4050 Laptop. Se comprobó vídeo real\nmediante Pixel Streaming con VP8, además de entrar, conducir, frenar y salir\ndel coche. La prueba recibió unos 30 FPS a 1280 × 720 durante 18,56 segundos;\nes una medición breve del vídeo recibido, no del rendimiento máximo del motor.\nEl paquete Linux descargable está en construcción y todavía no está validado.\nConstrucción, transmisión y publicación ·\nProyecto Unreal ·\nRevisar referencias sin usar el teclado o mouse del escritorio.\nPrototipo web anterior 0.4 · Three.js\n\nLa descripción, captura, controles y mediciones web siguientes corresponden\nal prototipo Three.js 0.4. Sus pruebas no acreditan el ejecutable Unreal.\n\nUna interpretación jugable de Neiva, Huila, Colombia. Acceso gratuito, personaje\nsin nombre, caminata en tercera persona, un carro conducible, tráfico ambiental,\nmapa con destinos y un pequeño estudio ficticio para contactar a Jhon Steven\nÁlvarez Ruiz. Controles de teclado y controles táctiles para celular.\n\nJugar al prototipo web anterior ·\nSala de juegos y Bloquitos\n\nAlcance del prototipo web 0.4\n\nLa edición web usa Three.js/WebGL 2 y funciona como sitio estático en Vercel.\nLas calles, parques y huellas de edificios proceden de datos abiertos. Las\nalturas ausentes, fachadas y árboles son una interpretación visual. La edición\n0.4 usa un personaje humano animado de Microsoft Rocketbox, el automóvil\nCar Concept de Khronos, mapas PBR fotográficos de Poly Haven, iluminación HDR,\nsombras solares y fachadas de apariencia fotográfica generadas con IA. La\nCatedral de la Inmaculada Concepción tiene una malla arquitectónica específica\ncon arcos, torre, reloj y cubiertas. El Palacio de Justicia, el Hotel Neiva Plaza\ny el Templo Colonial tienen modelos específicos apoyados en referencias del\ncentro; el Santander incorpora pavimento, fuente de mosaico y vegetación densa.\nLa revisión de fidelidad registra las fuentes y los detalles\ntodavía estimados. Se corrigieron dos extrusiones residenciales sin respaldo\ndentro del parque y el material de Calle 7 en su borde sur. El resto de edificios\nconserva huellas cartográficas y recibe fachadas, aleros y tejados representativos.\nLa edición 0.4 corrige 22 cubiertas abiertas que se interpretaban como edificios\ncerrados (14 asociadas a gasolineras); conserva sus huellas y estima los soportes.\nSe repara además una huella cuyo redondeo había introducido un autocruce.\nEl suelo del juego es plano. No es una réplica\nfotográfica ni un levantamiento completo de cada barrio e interior de Neiva.\nEl estudio mide 6 × 4 × 3,5 metros de juego y no representa una dirección real.\n\nEl desarrollo nativo usa Unreal Engine 5.5.4, con Lumen, ciudad procedural,\npersonaje, vehículo e interacción. Se comprobaron…",
+      "actualizadoEn": "2026-09-08T09:47:18.000Z",
+      "publicadoEn": "2026-09-08T09:46:19.000Z",
+      "extractoReadme": "Neiva Abierta\n\nAlfa Unreal 0.3.0 para Linux x8664. Explora Neiva a pie o en coche,\ncon un personaje anónimo, ocho peatones y conversaciones con siete clips de\nvoz sintética sobre Jhon y sus servicios. La lluvia llega por ciclos y las\nsuperficies se mojan y secan gradualmente. Creada y empaquetada con\nUnreal Engine 5.5.4.\n\nDescargar gratis la alfa Linux 0.3\n\nLa copia pública se descargó sin credenciales y pasó 19 comprobaciones de\njuego y seis de integridad, con cierre normal. Se revisó a 1080p en una\nRTX 4050 Laptop con límite de 30 FPS; no es un benchmark sin límite.\nEl archivo preparado es Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz.\nEstado del paquete ·\nComprobación de la descarga.\n\nExtrae el archivo completo y, desde la carpeta extraída, ejecuta:\n\nConserva Linux/ junto al lanzador. No necesitas instalar el editor para jugar.\nSe requiere Linux x8664 con GPU y controlador Vulkan; los requisitos mínimos\nno están establecidos. No hay ejecutables Windows, macOS ni móviles de esta\nentrega. Estado de plataformas.\n\nControles: WASD para caminar o conducir; ratón para mirar; Shift para\ncorrer; Espacio para saltar o frenar; E para conversar, entrar o salir del coche;\n1–4 o botones para elegir tema; C/V para cambiar colores de ropa; R para volver\nal inicio; Esc/P para pausar. E/Esc/P cierran primero una conversación activa.\n\nLa versión 0.3 añade 17.696 alturas estimadas de Google Research 2023 y una\nrevisión manual separada, con procedencia conservada; se retiró el edificio\nficticio. El contacto de Jhon está en los diálogos. La ciudad conserva 35.873\nhuellas y cuatro hitos interpretados. No es una réplica idéntica ni una ciudad\ncon calidad visual AAA: hay fachadas y alturas estimadas, terreno plano e\ninteriores pendientes. Los avisos VSM tampoco se consideran resueltos.\nReconstrucción y límites ·\nClima y diálogos.\n\nFicha del proyecto y vídeo ·\nJuegos: Neiva Abierta y Bloquitos.\nLa ficha se adapta a móvil; el ejecutable es para Linux. El vídeo de revisión\n0.3 incluye audio y se recodifica desde MediaRecorder a 30 FPS; esa cadencia\nno mide el rendimiento original. Las PNG conservan la captura nativa.\nNo se realizó una prueba auditiva humana.\n\nPara reconstruir esta versión, sigue el\norden de importación y horneado.\nscripts/unreal.py package ejecuta la importación base, clima y voces; los\nárboles y bancos CC0 y el horneado de hitos requieren los pasos previos\nindicados. Proyecto y controles ·\nDistribución, tamaño y SHA-256 ·\nConsulta aislada de referencias.\nHistorial de la alfa 0.2\n\nLa descarga anterior 0.2\nse verificó por tamaño y hash y se ejecutó a 1080p en una RTX 4050 Laptop.\nSu muestra del parque promedió 21,14 ms por cuadro (47,31 FPS derivados) con\nlímite de 60. Esa medición pertenece a 0.2, no a 0.3 ni a otros equipos.\nRecibo histórico ·\nMejoras y mediciones de 0.2.\nPrototipo web anterior 0.4 · Three.js\n\nLa descripción, captura, controles y mediciones web siguientes corresponden\nal prototipo Three.js 0.4. Sus pruebas no acreditan el ejecutable…",
       "inventario": {
-        "revision": "52ebd7fa55ff73c317fbb17134668b8398ec12eb",
+        "revision": "21d2db70bdf861c77e6a88359142954cd1dc935b",
         "vacio": false,
         "completo": true,
-        "archivos": 210,
-        "bytesVersionados": 99457753,
-        "archivosFuente": 57,
-        "archivosPrueba": 22,
-        "archivosDocumentacion": 19,
+        "archivos": 280,
+        "bytesVersionados": 103869441,
+        "archivosFuente": 82,
+        "archivosPrueba": 32,
+        "archivosDocumentacion": 29,
         "workflows": 1,
         "manifiestos": [
           "package-lock.json",
           "package.json",
+          "scripts/requirements-building-heights.txt",
           "vercel.json"
         ],
         "componentes": [
@@ -1789,6 +1858,74 @@ export const REPOSITORIOS_GITHUB = {
         ]
       },
       "releases": [
+        {
+          "repositorio": "neiva-abierta",
+          "etiqueta": "unreal-v0.3.0-linux-alpha",
+          "nombre": "Neiva Abierta · Unreal 0.3.0 · Linux (alfa)",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.3.0-linux-alpha",
+          "publicadoEn": "2026-09-08T09:10:42.000Z",
+          "preliminar": true,
+          "activos": [
+            {
+              "nombre": "Neiva-Abierta-0.3-Linux-1080p.png",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-0.3-Linux-1080p.png",
+              "bytes": 2864670,
+              "descargas": 1
+            },
+            {
+              "nombre": "Neiva-Abierta-0.3-Linux-1080p.webm",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-0.3-Linux-1080p.webm",
+              "bytes": 19522814,
+              "descargas": 1
+            },
+            {
+              "nombre": "Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
+              "bytes": 743035069,
+              "descargas": 1
+            },
+            {
+              "nombre": "SHA256SUMS",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/SHA256SUMS",
+              "bytes": 110,
+              "descargas": 0
+            }
+          ]
+        },
+        {
+          "repositorio": "neiva-abierta",
+          "etiqueta": "unreal-v0.2.0-linux-alpha",
+          "nombre": "Neiva Abierta 0.2 · Unreal Engine · Linux x64",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.2.0-linux-alpha",
+          "publicadoEn": "2026-09-08T05:39:26.000Z",
+          "preliminar": true,
+          "activos": [
+            {
+              "nombre": "Neiva-Abierta-0.2-Linux-1080p.png",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-0.2-Linux-1080p.png",
+              "bytes": 3632115,
+              "descargas": 0
+            },
+            {
+              "nombre": "Neiva-Abierta-0.2-Linux-1080p.webm",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-0.2-Linux-1080p.webm",
+              "bytes": 18486318,
+              "descargas": 1
+            },
+            {
+              "nombre": "Neiva-Abierta-Unreal-0.2.0-Linux-x64.tar.gz",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-Unreal-0.2.0-Linux-x64.tar.gz",
+              "bytes": 741359235,
+              "descargas": 3
+            },
+            {
+              "nombre": "SHA256SUMS",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/SHA256SUMS",
+              "bytes": 110,
+              "descargas": 0
+            }
+          ]
+        },
         {
           "repositorio": "neiva-abierta",
           "etiqueta": "unreal-v0.1.0-linux-alpha",
@@ -2341,11 +2478,11 @@ export const REPOSITORIOS_GITHUB = {
       "lenguajes": [
         {
           "nombre": "JavaScript",
-          "bytes": 860184
+          "bytes": 886426
         },
         {
           "nombre": "CSS",
-          "bytes": 136512
+          "bytes": 136753
         },
         {
           "nombre": "HTML",
@@ -2374,18 +2511,18 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-08-20T23:00:55.000Z",
-      "actualizadoEn": "2026-09-07T08:02:17.000Z",
-      "publicadoEn": "2026-09-07T08:02:08.000Z",
-      "extractoReadme": "Sitio de Jhon Steven Alvarez Ruiz\n\nSitio personal, blog y portafolio de Jhon Steven Alvarez Ruiz — analista de\ndatos y desarrollador de automatización en Neiva, Colombia. Genera HTML estático;\nReact/Preact y MapLibre se cargan para los mapas del estudio. Las funciones privadas\nde Vercel permiten publicar escritos y consultar registros de seguridad en /admin/.\n\nArquitectura\n\n· Pieza · Responsabilidad ·\n\n· datos.js · Perfil, experiencia y proyectos seleccionados. ·\n· datos-github.js · Snapshot seguro de repositorios propios, inventarios, releases, PR externas, logros y métricas fijadas a revisión. ·\n· datos-actividad.js · Totales anónimos de tokens, llamadas, tareas y proveedores. ·\n· escritos/.md · Fuente editorial del blog. ·\n· plantilla.js · Cabecera, navegación, SEO y JSON-LD comunes. ·\n· construir.js · Blog, proyectos, actividad, feed, sitemap y HTML estático. ·\n· juegos.js y activos/juegos.css · Catálogo /juegos/: Neiva Abierta y Bloquitos, enlaces directos y presentación adaptable al celular. ·\n· api/ y lib/ · Autenticación, CMS y auditoría en funciones de Vercel. ·\n· activos/animacion.js · Movimiento, audio persistente y navegación progresiva. ·\n· activos/cinematografia.js y .css · Escenas originales, luz de proyección, menú móvil y pausa accesible. ·\n· activos/lectura-accesible.js · Desplazamiento de tablas y fórmulas mediante teclado. ·\n· datos/continuidad-publicacion-oro.json · Estado del artículo ya publicado y SHA del manuscrito revisado. ·\n\nLa navegación interna reemplaza únicamente el contenido principal. El elemento\npermanece vivo, por lo que cambiar de Inicio a Blog o Proyectos no\nreinicia ni apaga la obra.\n\nTerciopelo, Nocturno y Celuloide cambian según la sección o la elección del lector.\nEl canvas está limitado a 45 partículas y 30 cuadros por segundo; se pausa cuando\nla pestaña está oculta. El movimiento reducido se respeta también al cambiar la\npreferencia durante la visita. La entrada nunca exige un clic para acceder al contenido.\nMúsica\n\nLa obra es la Sinfonía n.º 5 en do menor, op. 67 de Beethoven, interpretada\npor la Skidmore College Orchestra. Es una grabación real completa de 35:41,\nalmacenada localmente como MP3; el navegador no sintetiza notas ni consulta un\nservicio de terceros.\n\nLa procedencia, los cuatro movimientos originales, la declaración de dominio\npúblico y la huella SHA-256 están en\nactivos/beethoven-quinta-sinfonia.LICENCIA.md.\nBlog y panel privado\n\nCada escrito es Markdown con un encabezado pequeño y validado:\n\nEl panel /admin/ permite crear y actualizar estos archivos mediante la API de\ncontenidos de GitHub. Cada publicación queda versionada en master; la\nintegración GitHub–Vercel vuelve a construir automáticamente el sitio.\nSolo master despliega automáticamente; las demás ramas están deshabilitadas.\nEl artículo especial de oro conserva su fuente MDX y mapas. Su acta de continuidad\npermite reconstruir una publicación existente sin declarar cerrado el derecho de\nréplica. Un manuscrito que no coincida con su…",
+      "actualizadoEn": "2026-09-08T09:43:16.000Z",
+      "publicadoEn": "2026-09-08T09:42:28.000Z",
+      "extractoReadme": "Sitio de Jhon Steven Alvarez Ruiz\n\nSitio personal, blog y portafolio de Jhon Steven Alvarez Ruiz — analista de\ndatos y desarrollador de automatización en Neiva, Colombia. Genera HTML estático;\nReact/Preact y MapLibre se cargan para los mapas del estudio. Las funciones privadas\nde Vercel permiten publicar escritos y consultar registros de seguridad en /admin/.\n\nArquitectura\n\n· Pieza · Responsabilidad ·\n\n· datos.js · Perfil, experiencia y proyectos seleccionados. ·\n· datos-github.js · Snapshot seguro de repositorios propios, inventarios, releases, PR externas, logros y métricas fijadas a revisión. ·\n· datos-actividad.js · Totales anónimos de tokens, llamadas, tareas y proveedores. ·\n· escritos/.md · Fuente editorial del blog. ·\n· plantilla.js · Cabecera, navegación, SEO y JSON-LD comunes. ·\n· construir.js · Blog, proyectos, actividad, feed, sitemap y HTML estático. ·\n· juegos.js y activos/juegos.css · Catálogo /juegos/: Neiva Abierta y Bloquitos, enlaces directos y presentación adaptable al celular. ·\n· datos/descarga-neiva.json y descarga-neiva.js · Descarga nativa: exige URL, SHA, bytes, plataforma y comprobante de ejecución coincidentes. ·\n· herramientas/preparar-descarga-neiva.mjs · Coteja el archivo ya descargado; sin --aplicar no activa enlaces. Flujo de publicación. ·\n· api/ y lib/ · Autenticación, CMS y auditoría en funciones de Vercel. ·\n· activos/animacion.js · Movimiento, audio persistente y navegación progresiva. ·\n· activos/cinematografia.js y .css · Escenas originales, luz de proyección, menú móvil y pausa accesible. ·\n· activos/lectura-accesible.js · Desplazamiento de tablas y fórmulas mediante teclado. ·\n· datos/continuidad-publicacion-oro.json · Estado del artículo ya publicado y SHA del manuscrito revisado. ·\n\nLa navegación interna reemplaza únicamente el contenido principal. El elemento\npermanece vivo, por lo que cambiar de Inicio a Blog o Proyectos no\nreinicia ni apaga la obra.\n\nTerciopelo, Nocturno y Celuloide cambian según la sección o la elección del lector.\nEl canvas está limitado a 45 partículas y 30 cuadros por segundo; se pausa cuando\nla pestaña está oculta. El movimiento reducido se respeta también al cambiar la\npreferencia durante la visita. La entrada nunca exige un clic para acceder al contenido.\nMúsica\n\nLa obra es la Sinfonía n.º 5 en do menor, op. 67 de Beethoven, interpretada\npor la Skidmore College Orchestra. Es una grabación real completa de 35:41,\nalmacenada localmente como MP3; el navegador no sintetiza notas ni consulta un\nservicio de terceros.\n\nLa procedencia, los cuatro movimientos originales, la declaración de dominio\npúblico y la huella SHA-256 están en\nactivos/beethoven-quinta-sinfonia.LICENCIA.md.\nBlog y panel privado\n\nCada escrito es Markdown con un encabezado pequeño y validado:\n\nEl panel /admin/ permite crear y actualizar estos archivos mediante la API de\ncontenidos de GitHub. Cada publicación queda versionada en master; la\nintegración GitHub–Vercel vuelve a construir automáticamente el sitio.\nSolo…",
       "inventario": {
-        "revision": "589d033b5b152b0dce19fae4854c0f6e4dcf2647",
+        "revision": "f049d3bd449b8d0bf0b0b3e2dcd999bfaa89e626",
         "vacio": false,
         "completo": true,
-        "archivos": 136,
-        "bytesVersionados": 38459253,
-        "archivosFuente": 59,
-        "archivosPrueba": 18,
-        "archivosDocumentacion": 22,
+        "archivos": 143,
+        "bytesVersionados": 60883350,
+        "archivosFuente": 60,
+        "archivosPrueba": 19,
+        "archivosDocumentacion": 23,
         "workflows": 2,
         "manifiestos": [
           "package-lock.json",
