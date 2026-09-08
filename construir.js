@@ -21,8 +21,7 @@ import { auditarPublicacionOro, auditarSalidaEstaticaOro } from "./herramientas/
 import { leerContinuidadOro } from "./lib/continuidad-publicacion.js";
 import { cargarEstudioOro } from "./estudio-oro.js";
 import { indiceJuegos } from "./juegos.js";
-import { NEIVA_ABIERTA } from "./neiva-abierta.js";
-import { descargaNeiva } from "./descarga-neiva.js";
+import { NEIVA_ABIERTA, paginaNeiva } from "./neiva-abierta.js";
 
 const raiz = dirname(fileURLToPath(import.meta.url));
 const salida = join(raiz, "publico");
@@ -441,7 +440,7 @@ ${destacados}
 ${franja(`      <section class="juegos-inicio revelar" aria-labelledby="juegos-inicio-titulo">
         <div><p class="micro">Sala de juegos / Acceso gratuito</p>
         <h2 class="titulo" id="juegos-inicio-titulo">Te toca moverte.</h2>
-        <p>Recorre Neiva Abierta o entra a una partida de Bloquitos. También en tu celular.</p></div>
+        <p>Conoce la alfa de Neiva Abierta en Unreal o juega Bloquitos en el navegador, también en celular.</p></div>
         <a class="boton primario" href="/juegos/"><span>Entrar a los juegos</span><span aria-hidden="true">↗</span></a>
       </section>`)}
 
@@ -643,6 +642,7 @@ ${proyectosAutomaticos.map(fichaProyecto).join("\n") || "        <p class=\"pie-
 }
 
 function proyecto(p) {
+  if (p.slug === "neiva-abierta") return paginaNeiva();
   const razon = p.automatico
     ? parrafosEscapados(p.porQue)
     : `<p class="lead">${p.porQue.trim()}</p>`;
@@ -668,7 +668,6 @@ ${auditoria.releases.map((release) => `        <article class="ficha revelar">
           ${p.repo ? `<a class="boton primario" href="${p.repo}" rel="noopener" target="_blank"><span>Código en GitHub</span></a>` : `<span class="boton desactivado"><span>${esc(p.visibilidad || "Proyecto no público")}</span></span>`}
           ${p.demo ? `<a class="boton" href="${p.demo}" rel="noopener" target="_blank"><span>${esc(p.demoEtiqueta || "Probarlo")}</span></a>` : ""}
         </div>
-        ${p.slug === "neiva-abierta" ? descargaNeiva() : ""}
       </div>`)}
 
 ${franja(`      <div class="scrim columna revelar proyecto-razon prosa-ancha">

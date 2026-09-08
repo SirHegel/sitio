@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { DESCARGA_NEIVA_UNREAL, descargaUnrealValidada, descargaNeiva } from "../descarga-neiva.js";
+import { paginaNeiva } from '../neiva-abierta.js';
+import { indiceJuegos } from '../juegos.js';
 
 // Comprobante sintético de contrato: este archivo no declara una release existente.
 const artifact = () => {
@@ -10,10 +12,12 @@ const artifact = () => {
 };
 
 test("sin ejecutable validado hay estado pendiente y cero botones de descarga", () => {
-  assert.ok(Object.values(DESCARGA_NEIVA_UNREAL).every(value => value === null));
-  assert.equal(descargaUnrealValidada(), false);
-  assert.match(descargaNeiva(), /Descarga Unreal pendiente de compilación/);
-  assert.doesNotMatch(descargaNeiva(), /<a\b|data-descarga-unreal/);
+  const pending = { url: null, sha256: null, bytes: null, platform: null, verification: null };
+  assert.equal(descargaUnrealValidada(pending), false);
+  assert.match(descargaNeiva(pending), /Descarga Linux x64 en preparación/);
+  assert.doesNotMatch(descargaNeiva(pending), /<a\b|data-descarga-unreal/);
+  assert.match(descargaNeiva(pending), /alfa 0\.2 está en desarrollo/);
+  assert.doesNotMatch(descargaNeiva(pending), /archivo Linux está publicado/);
 });
 
 test("el contrato exige release del repositorio y comprobantes coherentes de archivo y ejecución", () => {
@@ -34,11 +38,42 @@ test("el contrato exige release del repositorio y comprobantes coherentes de arc
   }
 });
 
-test("páginas construidas separan Unreal pendiente del prototipo Three.js anterior", () => {
+test('las plantillas reflejan el contrato activo sin anunciar una descarga pendiente', () => {
+  for (const html of [paginaNeiva(), indiceJuegos()]) {
+    if (descargaUnrealValidada()) {
+      assert.ok(html.includes(DESCARGA_NEIVA_UNREAL.url));
+      assert.match(html, /Alfa 0\.2 (?:disponible|para Linux)/);
+      assert.doesNotMatch(html, /próxima alfa|Próxima alfa|descarga Linux x64 en preparación|Descarga Linux x64 en preparación|entrega prevista/i);
+    } else {
+      assert.match(html, /Alfa en desarrollo/);
+      assert.doesNotMatch(html, /href="[^"]+\/releases\/download\//);
+    }
+    assert.match(html, /interpretad|aproximaci/);
+  }
+});
+
+test("páginas construidas presentan el juego Linux con descarga condicionada y antecedente web identificado", () => {
+  const lista = descargaUnrealValidada();
+  if (!lista) assert.ok(Object.values(DESCARGA_NEIVA_UNREAL).every(value => value === null));
   for (const route of ["juegos", "proyectos/neiva-abierta"]) {
     const html = readFileSync(new URL(`../publico/${route}/index.html`, import.meta.url), "utf8");
-    assert.match(html, /Descarga Unreal pendiente de compilación/);
+    assert.match(html, /Unreal Engine 5\.5\.4/);
+    assert.doesNotMatch(html, /pendiente de compilación|compilación y la ejecución del juego nativo siguen pendientes/);
     assert.match(html, /prototipo web anterior|Prototipo web 0\.4 anterior/);
-    assert.doesNotMatch(html, /data-descarga-unreal|href="[^"]+\/releases\/download\//);
+    if (lista) assert.ok(html.includes(DESCARGA_NEIVA_UNREAL.url));
+    else {
+      assert.match(html, /Descarga Linux x64 en preparación/);
+      assert.doesNotMatch(html, /data-descarga-unreal|href="[^"]+\/releases\/download\//);
+    }
   }
+  const ficha = readFileSync(new URL('../publico/proyectos/neiva-abierta/index.html', import.meta.url), 'utf8');
+  assert.match(ficha, /Registro técnico de pruebas/);
+  assert.match(ficha, /\/data\/verification\/unreal-visual-download\.json/);
+  assert.match(ficha, /<video\b[^>]*controls[^>]*playsinline[^>]*preload="none"/);
+  assert.match(ficha, /src="\/activos\/neiva-unreal-linux\.webm"/);
+  assert.doesNotMatch(ficha, /<video\b[^>]*autoplay|game05|WALKING|Editor-game|cuadros decodificados|<h3>Ecuación/);
+  assert.match(ficha, /\.\/Jugar-Neiva\.sh/);
+  assert.match(ficha, lista ? /Esta descarga corresponde a Linux/ : /La entrega prevista corresponde a Linux/);
+  assert.match(ficha, lista ? /Alfa 0\.2 disponible para Linux/ : /Alfa en desarrollo/);
+  assert.match(ficha, /árboles de copa ancha y bancos/);
 });

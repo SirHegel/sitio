@@ -7,13 +7,14 @@ import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import puppeteer from "puppeteer-core";
 import { ejecutableChrome } from "./chrome.mjs";
+import { descargaUnrealValidada, DESCARGA_NEIVA_UNREAL } from "../descarga-neiva.js";
 
 const raiz = fileURLToPath(new URL("..", import.meta.url));
 const publico = resolve(raiz, "publico");
 let navegador;
 let servidor;
 let origen;
-const tipos = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".jpg": "image/jpeg", ".webp": "image/webp" };
+const tipos = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".jpg": "image/jpeg", ".webp": "image/webp", ".png": "image/png" };
 
 before(async () => {
   execFileSync(process.execPath, ["construir.js"], { cwd: raiz, stdio: "pipe" });
@@ -260,7 +261,8 @@ test("Juegos se alcanza con menú móvil y conserva navegación, escena y enlace
         overflow: document.documentElement.scrollWidth - innerWidth,
       }));
       assert.deepEqual(estado.titulos, ["Neiva Abierta", "Bloquitos"]);
-      assert.deepEqual(estado.enlaces.map((e) => e.url), [new URL("/proyectos/neiva-abierta/#descarga-unreal", pagina.url()).href, "https://bloquitos.vercel.app/"]);
+      const neivaUrl = descargaUnrealValidada() ? DESCARGA_NEIVA_UNREAL.url : new URL("/proyectos/neiva-abierta/#descarga-unreal", pagina.url()).href;
+      assert.deepEqual(estado.enlaces.map((e) => e.url), [neivaUrl, "https://bloquitos.vercel.app/"]);
       assert.ok(estado.captura.ancho > 0 && estado.captura.alto > 0, `captura visible a ${ancho}px`);
       assert.ok(estado.captura.x >= 0 && estado.captura.derecha <= estado.ancho, `captura cabe a ${ancho}px`);
       assert.ok(estado.overflow <= 2, `sin desbordamiento horizontal a ${ancho}px`);

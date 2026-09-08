@@ -100,3 +100,30 @@ datos, `httpStatus:200`, `launchPassed:true` y `checkedAt` ISO. El enlace se
 habilita sólo con coincidencia de valores; el comprobante no se fabrica con
 los fixtures de prueba. Windows x64 y Linux x64 son opciones del contrato,
 sin afirmar que exista actualmente un binario para alguna de ellas.
+
+La revisión nativa posterior fija evidencia a `2a4fcd22615bb950c26fb1091f8d25f75775699d`:
+Unreal 5.5.4 compilado e importado, partida de desarrollo y vídeo VP8 comprobados.
+La tarjeta y la ficha sustituyen el estado de motor pendiente por ese resultado;
+la descarga Linux sigue desactivada. Dos PNG originales de game05 conservan
+avisos y defectos visibles. La captura Three.js anterior no se presenta como nativa.
+
+El contrato descargable pasa a `datos/descarga-neiva.json`, todavía con sus cinco
+campos nulos. El preparador coteja SHA y bytes del archivo descargado contra un
+recibo de ejecución externo; sólo `--aplicar` escribe el contrato. No produce
+comprobantes de ejecución ni despliega. Su salida descarta campos ajenos al
+contrato público. Se conserva la autorización del encargo para publicar una
+entrega real, sujeta a verificar previamente ese archivo y su ejecución.
+
+## 2026-09-08
+
+La preparación inicial para la alfa Unreal 0.2 mantuvo los cinco campos de
+descarga nulos hasta verificar el nuevo paquete. El recibo de la descarga
+pública ya acredita HTTP 200 y ejecución aprobada: se cotejaron localmente
+741.359.235 bytes y SHA-256 antes de aplicar el contrato. Tarjeta y ficha
+indican ahora «Alfa 0.2 para Linux». La captura final procede del paquete
+descargado; el vídeo final VP8 conserva los bytes codificados originales,
+1.920 × 1.080 y 529 cuadros decodificables. La evidencia pública queda fijada
+al commit `247e28ae25e243eaa9700dfd1f1bd525c93e6239`.
+Los medios con advertencias sirvieron sólo para pruebas locales de plantilla.
+La QA se repitió con los medios finales y el contrato activo: 26 pruebas de
+contenido/contrato, dos de navegador y ocho combinaciones responsive aprobadas.
