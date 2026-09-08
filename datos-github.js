@@ -336,7 +336,7 @@ export const REPOSITORIOS_GITHUB = {
           "nombre": "Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
           "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
           "bytes": 743035069,
-          "descargas": 1
+          "descargas": 2
         },
         {
           "nombre": "SHA256SUMS",
@@ -1882,7 +1882,7 @@ export const REPOSITORIOS_GITHUB = {
               "nombre": "Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
               "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
               "bytes": 743035069,
-              "descargas": 1
+              "descargas": 2
             },
             {
               "nombre": "SHA256SUMS",
