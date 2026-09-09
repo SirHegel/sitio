@@ -89,3 +89,18 @@ Axe-core: cero infracciones WCAG 2/2.1 A/AA detectadas en Inicio y Ciencia a
 320/390/1440 px, seis combinaciones. Auditoría con GPU escénica bloqueada y
 canvas científico activo. Ciencia a 280 px: cero elementos fuera de pantalla.
 No equivale a certificación universal de accesibilidad ni a medición física.
+
+## Batería final
+
+`npm test`: 110/110 pruebas aprobadas, cero fallos, cancelaciones u omisiones;
+duración 294,564 s. La matriz responsive cubrió 46 rutas públicas × 13 anchos
+(280–1440 px) = 598 combinaciones, sin contenido fuera de sus cajas; duración
+60,620 s. La compilación produjo 47 páginas, incluido el panel no indexable.
+Las pruebas incluyen voz musical voluntaria, foco, gestos táctiles, controles,
+pausa/reducción dinámica, pérdida y restauración de contexto, CSP, ciencia,
+mapas, juegos, contenido, autenticación y exclusión del expediente privado.
+
+Vista previa revisada: `https://jhonstevenalvarezruiz-nv6e72t0r-sir-hegel.vercel.app`,
+basada en `55dda05`. Su controlador servido coincide byte a byte con el local:
+SHA-256 `576eaa80c91131095a8b0af5ae09e395cfd0aee3fc721253f770541f5574d12b`.
+La ruta Ciencia respondió correctamente mediante acceso autenticado de Vercel.

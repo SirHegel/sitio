@@ -310,3 +310,21 @@ hash del paquete O(N) en bytes con memoria acotada por el stream.
 `σ = desconocida`: Chrome automatizado; pendientes equipos físicos y
 verificación canónica posterior al despliegue. Detalles y hashes en
 `documentos/neiva-descarga.md`.
+
+## Observatorio 3D continuo y Ciencia, 8 de septiembre de 2026
+
+Se reemplazaron entrada y escenografía fotográficas por un solo entorno de
+geometría Three.js con cortinas, suelo chevrón, mobiliario e instrumento orbital.
+El modelo persiste al navegar. Hay controles de telón, lámpara, órbita, calidad
+y pausa, además de interacción directa con el puntero. Se conserva la elección
+musical y todo el inventario público, incluidos Juegos y Neiva Abierta.
+
+Ciencia añade un modelo de interferencia de dos modos, diseño inverso, estado
+gemelo, demostración y CSV de 513 muestras. El resultado reproduce una propiedad
+conocida; no se atribuye solución de un problema abierto.
+
+Validación final: 110/110 pruebas, cero omisiones; 294,564 s. La matriz recorrió
+46 rutas públicas en 13 anchos: 598 combinaciones sin desbordamiento. Axe no
+registró infracciones en seis combinaciones de Inicio/Ciencia. Generadas 47
+páginas. Modelos, presupuestos, referencias y límites de medición en
+`memoria/observatorio-3d-20260908.md` y `docs/ciencia.md`.
