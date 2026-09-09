@@ -261,9 +261,12 @@ test("el fondo sigue animado en contenido, blog, proyectos y pie, y respeta la p
 
 test("los ornamentos visibles se animan por defecto y la pausa o movimiento reducido los detienen", { timeout: 25_000 }, async (t) => {
   for (const ancho of [390, 1440]) {
-    const { pagina, errores } = await nuevaPagina(t, { ancho });
+    // Aquí se observan transforms y animaciones CSS. El caso anterior mide
+    // con GPU real que la misma pausa detiene los cuadros del observatorio.
+    const { pagina, errores } = await nuevaPagina(t, { ancho, sinWebGL: true });
     try {
       await cargar(pagina);
+      assert.equal(await pagina.$eval("body", (e) => e.dataset.motor), "respaldo");
       await pagina.$eval(".contenido-editorial .rotulo", (e) => {
         window.__qaSeccion = e.closest(".franja");
         // Una sección móvil puede medir más de un viewport. Centrar su
@@ -339,10 +342,13 @@ test("los ornamentos visibles se animan por defecto y la pausa o movimiento redu
 });
 
 test("las tarjetas responden a puntero y teclado, se neutralizan al pausar y se renuevan tras navegar", { timeout: 25_000 }, async (t) => {
-  const { pagina, errores } = await nuevaPagina(t, { ancho: 1440 });
+  // La respuesta de las tarjetas es HTML/CSS; compilar y animar el fondo
+  // no forma parte de este contrato de puntero, teclado y desmontaje PJAX.
+  const { pagina, errores } = await nuevaPagina(t, { ancho: 1440, sinWebGL: true });
   const tarjeta = 'a.ficha.tarjeta-interactiva[href^="/proyectos/"]';
   try {
     await cargar(pagina);
+    assert.equal(await pagina.$eval("body", (e) => e.dataset.motor), "respaldo");
     assert.equal(await pagina.evaluate(() => matchMedia("(hover: hover) and (pointer: fine)").matches), true, "el navegador de la prueba ofrece un ratón con hover real");
     await pagina.waitForSelector(tarjeta);
     await pagina.$eval(tarjeta, (e) => { window.__qaTarjetaAnterior = e; });

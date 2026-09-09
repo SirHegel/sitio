@@ -15,6 +15,10 @@ jobs:
   probar:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        particion: ["1/3", "2/3", "3/3"]
 
     steps:
       - name: Obtener el sitio
@@ -32,4 +36,6 @@ jobs:
         run: npm run build
 
       - name: Ejecutar pruebas sobre los recursos construidos
-        run: npm test
+        # Cada máquina mantiene un solo navegador activo; Node distribuye
+        # todos los archivos, incluidos los que se añadan en el futuro.
+        run: node --test --test-concurrency=1 --test-shard=${{ matrix.particion }} pruebas/*.test.mjs

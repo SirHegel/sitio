@@ -8,6 +8,7 @@
  */
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { limitarDpr } from './calidad-3d.js';
 
 const PI = Math.PI;
 const TAU = PI * 2;
@@ -400,16 +401,7 @@ export async function crearObservatorio(canvas) {
     width = Math.max(1, options.width || canvas.clientWidth || window.innerWidth);
     height = Math.max(1, options.height || canvas.clientHeight || window.innerHeight);
     mobile = width < 760;
-    const requestedDpr = clamp(options.dpr ?? window.devicePixelRatio ?? 1, 0.5, 2);
-    // Software quality keeps the selector meaningful within explicit budgets.
-    // Invariant: W·H·DPR² never exceeds the selected tier's pixel budget.
-    const softwareTier = options.quality === 'alta'
-      ? { pixels: 350000, desktop: 0.6, mobile: 1 }
-      : options.quality === 'ahorro'
-        ? { pixels: 140000, desktop: 0.35, mobile: 0.65 }
-        : { pixels: 260000, desktop: 0.5, mobile: 0.85 };
-    const softwareDpr = Math.min(mobile ? softwareTier.mobile : softwareTier.desktop, Math.sqrt(softwareTier.pixels / (width * height)));
-    currentDpr = software ? Math.min(requestedDpr, softwareDpr) : requestedDpr;
+    currentDpr = limitarDpr({ width, height, dpr: options.dpr ?? window.devicePixelRatio ?? 1, quality: options.quality, software });
     renderer.setPixelRatio(currentDpr);
     renderer.setSize(width, height, false);
     camera.aspect = width / height;

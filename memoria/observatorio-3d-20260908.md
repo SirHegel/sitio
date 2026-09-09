@@ -104,3 +104,35 @@ Vista previa revisada: `https://jhonstevenalvarezruiz-nv6e72t0r-sir-hegel.vercel
 basada en `55dda05`. Su controlador servido coincide byte a byte con el local:
 SHA-256 `576eaa80c91131095a8b0af5ae09e395cfd0aee3fc721253f770541f5574d12b`.
 La ruta Ciencia respondió correctamente mediante acceso autenticado de Vercel.
+
+## Producción y contraste con CI
+
+El commit `053c5ce` se publicó en el dominio canónico. La comprobación sobre
+producción verificó entrada silenciosa, los tres mandos de geometría, navegación
+a Ciencia sin sustituir canvas/documento, problema inverso y ancho móvil de
+390 px sin desbordamiento ni errores JavaScript.
+
+La corrida GitHub Actions `34296557866` aprobó 107 casos y canceló tres por
+tiempo total (15/25 s); ninguna aserción falló. Silencio agotó su presupuesto
+al recargar, ornamentos durante el segundo viewport y tarjetas tras navegar.
+Los tres contratos de foco/CSS se separan del costo de compilar WebGL. Las
+pruebas de geometría, entrada con continuidad, mandos y calidad mantienen el
+contexto gráfico real. Se conservan los límites y todas las aserciones.
+El workflow reparte automáticamente todos los archivos entre tres máquinas
+con `--test-shard`, un navegador activo por máquina y sin cancelar los demás
+grupos cuando falla uno. La ejecución local completa sigue siendo `npm test`.
+
+Los tres casos ajustados pasan con CPU ralentizada 4×: 3/3, cero omisiones,
+16,010 s. Se encontró además un límite real en Auto software: el DPR inicial
+de 0,447903 no cumplía el umbral anterior de 0,7, y el motor imponía 0,5 a las
+solicitudes menores. La política compartida permite bajar a 0,358323 ante
+cuadros sostenidos de 80 o 500 ms. Antes conservaba 0,447903 en ambos casos.
+Software evalúa 24 cuadros, umbral de 45 ms, pisos de DPR 0,2 en escritorio y
+0,45 en móvil; hardware conserva 120 cuadros, umbral de 25 ms y piso 0,65.
+Los retrasos mayores de 250 ms cuentan, acotados a 1.000 ms; pausa y regreso
+a la pestaña reinician las muestras. Alta conserva sus presupuestos anteriores.
+
+Las cinco regresiones numéricas nuevas y las dos pruebas de workflow pasan.
+Controles geométricos y cambio de calidad pasan también con WebGL real:
+2/2, 16,882 s. La batería tiene ahora 115 casos; el resultado independiente
+de GitHub Actions queda por confirmar en el commit que incorpora este ajuste.

@@ -2,6 +2,8 @@
    Control O(1) por cuadro; render O(V + P), V vértices y P píxeles.
    Calidad adaptativa con histéresis; no impone un límite de 30 fps.
    Pausa y pestaña oculta cancelan el único rAF del entorno. */
+import { ajustarCalidadAutomatica } from './calidad-3d.js';
+
 export function iniciarCinematografia() {
   const body = document.body;
   const canvas = document.getElementById('observatorio');
@@ -73,13 +75,12 @@ export function iniciarCinematografia() {
     science += (scienceTarget - science) * smooth;
     entry += ((leaving || !body.classList.contains('entrada-activa') ? 1 : 0) - entry) * smooth;
     draw();
-    if (quality === 'auto' && elapsed > 0 && elapsed < 250) {
+    if (quality === 'auto' && Number.isFinite(elapsed) && elapsed > 0) {
       samples.push(elapsed);
-      if (samples.length === 120) {
-        const mean = samples.reduce((a,b)=>a+b,0)/samples.length;
-        // Baja resolución al sostener >25ms; techo móvil y suelo explícitos.
-        if (mean > 25 && dpr > .7) { dpr = Math.max(.65, dpr * .8); resize(); }
-        canvas.dataset.frameMs = mean.toFixed(2);
+      const adjustment = ajustarCalidadAutomatica(samples, {dpr, software:motor.stats.software, mobile:innerWidth < 760});
+      if (adjustment) {
+        if (adjustment.dpr < dpr) { dpr = adjustment.dpr; resize(); }
+        canvas.dataset.frameMs = adjustment.frameMs.toFixed(2);
         samples = [];
       }
     }
@@ -87,6 +88,8 @@ export function iniciarCinematografia() {
   }
   function state() {
     cancelAnimationFrame(frame); frame = 0;
+    // A resumed tab starts a fresh timing window; hidden time is not a frame.
+    samples = [];
     controls();
     dispatchEvent(new CustomEvent('sitio:movimiento', {detail:{pausado:paused() || document.hidden}}));
     if (paused()) { x = 0; y = 0; aperture = apertureTarget; lamp = lampTarget; science = scienceTarget; entry = body.classList.contains('entrada-activa') ? 0 : 1; }

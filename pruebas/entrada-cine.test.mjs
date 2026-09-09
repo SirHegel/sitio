@@ -45,12 +45,12 @@ after(async () => {
   if (servidor) await new Promise((resolver) => servidor.close(resolver));
 });
 
-async function nuevaPagina(t, { ancho = 390, preferencia = "0", reducido = false, audio = "resuelve", sinJS = false } = {}) {
+async function nuevaPagina(t, { ancho = 390, preferencia = "0", reducido = false, audio = "resuelve", sinJS = false, sinWebGL = false } = {}) {
   const contexto = await navegador.createBrowserContext();
   const pagina = await contexto.newPage();
   const errores = [];
   const imagenes = [];
-  const traza = { ancho, fase: "crear página", errores };
+  const traza = { ancho, sinWebGL, fase: "crear página", errores };
   let cierre;
   const cerrar = () => (cierre ||= contexto.close().catch(() => {}));
   const cancelar = () => { t.diagnostic(JSON.stringify(traza)); void cerrar(); };
@@ -65,6 +65,10 @@ async function nuevaPagina(t, { ancho = 390, preferencia = "0", reducido = false
   }
   await pagina.setViewport({ width: ancho, height: ancho < 768 ? 844 : 900, isMobile: ancho < 768, hasTouch: ancho < 768 });
   await pagina.bringToFront();
+  if (process.env.CINE_QA_CPU === "4") {
+    const sesion = await pagina.createCDPSession();
+    await sesion.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+  }
   if (reducido) await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
   pagina.on("pageerror", (error) => errores.push(error.message));
   await pagina.setRequestInterception(true);
@@ -73,7 +77,13 @@ async function nuevaPagina(t, { ancho = 390, preferencia = "0", reducido = false
     if (peticion.resourceType() === "media" || /\/_vercel\/|\/api\/visita/.test(peticion.url())) peticion.abort();
     else peticion.continue();
   });
-  await pagina.evaluateOnNewDocument(({ preferencia, audio }) => {
+  await pagina.evaluateOnNewDocument(({ preferencia, audio, sinWebGL }) => {
+    if (sinWebGL) {
+      const original = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (tipo, ...opciones) {
+        return /webgl/i.test(tipo) ? null : original.call(this, tipo, ...opciones);
+      };
+    }
     if (!sessionStorage.getItem("qa:entrada-sembrada")) {
       localStorage.setItem("jsar:musica", preferencia);
       // La marca de la cortinilla antigua nunca sustituye una elección nueva.
@@ -103,7 +113,7 @@ async function nuevaPagina(t, { ancho = 390, preferencia = "0", reducido = false
       sonando.set(this, false);
       this.dispatchEvent(new Event("pause"));
     };
-  }, { preferencia, audio });
+  }, { preferencia, audio, sinWebGL });
   if (sinJS) await pagina.setJavaScriptEnabled(false);
   return { pagina, errores, cerrar, imagenes };
 }
@@ -157,8 +167,11 @@ test("la primera visita conserva dos elecciones y nunca reproduce antes de elegi
 });
 
 test("la elección silenciosa retiene el foco del diálogo, entra con teclado y se recuerda en la sesión", { timeout: 15_000 }, async (t) => {
-  const { pagina, errores } = await nuevaPagina(t, { preferencia: "1" });
+  // Foco y sesión atraviesan una recarga completa. La continuidad 3D desde
+  // la entrada se comprueba con GPU real en el caso de música siguiente.
+  const { pagina, errores } = await nuevaPagina(t, { preferencia: "1", sinWebGL: true });
   await cargar(pagina);
+  await pagina.waitForFunction(() => document.body.dataset.motor === "respaldo");
   await comprobarDialogo(pagina);
   assert.equal(await pagina.evaluate(() => document.getElementById("puerta").contains(document.activeElement)), true, "el foco inicial entra al diálogo");
   for (const tecla of ["Tab", "Tab", "Tab", "Shift+Tab"]) {

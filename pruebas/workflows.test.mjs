@@ -11,7 +11,7 @@ const directorio = `${raiz}/.github/workflows`;
 test("todo workflow instala dependencias antes de ejecutar las pruebas", () => {
   for (const archivo of readdirSync(directorio).filter((nombre) => /\.ya?ml$/i.test(nombre))) {
     const fuente = readFileSync(`${directorio}/${archivo}`, "utf8");
-    const prueba = fuente.indexOf("npm test");
+    const prueba = fuente.search(/npm test|node --test\b/);
     if (prueba < 0) continue;
     const instalacion = fuente.indexOf("npm ci");
     assert.ok(instalacion >= 0, `${archivo} ejecuta npm test sin npm ci`);
