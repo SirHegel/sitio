@@ -22,6 +22,8 @@ import { notaInvestigacionHtml } from "./herramientas/nota-investigacion.js";
 import { auditarPublicacionOro, auditarSalidaEstaticaOro } from "./herramientas/validar-publicacion-oro.mjs";
 import { leerContinuidadOro } from "./lib/continuidad-publicacion.js";
 import { cargarEstudioOro } from "./estudio-oro.js";
+import { indiceJuegos } from "./juegos.js";
+import { NEIVA_ABIERTA, paginaNeiva } from "./neiva-abierta.js";
 
 const raiz = dirname(fileURLToPath(import.meta.url));
 const salida = join(raiz, "publico");
@@ -174,7 +176,7 @@ function proyectoDesdeGitHub(repo) {
 
 const repositoriosGitHubVigentes = REPOSITORIOS_GITHUB.repositorios.map(repoConPerfilActual);
 const githubPorNombre = new Map(repositoriosGitHubVigentes.map((r) => [r.nombre.toLowerCase(), r]));
-const proyectosCurados = PROYECTOS.map((proyecto) => {
+const proyectosCurados = [...PROYECTOS, NEIVA_ABIERTA].map((proyecto) => {
   const vivo = proyecto.repo ? githubPorNombre.get(nombreRepo(proyecto.repo)) : null;
   return { ...proyecto, github: vivo || null };
 });
@@ -429,6 +431,14 @@ ${franja(`      <a class="ciencia-invitacion revelar" href="/ciencia/">
         <div><p>Una fase cambia el patrón entero. Manipula un estado, observa su interferencia y reconstruye la solución.</p><span class="mas">Explorar el estudio <i>↗</i></span><small>Modelo interactivo · derivación · datos descargables</small></div>
       </a>`)}
 
+${franja(`      <section class="juegos-inicio revelar" aria-labelledby="juegos-inicio-titulo">
+        <div><p class="micro">Sala de juegos / Acceso gratuito</p>
+        <h2 class="titulo" id="juegos-inicio-titulo">Te toca moverte.</h2>
+        <p>Conoce la alfa de Neiva Abierta en Unreal o juega Bloquitos en el navegador, también en celular.</p></div>
+        <a class="boton primario" href="/juegos/"><span>Entrar a los juegos</span><span aria-hidden="true">↗</span></a>
+      </section>`)}
+
+
 ${franja(`<div data-ambiente="celuloide">${rotulo("03 / Notas al margen", "Últimos textos", "verde")}</div>
       <div class="lista-escritos" data-escalonar>
 ${escritosRecientes}
@@ -616,10 +626,11 @@ ${proyectosAutomaticos.map(fichaProyecto).join("\n") || "        <p class=\"pie-
 }
 
 function proyecto(p) {
+  if (p.slug === "neiva-abierta") return paginaNeiva();
   const razon = p.automatico
     ? parrafosEscapados(p.porQue)
     : `<p class="lead">${p.porQue.trim()}</p>`;
-  const auditoria = auditoriaProyecto(p);
+  const auditoria = { ...auditoriaProyecto(p), ...(p.auditoria || {}) };
   const releases = auditoria.releases.length
     ? `      <div class="rejilla sep-m" data-escalonar>
 ${auditoria.releases.map((release) => `        <article class="ficha revelar">
@@ -639,7 +650,7 @@ ${auditoria.releases.map((release) => `        <article class="ficha revelar">
         <p class="cifras-sueltas">${esc(p.cifras)}</p>
         <div class="acciones">
           ${p.repo ? `<a class="boton primario" href="${p.repo}" rel="noopener" target="_blank"><span>Código en GitHub</span></a>` : `<span class="boton desactivado"><span>${esc(p.visibilidad || "Proyecto no público")}</span></span>`}
-          ${p.demo ? `<a class="boton" href="${p.demo}" rel="noopener" target="_blank"><span>Probarlo</span></a>` : ""}
+          ${p.demo ? `<a class="boton" href="${p.demo}" rel="noopener" target="_blank"><span>${esc(p.demoEtiqueta || "Probarlo")}</span></a>` : ""}
         </div>
       </div>`)}
 
@@ -1333,6 +1344,7 @@ const RUTAS = [
   ["/academico/", academico],
   ["/ciencia/", cienciaPagina],
   ["/proyectos/", indiceProyectos],
+  ["/juegos/", indiceJuegos],
   ["/contribuciones/", contribuciones],
   ["/blog/", () => indiceBlog()],
   ["/actividad/", actividad],

@@ -3,13 +3,13 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-08-28T13:01:29.000Z",
-  "total": 22,
+  "actualizadoEn": "2026-09-08T09:47:18.000Z",
+  "total": 23,
   "perfilGitHub": {
-    "repositoriosPublicos": 42,
-    "repositoriosPropios": 22,
+    "repositoriosPublicos": 43,
+    "repositoriosPropios": 23,
     "forksPublicos": 20,
-    "seguidores": 4,
+    "seguidores": 6,
     "seguidos": 2
   },
   "forks": [
@@ -313,6 +313,96 @@ export const REPOSITORIOS_GITHUB = {
   },
   "releases": [
     {
+      "repositorio": "neiva-abierta",
+      "etiqueta": "unreal-v0.3.0-linux-alpha",
+      "nombre": "Neiva Abierta · Unreal 0.3.0 · Linux (alfa)",
+      "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.3.0-linux-alpha",
+      "publicadoEn": "2026-09-08T09:10:42.000Z",
+      "preliminar": true,
+      "activos": [
+        {
+          "nombre": "Neiva-Abierta-0.3-Linux-1080p.png",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-0.3-Linux-1080p.png",
+          "bytes": 2864670,
+          "descargas": 1
+        },
+        {
+          "nombre": "Neiva-Abierta-0.3-Linux-1080p.webm",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-0.3-Linux-1080p.webm",
+          "bytes": 19522814,
+          "descargas": 1
+        },
+        {
+          "nombre": "Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
+          "bytes": 743035069,
+          "descargas": 2
+        },
+        {
+          "nombre": "SHA256SUMS",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/SHA256SUMS",
+          "bytes": 110,
+          "descargas": 0
+        }
+      ]
+    },
+    {
+      "repositorio": "neiva-abierta",
+      "etiqueta": "unreal-v0.2.0-linux-alpha",
+      "nombre": "Neiva Abierta 0.2 · Unreal Engine · Linux x64",
+      "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.2.0-linux-alpha",
+      "publicadoEn": "2026-09-08T05:39:26.000Z",
+      "preliminar": true,
+      "activos": [
+        {
+          "nombre": "Neiva-Abierta-0.2-Linux-1080p.png",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-0.2-Linux-1080p.png",
+          "bytes": 3632115,
+          "descargas": 0
+        },
+        {
+          "nombre": "Neiva-Abierta-0.2-Linux-1080p.webm",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-0.2-Linux-1080p.webm",
+          "bytes": 18486318,
+          "descargas": 1
+        },
+        {
+          "nombre": "Neiva-Abierta-Unreal-0.2.0-Linux-x64.tar.gz",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-Unreal-0.2.0-Linux-x64.tar.gz",
+          "bytes": 741359235,
+          "descargas": 3
+        },
+        {
+          "nombre": "SHA256SUMS",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/SHA256SUMS",
+          "bytes": 110,
+          "descargas": 0
+        }
+      ]
+    },
+    {
+      "repositorio": "neiva-abierta",
+      "etiqueta": "unreal-v0.1.0-linux-alpha",
+      "nombre": "Neiva Abierta · Unreal 0.1.0 · Alfa Linux",
+      "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.1.0-linux-alpha",
+      "publicadoEn": "2026-09-07T18:36:22.000Z",
+      "preliminar": true,
+      "activos": [
+        {
+          "nombre": "Neiva-Abierta-Unreal-0.1.0-Linux-x64.tar.gz",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.1.0-linux-alpha/Neiva-Abierta-Unreal-0.1.0-Linux-x64.tar.gz",
+          "bytes": 596976129,
+          "descargas": 1
+        },
+        {
+          "nombre": "SHA256SUMS",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.1.0-linux-alpha/SHA256SUMS",
+          "bytes": 110,
+          "descargas": 0
+        }
+      ]
+    },
+    {
       "repositorio": "gh-achievement-audit",
       "etiqueta": "v0.1.0",
       "nombre": "gh-achievement-audit v0.1.0",
@@ -489,8 +579,8 @@ export const REPOSITORIOS_GITHUB = {
   ],
   "contribucionesExternas": {
     "totales": {
-      "pullRequestsPublicos": 57,
-      "fusionadosPublicos": 40,
+      "pullRequestsPublicos": 63,
+      "fusionadosPublicos": 45,
       "pullRequests": 20,
       "repositorios": 19,
       "fusionadas": 3,
@@ -568,7 +658,7 @@ export const REPOSITORIOS_GITHUB = {
         "estado": "cerrada",
         "url": "https://github.com/ansible/ansible/pull/87432",
         "creadoEn": "2026-08-20T17:30:15.000Z",
-        "actualizadoEn": "2026-08-20T22:33:26.000Z"
+        "actualizadoEn": "2026-09-03T00:04:01.000Z"
       },
       {
         "repositorio": "sphinx-doc/sphinx",
@@ -592,7 +682,7 @@ export const REPOSITORIOS_GITHUB = {
         "estado": "abierta",
         "url": "https://github.com/scipy/scipy/pull/25975",
         "creadoEn": "2026-08-20T17:13:02.000Z",
-        "actualizadoEn": "2026-08-21T17:45:08.000Z"
+        "actualizadoEn": "2026-09-03T12:11:30.000Z"
       },
       {
         "repositorio": "pypa/pip",
@@ -616,7 +706,7 @@ export const REPOSITORIOS_GITHUB = {
         "estado": "cerrada",
         "url": "https://github.com/pallets/click/pull/3783",
         "creadoEn": "2026-08-20T16:26:59.000Z",
-        "actualizadoEn": "2026-08-20T16:43:11.000Z"
+        "actualizadoEn": "2026-09-04T00:29:17.000Z"
       },
       {
         "repositorio": "pypa/pipx",
@@ -673,7 +763,7 @@ export const REPOSITORIOS_GITHUB = {
     }
   ],
   "costoSincronizacion": {
-    "solicitudesApi": 92,
+    "solicitudesApi": 96,
     "complejidadTemporal": "O(R + F + P)",
     "complejidadEspacial": "O(R + F + P)",
     "variables": "R repositorios, F archivos versionados y P pull requests publicos."
@@ -952,7 +1042,7 @@ export const REPOSITORIOS_GITHUB = {
       "forks": 0,
       "creadoEn": "2026-08-19T21:51:37.000Z",
       "actualizadoEn": "2026-08-28T00:32:53.000Z",
-      "publicadoEn": "2026-08-28T04:47:14.000Z",
+      "publicadoEn": "2026-09-07T04:47:36.000Z",
       "extractoReadme": "Bloquitos\n\nJuego de bloques que caen, con niveles infinitos y piezas que parecen joyas de\ncaramelo. Guarda tu historial de partidas, tus récords y tus logros en una base\nde datos local, funciona sin conexión, y se puede jugar de tres formas: abriendo\nun archivo, en la web, o como aplicación instalada.\n\nPensado para que lo juegue un niño sin frustrarse, pero con la mecánica completa\nque espera alguien que lleva años jugando a este género.\n\n▶ Jugar ahora: sirhegel.github.io/bloquitos\n\nLa misma versión se publica además en Vercel, que añade las cabeceras de\nseguridad reales y una dirección de vista previa por cada rama. Cómo publicarlo\nestá en DESPLIEGUE.md.\nCómo se instala\n\nDepende de cómo quieras jugarlo. Ninguna de las tres opciones necesita instalar\ndependencias: el juego no tiene ni una.\n\n1. En la web — no se instala nada. Abre el enlace de arriba y ya está.\n\nSi lo quieres como aplicación con su propia ventana e icono, ahí mismo se puede\ninstalar: en Chrome o Edge aparece el icono de instalar en la barra de\ndirecciones; en Android e iOS, con «Añadir a pantalla de inicio». Se guarda\nentero en el dispositivo, así que después funciona sin conexión.\n\n2. Doble clic — descargar y abrir. Descarga el repositorio (botón Code →\nDownload ZIP, o git clone), descomprime y abre index.html. No hace falta\nservidor, ni Node, ni conexión. Funciona porque js/bloquitos.js viene ya\ngenerado dentro del repositorio; más abajo se explica por qué.\n\n3. Como programa de escritorio — instalador. Descarga el de tu sistema\n(Windows, Linux o macOS) de la sección\nReleases y ábrelo. No están\nfirmados digitalmente, así que la primera vez el sistema puede pedir\nconfirmación; es lo normal en aplicaciones sin certificado de firma.\nCómo se juega\n\nCaen piezas, completas filas y suben los puntos. El nivel sube cada 10 líneas y\nno tiene techo. C guarda una pieza para después, y solo se puede usar una vez\npor pieza.\n\n· Acción · Teclado · Táctil ·\n\n· Mover · ← → o A D · deslizar de lado, o los botones ·\n· Girar · ↑ o X · Z o Ctrl al revés · tocar la pantalla ·\n· Bajar rápido · ↓ o S · deslizar hacia abajo ·\n· Soltar de golpe · espacio · deslizar abajo rápido ·\n· Guardar pieza · C o Shift · botón ⇄ ·\n· Pausa · P o Esc · botón ⏸ ·\n· Empezar partida · R o Intro (desde la portada o el final) · botones Jugar y Otra vez ·\n\nDesde la portada y desde la pausa se llega a Récords, Datos y\nLogros, y desde ahí se puede exportar el progreso a un archivo o volver a\nimportarlo. Los tres botones de la derecha alternan sonido, sombra de caída y\nmodo daltónico, que añade una forma distinta a cada tipo de pieza para no\ndepender del color.\nCómo está hecho\n\nSin dependencias para jugar: ni npm, ni CDN, ni una sola petición externa. Son\nmódulos de JavaScript y un lienzo. Electron solo aparece si quieres generar los\nejecutables de escritorio.\n\n· Archivo · Qué hace ·\n\n· index.html · La página: maquetación, metadatos y tarjeta social ·\n· css/estilos.css · Todo el estilo ·\n· js/piezas.js · Las 7 piezas, sus 4…",
       "inventario": {
         "revision": "8484638e98d3587f2ab1f4d37167863a98841f42",
@@ -1097,7 +1187,23 @@ export const REPOSITORIOS_GITHUB = {
       "lenguajes": [
         {
           "nombre": "Python",
-          "bytes": 124402
+          "bytes": 1507137
+        },
+        {
+          "nombre": "PLpgSQL",
+          "bytes": 57145
+        },
+        {
+          "nombre": "HTML",
+          "bytes": 31962
+        },
+        {
+          "nombre": "CSS",
+          "bytes": 28191
+        },
+        {
+          "nombre": "JavaScript",
+          "bytes": 1304
         },
         {
           "nombre": "Jinja",
@@ -1117,34 +1223,38 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-08-16T02:05:49.000Z",
-      "actualizadoEn": "2026-08-28T01:27:23.000Z",
-      "publicadoEn": "2026-08-28T01:27:16.000Z",
-      "extractoReadme": "Colmat X Automation\n\nProyecto en Python para preparar, aprobar, programar y publicar contenido de la escuela de\npensamiento Colmat en X. Está pensado para una sola cuenta institucional y usa únicamente\nla API oficial.\n\nEl proyecto nace en modo seguro: el contenido de ejemplo entra como borrador, las URL están\nbloqueadas y una ejecución normal solo simula. Para publicar de verdad deben coincidir tres\ncondiciones: el snapshot fue aprobado por CLI, COLMATLIVEENABLED=true y el operador usa\n--live.\nAlcance de esta primera versión\nPublicaciones originales de texto, programadas en YAML.\nPlantillas Jinja reutilizables y vista previa del texto final.\nAprobación humana auditada y ligada al hash exacto del texto y la hora revisados.\nEstimación conservadora de longitud ponderada y controles preventivos de URL, cashtags y\nduplicados exactos.\nCola SQLite con auditoría, límite diario y protección contra doble publicación local.\nAutenticación OAuth 1.0a de usuario para una cuenta de Colmat.\nModo simulación, diagnóstico, reintentos controlados y conciliación de resultados ambiguos.\n\nNo automatiza respuestas, mensajes directos, likes, follows, tendencias, scraping de la web,\ngeneración de contenido con IA ni archivos multimedia. Esas capacidades requieren decisiones\neditoriales, permisos o controles adicionales.\nInstalación\n\nRequiere Python 3.11 o posterior. Desde la raíz del proyecto:\n\nLa base .state/colmat.db se crea al primer uso con permisos locales restrictivos y nunca se\nincluye en Git. En sistemas sin install, copia el archivo y aplica permisos equivalentes para\nque solo su propietario pueda leer .env.\nFlujo editorial\nDuplica content/posts/001-bienvenida.yaml y asigna un id único.\nEscoge una plantilla de content/templates/ y completa data.\nEjecuta colmat-x validate y colmat-x preview --id TUID.\nRevisa texto, hora y el hash snapshot de aprobación que muestra preview.\nSincroniza con colmat-x sync.\nAprueba exactamente ese snapshot:\nComprueba lo vencido con colmat-x run-due; esto no llama a X.\nSolo cuando todo esté listo, habilita y ejecuta la publicación real.\n\nLa aprobación vive en SQLite, no en el YAML. Cualquier cambio de texto o de hora invalida el\nsnapshot y devuelve la pieza a draft; hay que previsualizarla y aprobarla de nuevo. --by es\nmetadato de auditoría, no autentica por sí solo a una persona: restringe también el acceso al host\ny a la cuenta de servicio.\n\nSi eliminas de content/posts/ un YAML que estaba en borrador o programado, la siguiente\nsincronización lo cancela en SQLite para que no pueda publicarse desde estado antiguo. Si repones\nun archivo con el mismo ID, ejecuta colmat-x restore TUID y vuelve a aprobarlo. Puede contener\ntexto u hora nuevos: restore carga ese snapshot como draft y nunca conserva la aprobación\nanterior. Eliminar todos los YAML es válido y cancela toda pieza activa.\n\nEjemplo de contenido:\n\npublishat siempre debe incluir el desplazamiento horario. El proyecto guarda UTC y muestra\nlas horas en America/Bogota, configurada en…",
+      "actualizadoEn": "2026-08-31T04:58:01.000Z",
+      "publicadoEn": "2026-08-31T04:57:38.000Z",
+      "extractoReadme": "Colmat X Automation\n\nProyecto en Python para preparar, clasificar, revisar y publicar contenido institucional en X,\ncon control operativo por Telegram. Usa exclusivamente las API oficiales de X, Telegram y\nMiniMax; nunca automatiza la interfaz web de X.\n\nEl proyecto nace en modo seguro. En humanreview, toda salida de IA es un borrador y una persona\ndistinta del autor debe aprobar el snapshot exacto. En direct, la ejecución usa identidades de\nservicio separadas y la publicación real exige dos seguros de entorno más --live. El webhook de\nTelegram puede consultar y registrar decisiones, pero no crea usuarios ni llama a X.\nCapacidades\nPublicaciones originales de texto, programadas en YAML.\nPlantillas Jinja reutilizables y vista previa del texto final.\nAprobación humana auditada y ligada al hash exacto del texto y la hora revisados.\nEstimación conservadora de longitud ponderada y controles preventivos de URL, cashtags y\nduplicados exactos.\nCola SQLite heredada para un host persistente y store SQLAlchemy para SQLite local o PostgreSQL\nen despliegues serverless.\nAutenticación OAuth 1.0a de usuario para una cuenta de Colmat.\nModo simulación, diagnóstico, reintentos controlados y conciliación de resultados ambiguos.\nRBAC explícito para owner, admin, editor, reviewer, publisher, scheduler y auditor,\ncon separación entre autoría, aprobación y publicación.\nWebhook de Telegram autenticado, deduplicación de updateid y callbacks de un solo uso ligados\na persona, chat, revisión y snapshot.\nMiniMax para proponer borradores e imágenes en memoria, con validación local cerrada y sin\ncapacidad de aprobar, programar o publicar.\nAgenda diaria persistida, ejecución idempotente por slot y modos humanreview y direct.\nWorkers automation-run, generation-run y publication-run, invocables por command jobs\ndeterministas de un OpenClaw aislado en un host persistente.\nCarga de hasta cuatro imágenes en X, texto alternativo obligatorio y marca madewithai para\nmedia generada con IA.\nPanel FastAPI desplegable en Vercel con acceso passwordless por Telegram, gestión de equipo,\nagenda, generación y revisión; además de /api/health, /api/ready y el webhook.\n\nNo automatiza respuestas, mensajes directos, likes, follows, tendencias, scraping ni segmentación\nde personas. Tampoco promete viralidad: la rúbrica de engagement compara claridad, cifra temprana,\natribución y legibilidad, pero exige verificación editorial y no autoriza una publicación.\nInstalación\n\nRequiere Python 3.11 o posterior. Desde la raíz del proyecto:\n\nLa base .state/colmat.db se crea al primer uso con permisos locales restrictivos y nunca se\nincluye en Git. En sistemas sin install, copia el archivo y aplica permisos equivalentes para\nque solo su propietario pueda leer .env.\nManual canónico y política editorial\n\nLa fuente de control es el PDF de Drive con ID\n1S870mC8iixpNRv2FYtnnLZauO0eDGww. La política local fija tanto el ID como la huella SHA-256 del\ntexto extraído para contrastarla en cada nueva auditoría. Sus reglas…",
       "inventario": {
-        "revision": "cd68e547a8c8c45ee82dd381e796a966cc1fe0e5",
+        "revision": "a8acd3834889a6210e6f7f68bdddf0282db3a1d4",
         "vacio": false,
         "completo": true,
-        "archivos": 33,
-        "bytesVersionados": 144340,
-        "archivosFuente": 9,
-        "archivosPrueba": 10,
+        "archivos": 82,
+        "bytesVersionados": 5292159,
+        "archivosFuente": 34,
+        "archivosPrueba": 28,
         "archivosDocumentacion": 2,
         "workflows": 1,
         "manifiestos": [
-          "pyproject.toml"
+          "pyproject.toml",
+          "vercel.json"
         ],
         "componentes": [
           ".env.example",
           ".github",
           ".gitignore",
           ".python-version",
+          ".vercelignore",
           "README.md",
+          "api",
           "config",
           "content",
           "deploy",
           "pyproject.toml",
           "src",
-          "tests"
+          "tests",
+          "vercel.json"
         ]
       },
       "releases": []
@@ -1500,7 +1610,7 @@ export const REPOSITORIOS_GITHUB = {
       "forks": 0,
       "creadoEn": "2026-08-25T15:35:17.000Z",
       "actualizadoEn": "2026-08-28T02:15:40.000Z",
-      "publicadoEn": "2026-08-28T02:13:13.000Z",
+      "publicadoEn": "2026-09-07T15:12:59.000Z",
       "extractoReadme": "HegelFlow\n\nHegelFlow es una aplicación multiusuario para delegar, priorizar y seguir trabajo con Scrum y Kanban. El repositorio contiene una aplicación web funcional con autenticación propia, tableros, backlog, sprints, calendario, reportes, perfiles de trabajo y trazabilidad sobre PostgreSQL.\nProducción disponible en hegelflow.vercel.app, con Vercel Hobby y Neon Free. El despliegue conserva secretos únicamente en el entorno administrado, fuera del repositorio.\nVista del producto\n\nEstas capturas se renderizaron con los componentes reales de HegelFlow sobre un escenario local, aislado y marcado como demostración. Todos los nombres, tareas y valores visibles son ficticios; ninguna imagen contiene credenciales ni datos de producción.\nResumen ejecutivo\n\nReportes ágiles\n\nQué funciona hoy\nInicio y cierre de sesión, sesiones revocables y cambio de contraseña.\nResumen ejecutivo de trabajo abierto, vencimientos, sprint y carga por persona.\nTablero Kanban con drag-and-drop, vista de lista, filtros y límites WIP.\nSincronización automática de cambios visibles entre navegadores, con actualización al recuperar el foco y revisión ligera cada cinco segundos.\nCreación, edición y archivo de tareas con tipo, prioridad, fechas, story points, responsables, etiquetas y sprint.\nBacklog y gestión de sprints: crear, iniciar, completar y devolver pendientes al backlog.\nCalendario mensual de fechas de tareas y sprints.\nReportes base de burndown, velocidad, distribución por estado/prioridad y tiempo de ciclo.\nCronología de actividad, búsqueda global, perfiles de trabajo y capacidad.\nRoles OWNER, ADMIN, MEMBER y VIEWER, separados del cargo laboral.\nAlta atómica de cuenta y perfil, o habilitación posterior de credenciales, reservada al OWNER.\nConsola de administración y auditoría visible únicamente para OWNER, con eventos de seguridad append-only.\nTableros de workspace o privados, con ACL explícita por miembro de tablero.\nEsquema para comentarios, checklists, adjuntos, dependencias, campos personalizados, vistas, notificaciones, invitaciones y automatizaciones. Algunas de estas capacidades aún no tienen flujo completo de interfaz o ejecución; consulte Alcance del producto.\nStack\n\n· Capa · Tecnología ·\n\n· Aplicación · Next.js 16 App Router, React 19 y TypeScript estricto ·\n· Interfaz · Tailwind CSS 4, Lucide, dnd-kit y Recharts ·\n· Servidor · Route Handlers de Next.js y servicios de dominio transaccionales ·\n· Datos · PostgreSQL, postgres.js y migraciones SQL versionadas ·\n· Validación y acceso · Zod 4, bcrypt y sesiones opacas almacenadas por hash ·\n· Calidad · ESLint, TypeScript, Vitest, cobertura V8, auditoría de secretos y npm audit ·\n· Despliegue objetivo · Vercel con PostgreSQL administrado en Neon ·\nDocumentación\nArquitectura actual\nModelo de seguridad\nBenchmark de Trello y alternativas\nAlcance implementado y roadmap\nPuesta en marcha local\nRequisitos\nNode.js 20.9 o posterior, requisito de Next.js 16.\nnpm y una base PostgreSQL accesible.\nPara PostgreSQL remoto, una…",
       "inventario": {
         "revision": "a6585ed16ae67fd4158d08874c2445a5741b0a96",
@@ -1627,7 +1737,7 @@ export const REPOSITORIOS_GITHUB = {
       "forks": 0,
       "creadoEn": "2026-08-22T17:38:15.000Z",
       "actualizadoEn": "2026-08-28T02:56:42.000Z",
-      "publicadoEn": "2026-08-28T02:56:23.000Z",
+      "publicadoEn": "2026-09-07T14:12:29.000Z",
       "extractoReadme": "NÁCAR — Sistemas minerales por Juan\n\nLanding premium para presentar y vender proyectos de tratamiento mineral con magnesio para piscinas. Incluye sitio público, formulario de diagnóstico, CMS privado y bandeja de prospectos.\nPrimer arranque seguro\n\nEl repositorio se entrega sin usuario, contraseña, hash, secreto de sesión, token de almacenamiento ni datos de prospectos. Tampoco existe una cuenta predeterminada.\n\nRequiere Node.js 24 o posterior. El archivo .nvmrc fija la misma línea que CI, los tipos de Node y el despliegue; el .npmrc versionado sólo activa engine-strict, de modo que npm rechaza versiones anteriores incluso si se omiten scripts. Las credenciales de registros privados deben guardarse en la configuración personal de npm, nunca en este repositorio.\n\nnpm run setup solicita en una terminal privada el usuario y una contraseña de al menos 14 caracteres elegidos por el nuevo propietario. La contraseña no se escribe en ningún archivo: se guarda solamente un hash scrypt con sal aleatoria. El comando también genera un secreto de sesión y deja .env.local con permisos 600.\n\nDespués hay que configurar un almacenamiento privado de Vercel Blob y agregar su token como BLOBREADWRITETOKEN en .env.local. Se puede vincular un proyecto propio y descargar sus variables con:\n\nSi .env.local ya contiene un acceso, el comando exige escribir ROTAR antes de reemplazarlo. Conserva las demás variables. Para iniciar:\n\nAbre El panel privado está en /admin/login y permanece bloqueado si falta o es inválida cualquiera de sus variables. El alta inicial se hace solo desde la terminal, nunca desde una ruta pública de Internet.\nVariables de entorno\n\nUsa .env.example como inventario, sin colocar valores reales en ese archivo:\n\nPara producción, define SITEURL con el origen HTTPS completo y registra los valores mediante el gestor de secretos de Vercel o del proveedor elegido. No subas .env.local, no pegues secretos en incidencias o pull requests y no uses variables NEXTPUBLIC para información sensible.\nCMS, acceso y almacenamiento\n\nEl panel permite editar la marca, portada, secciones, tarjetas, proceso, FAQ, SEO, contacto e imagen principal; también permite activar u ocultar módulos completos y publicar los cambios.\n\nLos contenidos y prospectos se guardan como JSON privado en Vercel Blob. Los prospectos tienen estados, notas internas y borrado definitivo desde el panel. La sesión dura diez horas, está firmada mediante HMAC y usa una cookie HttpOnly, SameSite=Strict y Secure en producción. El acceso aplica validación de origen y limitación local de intentos; en despliegues distribuidos también debe activarse el rate limit o firewall del proveedor.\nContactos y entrega de solicitudes\n\nEl formulario valida, evita duplicados por reintento, genera una referencia y guarda cada solicitud en la bandeja privada. El WhatsApp y el correo comercial se configuran desde “Marca y contacto” dentro del panel; el número debe usar formato internacional sin +, espacios ni guiones.…",
       "inventario": {
         "revision": "15975530e44bc1075e6e364ce5d397ea7cf83b8b",
@@ -1666,6 +1776,179 @@ export const REPOSITORIOS_GITHUB = {
         ]
       },
       "releases": []
+    },
+    {
+      "slug": "neiva-abierta",
+      "nombre": "neiva-abierta",
+      "descripcion": "Exploración libre de Neiva, Huila: ciudad 3D con cartografía abierta, vehículo, controles móviles y proyecto fuente Unreal Engine.",
+      "url": "https://github.com/SirHegel/neiva-abierta",
+      "homepage": "https://neiva-abierta.vercel.app/",
+      "lenguajes": [
+        {
+          "nombre": "JavaScript",
+          "bytes": 449976
+        },
+        {
+          "nombre": "Python",
+          "bytes": 386508
+        },
+        {
+          "nombre": "C++",
+          "bytes": 147676
+        },
+        {
+          "nombre": "HTML",
+          "bytes": 14288
+        },
+        {
+          "nombre": "Shell",
+          "bytes": 1436
+        },
+        {
+          "nombre": "C#",
+          "bytes": 1167
+        }
+      ],
+      "temas": [],
+      "licencia": {
+        "spdx": "NOASSERTION",
+        "nombre": "Other"
+      },
+      "ramaPredeterminada": "main",
+      "estrellas": 0,
+      "forks": 0,
+      "creadoEn": "2026-09-07T03:41:13.000Z",
+      "actualizadoEn": "2026-09-08T09:47:18.000Z",
+      "publicadoEn": "2026-09-08T09:46:19.000Z",
+      "extractoReadme": "Neiva Abierta\n\nAlfa Unreal 0.3.0 para Linux x8664. Explora Neiva a pie o en coche,\ncon un personaje anónimo, ocho peatones y conversaciones con siete clips de\nvoz sintética sobre Jhon y sus servicios. La lluvia llega por ciclos y las\nsuperficies se mojan y secan gradualmente. Creada y empaquetada con\nUnreal Engine 5.5.4.\n\nDescargar gratis la alfa Linux 0.3\n\nLa copia pública se descargó sin credenciales y pasó 19 comprobaciones de\njuego y seis de integridad, con cierre normal. Se revisó a 1080p en una\nRTX 4050 Laptop con límite de 30 FPS; no es un benchmark sin límite.\nEl archivo preparado es Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz.\nEstado del paquete ·\nComprobación de la descarga.\n\nExtrae el archivo completo y, desde la carpeta extraída, ejecuta:\n\nConserva Linux/ junto al lanzador. No necesitas instalar el editor para jugar.\nSe requiere Linux x8664 con GPU y controlador Vulkan; los requisitos mínimos\nno están establecidos. No hay ejecutables Windows, macOS ni móviles de esta\nentrega. Estado de plataformas.\n\nControles: WASD para caminar o conducir; ratón para mirar; Shift para\ncorrer; Espacio para saltar o frenar; E para conversar, entrar o salir del coche;\n1–4 o botones para elegir tema; C/V para cambiar colores de ropa; R para volver\nal inicio; Esc/P para pausar. E/Esc/P cierran primero una conversación activa.\n\nLa versión 0.3 añade 17.696 alturas estimadas de Google Research 2023 y una\nrevisión manual separada, con procedencia conservada; se retiró el edificio\nficticio. El contacto de Jhon está en los diálogos. La ciudad conserva 35.873\nhuellas y cuatro hitos interpretados. No es una réplica idéntica ni una ciudad\ncon calidad visual AAA: hay fachadas y alturas estimadas, terreno plano e\ninteriores pendientes. Los avisos VSM tampoco se consideran resueltos.\nReconstrucción y límites ·\nClima y diálogos.\n\nFicha del proyecto y vídeo ·\nJuegos: Neiva Abierta y Bloquitos.\nLa ficha se adapta a móvil; el ejecutable es para Linux. El vídeo de revisión\n0.3 incluye audio y se recodifica desde MediaRecorder a 30 FPS; esa cadencia\nno mide el rendimiento original. Las PNG conservan la captura nativa.\nNo se realizó una prueba auditiva humana.\n\nPara reconstruir esta versión, sigue el\norden de importación y horneado.\nscripts/unreal.py package ejecuta la importación base, clima y voces; los\nárboles y bancos CC0 y el horneado de hitos requieren los pasos previos\nindicados. Proyecto y controles ·\nDistribución, tamaño y SHA-256 ·\nConsulta aislada de referencias.\nHistorial de la alfa 0.2\n\nLa descarga anterior 0.2\nse verificó por tamaño y hash y se ejecutó a 1080p en una RTX 4050 Laptop.\nSu muestra del parque promedió 21,14 ms por cuadro (47,31 FPS derivados) con\nlímite de 60. Esa medición pertenece a 0.2, no a 0.3 ni a otros equipos.\nRecibo histórico ·\nMejoras y mediciones de 0.2.\nPrototipo web anterior 0.4 · Three.js\n\nLa descripción, captura, controles y mediciones web siguientes corresponden\nal prototipo Three.js 0.4. Sus pruebas no acreditan el ejecutable…",
+      "inventario": {
+        "revision": "21d2db70bdf861c77e6a88359142954cd1dc935b",
+        "vacio": false,
+        "completo": true,
+        "archivos": 280,
+        "bytesVersionados": 103869441,
+        "archivosFuente": 82,
+        "archivosPrueba": 32,
+        "archivosDocumentacion": 29,
+        "workflows": 1,
+        "manifiestos": [
+          "package-lock.json",
+          "package.json",
+          "scripts/requirements-building-heights.txt",
+          "vercel.json"
+        ],
+        "componentes": [
+          ".github",
+          ".gitignore",
+          ".vercelignore",
+          "LICENSE",
+          "README.md",
+          "data",
+          "docs",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "public",
+          "publishing",
+          "scripts",
+          "src",
+          "tests",
+          "unreal",
+          "vercel.json"
+        ]
+      },
+      "releases": [
+        {
+          "repositorio": "neiva-abierta",
+          "etiqueta": "unreal-v0.3.0-linux-alpha",
+          "nombre": "Neiva Abierta · Unreal 0.3.0 · Linux (alfa)",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.3.0-linux-alpha",
+          "publicadoEn": "2026-09-08T09:10:42.000Z",
+          "preliminar": true,
+          "activos": [
+            {
+              "nombre": "Neiva-Abierta-0.3-Linux-1080p.png",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-0.3-Linux-1080p.png",
+              "bytes": 2864670,
+              "descargas": 1
+            },
+            {
+              "nombre": "Neiva-Abierta-0.3-Linux-1080p.webm",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-0.3-Linux-1080p.webm",
+              "bytes": 19522814,
+              "descargas": 1
+            },
+            {
+              "nombre": "Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
+              "bytes": 743035069,
+              "descargas": 2
+            },
+            {
+              "nombre": "SHA256SUMS",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/SHA256SUMS",
+              "bytes": 110,
+              "descargas": 0
+            }
+          ]
+        },
+        {
+          "repositorio": "neiva-abierta",
+          "etiqueta": "unreal-v0.2.0-linux-alpha",
+          "nombre": "Neiva Abierta 0.2 · Unreal Engine · Linux x64",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.2.0-linux-alpha",
+          "publicadoEn": "2026-09-08T05:39:26.000Z",
+          "preliminar": true,
+          "activos": [
+            {
+              "nombre": "Neiva-Abierta-0.2-Linux-1080p.png",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-0.2-Linux-1080p.png",
+              "bytes": 3632115,
+              "descargas": 0
+            },
+            {
+              "nombre": "Neiva-Abierta-0.2-Linux-1080p.webm",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-0.2-Linux-1080p.webm",
+              "bytes": 18486318,
+              "descargas": 1
+            },
+            {
+              "nombre": "Neiva-Abierta-Unreal-0.2.0-Linux-x64.tar.gz",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/Neiva-Abierta-Unreal-0.2.0-Linux-x64.tar.gz",
+              "bytes": 741359235,
+              "descargas": 3
+            },
+            {
+              "nombre": "SHA256SUMS",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.2.0-linux-alpha/SHA256SUMS",
+              "bytes": 110,
+              "descargas": 0
+            }
+          ]
+        },
+        {
+          "repositorio": "neiva-abierta",
+          "etiqueta": "unreal-v0.1.0-linux-alpha",
+          "nombre": "Neiva Abierta · Unreal 0.1.0 · Alfa Linux",
+          "url": "https://github.com/SirHegel/neiva-abierta/releases/tag/unreal-v0.1.0-linux-alpha",
+          "publicadoEn": "2026-09-07T18:36:22.000Z",
+          "preliminar": true,
+          "activos": [
+            {
+              "nombre": "Neiva-Abierta-Unreal-0.1.0-Linux-x64.tar.gz",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.1.0-linux-alpha/Neiva-Abierta-Unreal-0.1.0-Linux-x64.tar.gz",
+              "bytes": 596976129,
+              "descargas": 1
+            },
+            {
+              "nombre": "SHA256SUMS",
+              "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.1.0-linux-alpha/SHA256SUMS",
+              "bytes": 110,
+              "descargas": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "slug": "orquesta-ia",
@@ -2195,15 +2478,23 @@ export const REPOSITORIOS_GITHUB = {
       "lenguajes": [
         {
           "nombre": "JavaScript",
-          "bytes": 311400
-        },
-        {
-          "nombre": "HTML",
-          "bytes": 109605
+          "bytes": 886426
         },
         {
           "nombre": "CSS",
-          "bytes": 49659
+          "bytes": 136753
+        },
+        {
+          "nombre": "HTML",
+          "bytes": 109666
+        },
+        {
+          "nombre": "MDX",
+          "bytes": 66135
+        },
+        {
+          "nombre": "TypeScript",
+          "bytes": 44172
         },
         {
           "nombre": "Python",
@@ -2220,18 +2511,18 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-08-20T23:00:55.000Z",
-      "actualizadoEn": "2026-08-28T00:21:38.000Z",
-      "publicadoEn": "2026-08-28T00:21:13.000Z",
-      "extractoReadme": "Sitio de Jhon Steven Alvarez Ruiz\n\nSitio personal, blog y portafolio de Jhon Steven Alvarez Ruiz — analista de\ndatos y desarrollador de automatización en Neiva, Colombia. El HTML público se genera\nsin dependencias; las funciones privadas de Vercel permiten publicar escritos y\nconsultar una auditoría anónima desde /admin/.\n\nArquitectura\n\n· Pieza · Responsabilidad ·\n\n· datos.js · Perfil, experiencia y proyectos seleccionados. ·\n· datos-github.js · Snapshot seguro de todos los repositorios públicos propios. ·\n· datos-actividad.js · Totales anónimos de tokens, llamadas, tareas y proveedores. ·\n· escritos/.md · Fuente editorial del blog. ·\n· plantilla.js · Cabecera, navegación, SEO y JSON-LD comunes. ·\n· construir.js · Blog, proyectos, actividad, feed, sitemap y HTML estático. ·\n· api/ y lib/ · Autenticación, CMS y auditoría en funciones de Vercel. ·\n· activos/animacion.js · Movimiento, audio persistente y navegación progresiva. ·\n\nLa navegación interna reemplaza únicamente el contenido principal. El elemento\npermanece vivo, por lo que cambiar de Inicio a Blog o Proyectos no\nreinicia ni apaga la obra.\nMúsica\n\nLa obra es la Sinfonía n.º 5 en do menor, op. 67 de Beethoven, interpretada\npor la Skidmore College Orchestra. Es una grabación real completa de 35:41,\nalmacenada localmente como MP3; el navegador no sintetiza notas ni consulta un\nservicio de terceros.\n\nLa procedencia, los cuatro movimientos originales, la declaración de dominio\npúblico y la huella SHA-256 están en\nactivos/beethoven-quinta-sinfonia.LICENCIA.md.\nBlog y panel privado\n\nCada escrito es Markdown con un encabezado pequeño y validado:\n\nEl panel /admin/ permite crear y actualizar estos archivos mediante la API de\ncontenidos de GitHub. Cada publicación queda versionada en master; la\nintegración GitHub–Vercel vuelve a construir automáticamente el sitio.\n\nVariables de entorno requeridas en Vercel:\n\n· Variable · Uso ·\n\n· ADMINUSER · Usuario único del panel. ·\n· ADMINPASSWORDHASH · Hash scrypt, nunca la contraseña en texto. ·\n· SESSIONSECRET · Secreto aleatorio de al menos 32 bytes. ·\n· GITHUBSITETOKEN · Token server-only con Contents lectura/escritura en SirHegel/sitio. ·\n· GITHUBAUDITREPO · Repositorio privado de auditoría; en producción, SirHegel/sitio-auditoria. ·\n· GITHUBAUDITTOKEN · Requerido y separado por configuración; debe limitarse al repositorio de auditoría. ·\n· GITHUBAUDITBRANCH · Opcional; si falta se usa la rama predeterminada. ·\n· IPAPIKEY · Opcional; mejora la disponibilidad de la estimación VPN/proxy/Tor. ·\n· SITEORIGIN · Origen canónico, por ejemplo ·\n\nLas cookies de sesión son HttpOnly, Secure, SameSite=Strict y están\nfirmadas. Las mutaciones requieren origen coincidente y token CSRF. El Markdown\nse valida tanto al escribir como al leer.\nAuditoría y privacidad\n\nVercel Web Analytics es la fuente principal para visitantes, páginas, rutas,\npaíses y dispositivos agregados. No usa cookies de seguimiento. El sistema\npropio conserva únicamente el primer ingreso de cada sesión:…",
+      "actualizadoEn": "2026-09-08T09:43:16.000Z",
+      "publicadoEn": "2026-09-08T09:42:28.000Z",
+      "extractoReadme": "Sitio de Jhon Steven Alvarez Ruiz\n\nSitio personal, blog y portafolio de Jhon Steven Alvarez Ruiz — analista de\ndatos y desarrollador de automatización en Neiva, Colombia. Genera HTML estático;\nReact/Preact y MapLibre se cargan para los mapas del estudio. Las funciones privadas\nde Vercel permiten publicar escritos y consultar registros de seguridad en /admin/.\n\nArquitectura\n\n· Pieza · Responsabilidad ·\n\n· datos.js · Perfil, experiencia y proyectos seleccionados. ·\n· datos-github.js · Snapshot seguro de repositorios propios, inventarios, releases, PR externas, logros y métricas fijadas a revisión. ·\n· datos-actividad.js · Totales anónimos de tokens, llamadas, tareas y proveedores. ·\n· escritos/.md · Fuente editorial del blog. ·\n· plantilla.js · Cabecera, navegación, SEO y JSON-LD comunes. ·\n· construir.js · Blog, proyectos, actividad, feed, sitemap y HTML estático. ·\n· juegos.js y activos/juegos.css · Catálogo /juegos/: Neiva Abierta y Bloquitos, enlaces directos y presentación adaptable al celular. ·\n· datos/descarga-neiva.json y descarga-neiva.js · Descarga nativa: exige URL, SHA, bytes, plataforma y comprobante de ejecución coincidentes. ·\n· herramientas/preparar-descarga-neiva.mjs · Coteja el archivo ya descargado; sin --aplicar no activa enlaces. Flujo de publicación. ·\n· api/ y lib/ · Autenticación, CMS y auditoría en funciones de Vercel. ·\n· activos/animacion.js · Movimiento, audio persistente y navegación progresiva. ·\n· activos/cinematografia.js y .css · Escenas originales, luz de proyección, menú móvil y pausa accesible. ·\n· activos/lectura-accesible.js · Desplazamiento de tablas y fórmulas mediante teclado. ·\n· datos/continuidad-publicacion-oro.json · Estado del artículo ya publicado y SHA del manuscrito revisado. ·\n\nLa navegación interna reemplaza únicamente el contenido principal. El elemento\npermanece vivo, por lo que cambiar de Inicio a Blog o Proyectos no\nreinicia ni apaga la obra.\n\nTerciopelo, Nocturno y Celuloide cambian según la sección o la elección del lector.\nEl canvas está limitado a 45 partículas y 30 cuadros por segundo; se pausa cuando\nla pestaña está oculta. El movimiento reducido se respeta también al cambiar la\npreferencia durante la visita. La entrada nunca exige un clic para acceder al contenido.\nMúsica\n\nLa obra es la Sinfonía n.º 5 en do menor, op. 67 de Beethoven, interpretada\npor la Skidmore College Orchestra. Es una grabación real completa de 35:41,\nalmacenada localmente como MP3; el navegador no sintetiza notas ni consulta un\nservicio de terceros.\n\nLa procedencia, los cuatro movimientos originales, la declaración de dominio\npúblico y la huella SHA-256 están en\nactivos/beethoven-quinta-sinfonia.LICENCIA.md.\nBlog y panel privado\n\nCada escrito es Markdown con un encabezado pequeño y validado:\n\nEl panel /admin/ permite crear y actualizar estos archivos mediante la API de\ncontenidos de GitHub. Cada publicación queda versionada en master; la\nintegración GitHub–Vercel vuelve a construir automáticamente el sitio.\nSolo…",
       "inventario": {
-        "revision": "de1a1b705f72c66f33241d0c76ab1ea06609cb9e",
+        "revision": "f049d3bd449b8d0bf0b0b3e2dcd999bfaa89e626",
         "vacio": false,
         "completo": true,
-        "archivos": 60,
-        "bytesVersionados": 35418055,
-        "archivosFuente": 32,
-        "archivosPrueba": 5,
-        "archivosDocumentacion": 8,
+        "archivos": 143,
+        "bytesVersionados": 60883350,
+        "archivosFuente": 60,
+        "archivosPrueba": 19,
+        "archivosDocumentacion": 23,
         "workflows": 2,
         "manifiestos": [
           "package-lock.json",
@@ -2241,25 +2532,36 @@ export const REPOSITORIOS_GITHUB = {
         "componentes": [
           ".github",
           ".gitignore",
+          "AGENTS.md",
           "README.md",
           "activos",
           "api",
+          "components",
           "construir.js",
+          "datos",
           "datos-actividad.js",
           "datos-github.js",
           "datos-hoja-de-vida.js",
           "datos.js",
+          "descarga-neiva.js",
           "despliegue",
           "documentos",
           "escritos",
           "escritos.js",
+          "estudio-oro.js",
           "herramientas",
+          "juegos.js",
           "lib",
+          "memoria",
+          "neiva-abierta.js",
           "package-lock.json",
           "package.json",
           "plantilla.js",
           "pruebas",
-          "vercel.json"
+          "public",
+          "salidas",
+          "vercel.json",
+          "voz"
         ]
       },
       "releases": []

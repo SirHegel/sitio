@@ -131,6 +131,7 @@ test("la visita descarta consultas, credenciales y detalles de User-Agent", () =
     enlace: "",
   });
   assert.equal(validateVisitInput({ path: "/hoja-de-vida/", referrer: "" }).path, "/hoja-de-vida/");
+  assert.equal(validateVisitInput({ path: "/juegos/", referrer: "" }).path, "/juegos/");
   assert.throws(() => validateVisitInput({ path: "/", ip: "192.0.2.1" }), { code: "campo_no_permitido" });
   assert.throws(() => validateVisitInput({ path: "/admin/", referrer: "" }), { code: "ruta_privada" });
   assert.throws(() => validateVisitInput({ path: "/ruta-inventada/", referrer: "" }), { code: "ruta_no_publica" });

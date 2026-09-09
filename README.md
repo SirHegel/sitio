@@ -24,6 +24,9 @@ npm run sync:activity     # actualiza el agregado del ledger local
 | `escritos/*.md` | Fuente editorial del blog. |
 | `plantilla.js` | Cabecera, navegación, SEO y JSON-LD comunes. |
 | `construir.js` | Blog, proyectos, actividad, feed, sitemap y HTML estático. |
+| `juegos.js` y `activos/juegos.css` | Catálogo `/juegos/`: Neiva Abierta y Bloquitos, enlaces directos y presentación adaptable al celular. |
+| `datos/descarga-neiva.json` y `descarga-neiva.js` | Descarga nativa: exige URL, SHA, bytes, plataforma y comprobante de ejecución coincidentes. |
+| `herramientas/preparar-descarga-neiva.mjs` | Coteja el archivo ya descargado; sin `--aplicar` no activa enlaces. [Flujo de publicación](documentos/neiva-descarga.md). |
 | `api/` y `lib/` | Autenticación, CMS y auditoría en funciones de Vercel. |
 | `activos/animacion.js` | Movimiento, audio persistente y navegación progresiva. |
 | `activos/cinematografia.js` | Un contexto 3D persistente, cámara, calidad adaptativa, menú y pausa. |

@@ -20,6 +20,7 @@ import {
 } from "../datos.js";
 import { ARCHIVO_HOJA_DE_VIDA, EVIDENCIA_TECNICA, HOJA_DE_VIDA } from "../datos-hoja-de-vida.js";
 import { cargarEscritos, slugificar } from "../escritos.js";
+import { entregaNeivaLista as descargaUnrealValidada, DESCARGA_NEIVA_UNREAL, NEIVA_MEDIOS_VERIFICADOS } from "../descarga-neiva.js";
 
 const raiz = fileURLToPath(new URL("..", import.meta.url));
 const construido = fileURLToPath(new URL("../publico/", import.meta.url));
@@ -73,6 +74,38 @@ test("el sitemap enumera rutas únicas que existen", () => {
   for (const ruta of rutasPublicas) assert.ok(existsSync(archivoRuta(ruta)), `sitemap promete ${ruta}`);
 });
 
+test("la sala de juegos publica entradas gratuitas, alcance cartográfico y navegación global", () => {
+  assert.ok(rutasPublicas.includes("/juegos/"));
+  const html = readFileSync(archivoRuta("/juegos/"), "utf8");
+  for (const ruta of rutasPublicas) {
+    const pagina = readFileSync(archivoRuta(ruta), "utf8");
+    assert.match(pagina.match(/<nav class="menu"[\s\S]*?<\/nav>/)?.[0] || "", /href="\/juegos\/"/);
+  }
+  for (const texto of ["Neiva Abierta", "Bloquitos", "OpenStreetMap", "personaje sin nombre", "voz sintética", "Controles táctiles"]) {
+    assert.ok(html.includes(texto), `la sala de juegos omite ${texto}`);
+  }
+  assert.doesNotMatch(html, /hiperrealista|ultrarrealista|cada barrio reconstruido|estudio ficticio/i);
+  if (descargaUnrealValidada()) assert.ok(html.includes(DESCARGA_NEIVA_UNREAL.url));
+  else assert.match(html, /Descarga Linux x64 en preparación/);
+  const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  const catalogo = ld["@graph"].find((nodo) => nodo["@type"] === "CollectionPage");
+  assert.equal(catalogo.hasPart.length, 2);
+  assert.ok(catalogo.hasPart.every((juego) => juego.isAccessibleForFree === true));
+  assert.match(readFileSync(archivoRuta("/"), "utf8"), /class="juegos-inicio/);
+
+  const neiva = html.match(/<article[^>]+id="neiva-abierta"[\s\S]*?<\/article>/)?.[0] || "";
+  assert.match(neiva, /<img[^>]+src="\/activos\/neiva-unreal-linux\.png"[^>]+alt="[^"]+"/);
+  assert.match(neiva, NEIVA_MEDIOS_VERIFICADOS ? /<figcaption[^>]*>Unreal \/ Alfa 0\.3 para Linux<\/figcaption>/ : /<figcaption[^>]*>Unreal \/ Alfa 0\.3 · Captura en revisión<\/figcaption>/);
+  assert.doesNotMatch(neiva, /juego-ilustracion-neiva|juego-ciudad|Ilustración/);
+  assert.match(html, /class="juego-ilustracion juego-ilustracion-bloquitos"/);
+  const captura = readFileSync(`${construido}activos/neiva-unreal-linux.png`);
+  assert.equal(captura.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+  assert.equal(captura.readUInt32BE(16), 1920);
+  assert.equal(captura.readUInt32BE(20), 1080);
+  const video = readFileSync(`${construido}activos/neiva-unreal-linux.webm`);
+  assert.equal(video.subarray(0, 4).toString('hex'), '1a45dfa3');
+});
+
 test("todas las páginas tienen título, canónico único y marcado de persona", () => {
   const canonicos = new Set();
   for (const ruta of rutasPublicas) {
@@ -107,6 +140,11 @@ test("cada repositorio público de GitHub tiene un módulo de proyecto", () => {
     if (repo.inventario.vacio) assert.equal(repo.inventario.revision, null);
     else assert.match(repo.inventario.revision, /^[a-f0-9]{40}$/i, `falta la revisión de ${repo.nombre}`);
     const informe = readFileSync(`${directorio}${slugificar(repo.slug)}/index.html`, "utf8");
+    if (slugificar(repo.slug) === 'neiva-abierta') {
+      for (const texto of [descargaUnrealValidada() ? 'Para abrir el juego' : 'Preparar tu equipo', 'Equipo compatible', 'Controles', 'Registro técnico de pruebas']) assert.ok(informe.includes(texto));
+      assert.doesNotMatch(informe, /<h3>Ecuación<\/h3>|WALKING|game05|Editor-game/);
+      continue;
+    }
     for (const seccion of ["Qué hice", "Qué contiene", "Cómo se verificó", "Resultados medidos", "Límites y pendientes", "Costo"]) {
       assert.ok(informe.includes(seccion), `${repo.nombre} no publica la sección ${seccion}`);
     }

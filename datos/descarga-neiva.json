@@ -1,0 +1,15 @@
+{
+  "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
+  "sha256": "65a11768f536f81d9c47ab62788d28e054007e6eb7ec05c4bd9ce28f1cda4cfb",
+  "bytes": 743035069,
+  "platform": "Linux x64",
+  "verification": {
+    "url": "https://github.com/SirHegel/neiva-abierta/releases/download/unreal-v0.3.0-linux-alpha/Neiva-Abierta-Unreal-0.3.0-Linux-x64.tar.gz",
+    "sha256": "65a11768f536f81d9c47ab62788d28e054007e6eb7ec05c4bd9ce28f1cda4cfb",
+    "bytes": 743035069,
+    "platform": "Linux x64",
+    "httpStatus": 200,
+    "launchPassed": true,
+    "checkedAt": "2026-09-08T09:28:06.243231+00:00"
+  }
+}

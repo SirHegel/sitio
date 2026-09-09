@@ -7,13 +7,14 @@ import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import puppeteer from "puppeteer-core";
 import { ejecutableChrome } from "./chrome.mjs";
+import { descargaUnrealValidada, DESCARGA_NEIVA_UNREAL } from "../descarga-neiva.js";
 
 const raiz = fileURLToPath(new URL("..", import.meta.url));
 const publico = resolve(raiz, "publico");
 let navegador;
 let servidor;
 let origen;
-const tipos = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".jpg": "image/jpeg" };
+const tipos = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".jpg": "image/jpeg", ".webp": "image/webp", ".png": "image/png" };
 
 before(async () => {
   execFileSync(process.execPath, ["construir.js"], { cwd: raiz, stdio: "pipe" });
@@ -170,11 +171,11 @@ test("movimiento reducido inicial conserva una composición quieta y reanuda el 
   } finally { await pagina.close(); }
 });
 
-test("sin JavaScript se pueden leer inicio y blog, usar navegación y omitir la entrada", { timeout: 15_000 }, async () => {
+test("sin JavaScript se pueden leer inicio, blog y juegos, usar navegación y omitir la entrada", { timeout: 15_000 }, async () => {
   const pagina = await nuevaPagina();
   try {
     await pagina.setJavaScriptEnabled(false);
-    for (const ruta of ["/", "/blog/"]) {
+    for (const ruta of ["/", "/blog/", "/juegos/"]) {
       await pagina.goto(origen + ruta, { waitUntil: "networkidle2" });
       const estado = await pagina.evaluate(() => ({
         puerta: document.getElementById("puerta") ? getComputedStyle(document.getElementById("puerta")).display : "none",
@@ -190,4 +191,54 @@ test("sin JavaScript se pueden leer inicio y blog, usar navegación y omitir la 
       assert.equal(estado.controles, "none");
     }
   } finally { await pagina.close(); }
+});
+
+test("Juegos se alcanza con menú móvil y conserva navegación, escena y enlaces jugables", { timeout: 35_000 }, async () => {
+  for (const ancho of [320, 390, 960, 1440]) {
+    const pagina = await nuevaPagina(ancho);
+    try {
+      await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+      await cargar(pagina, "/blog/");
+      await pagina.evaluate(() => { window.marcaJuegos = "mismo-documento"; });
+      if (ancho < 768) await pagina.click(".menu-mando");
+      const enlace = 'nav.menu a[href="/juegos/"]';
+      await pagina.focus(enlace);
+      await pagina.keyboard.press("Enter");
+      await pagina.waitForFunction(() => document.body.dataset.ruta === "/juegos/");
+      await terminarTransicion(pagina);
+      assert.equal(await pagina.evaluate(() => window.marcaJuegos), "mismo-documento");
+      assert.equal(await pagina.$eval(enlace, (e) => e.getAttribute("aria-current")), "page");
+      assert.equal(await pagina.$eval("body", (e) => e.dataset.escena), "nocturno");
+      if (ancho < 768) assert.equal(await pagina.$eval(".menu-mando", (e) => e.getAttribute("aria-expanded")), "false");
+      await pagina.$eval(".juego-captura", (e) => e.scrollIntoView({ block: "center" }));
+      await pagina.waitForFunction(() => {
+        const captura = document.querySelector(".juego-captura img");
+        return captura?.complete && captura.naturalWidth > 0;
+      });
+      const estado = await pagina.evaluate(() => ({
+        titulos: [...document.querySelectorAll(".juego-ficha h2")].map((e) => e.textContent),
+        enlaces: [...document.querySelectorAll(".juego-acciones .boton")].map((e) => ({
+          url: e.href, alto: e.getBoundingClientRect().height, ancho: e.getBoundingClientRect().width,
+          x: e.getBoundingClientRect().x, derecha: e.getBoundingClientRect().right,
+        })),
+        ancho: innerWidth,
+        captura: (() => {
+          const imagen = document.querySelector(".juego-captura img");
+          const caja = imagen.getBoundingClientRect();
+          return { x: caja.x, derecha: caja.right, ancho: caja.width, alto: caja.height };
+        })(),
+        overflow: document.documentElement.scrollWidth - innerWidth,
+      }));
+      assert.deepEqual(estado.titulos, ["Neiva Abierta", "Bloquitos"]);
+      const neivaUrl = descargaUnrealValidada() ? DESCARGA_NEIVA_UNREAL.url : new URL("/proyectos/neiva-abierta/#descarga-unreal", pagina.url()).href;
+      assert.deepEqual(estado.enlaces.map((e) => e.url), [neivaUrl, "https://bloquitos.vercel.app/"]);
+      assert.ok(estado.captura.ancho > 0 && estado.captura.alto > 0, `captura visible a ${ancho}px`);
+      assert.ok(estado.captura.x >= 0 && estado.captura.derecha <= estado.ancho, `captura cabe a ${ancho}px`);
+      assert.ok(estado.overflow <= 2, `sin desbordamiento horizontal a ${ancho}px`);
+      for (const boton of estado.enlaces) {
+        assert.ok(boton.alto >= 44 && boton.ancho >= 44, `objetivo táctil a ${ancho}px`);
+        assert.ok(boton.x >= 0 && boton.derecha <= estado.ancho, `acción accesible completa a ${ancho}px`);
+      }
+    } finally { await pagina.close(); }
+  }
 });

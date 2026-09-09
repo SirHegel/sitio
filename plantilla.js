@@ -19,6 +19,7 @@ export const MENU = [
   { ruta: "/academico/", texto: "Académico" },
   { ruta: "/proyectos/", texto: "Proyectos" },
   { ruta: "/ciencia/", texto: "Ciencia" },
+  { ruta: "/juegos/", texto: "Juegos" },
   { ruta: "/contribuciones/", texto: "Contribuciones" },
   { ruta: "/blog/", texto: "Blog" },
   { ruta: "/trayectoria/", texto: "Trayectoria" },
@@ -151,6 +152,7 @@ ${ruta === "/" ? `<meta property="profile:first_name" content="Jhon Steven">
 <link rel="stylesheet" href="/activos/transiciones.css">
 <link rel="stylesheet" href="/activos/movimiento.css">
 <link rel="stylesheet" href="/activos/entrada.css">
+<link rel="stylesheet" href="/activos/juegos.css">
 <link rel="stylesheet" href="/activos/observatorio.css">
 <link rel="stylesheet" href="/activos/ciencia-lab.css">
 
