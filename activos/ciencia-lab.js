@@ -251,7 +251,7 @@ function proyector(ancho, alto, yaw, pitch, escala = .32) {
   };
 }
 
-/** O(V log V) tiempo/O(V) espacio. Malla paramétrica, grosor=0,045+0,3√(2πρ). */
+/** O(V log V) tiempo/O(V) espacio. Malla paramétrica, radio del tubo=0,32√(2πρ). */
 function dibujarVolumen(ctx, { ancho, alto }, theta, phi, yaw, pitch) {
   const proyectar = proyector(ancho, alto, yaw, pitch);
   const pasos = ancho < 500 ? 72 : 96;
@@ -262,7 +262,7 @@ function dibujarVolumen(ctx, { ancho, alto }, theta, phi, yaw, pitch) {
   const cp = Math.cos(pitch), sp = Math.sin(pitch), cy = Math.cos(yaw), sy = Math.sin(yaw);
   for (let i = 0; i < pasos; i++) {
     const u = i * TAU / pasos, cu = Math.cos(u), su = Math.sin(u);
-    const radio = .045 + .3 * Math.sqrt(Math.max(0, 1 + contraste * Math.cos(u - phi)));
+    const radio = .32 * Math.sqrt(Math.max(0, 1 + contraste * Math.cos(u - phi)));
     for (let j = 0; j < anillos; j++) {
       const v = j * TAU / anillos, cv = Math.cos(v), sv = Math.sin(v);
       puntos.push(proyectar((1 + radio * cv) * cu, radio * sv, (1 + radio * cv) * su));

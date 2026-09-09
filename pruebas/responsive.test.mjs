@@ -105,6 +105,10 @@ test("ningún contenido público abandona su caja en móvil ni al cambiar de bre
       const url = peticion.url();
       if (
         peticion.resourceType() === "media" ||
+        // La matriz mide cajas HTML en 13 anchos y todas las rutas. La GPU
+        // persistente y su composición tienen pruebas propias; reconstruir
+        // el mismo entorno cientos de veces no aporta cobertura geométrica.
+        url.endsWith('/activos/observatorio-motor.js') ||
         url.includes("/_vercel/") ||
         url.includes("/api/visita")
       ) peticion.abort();

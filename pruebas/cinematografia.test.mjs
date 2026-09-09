@@ -30,7 +30,7 @@ before(async () => {
   });
   await new Promise((resolver) => servidor.listen(0, "127.0.0.1", resolver));
   origen = `http://127.0.0.1:${servidor.address().port}`;
-  navegador = await puppeteer.launch({ executablePath: ejecutableChrome(), headless: true, args: ["--no-sandbox", "--disable-dev-shm-usage"] });
+  navegador = await puppeteer.launch({ executablePath: ejecutableChrome(), headless: true, args: ["--no-sandbox", "--disable-dev-shm-usage", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
 });
 
 after(async () => {
@@ -38,8 +38,25 @@ after(async () => {
   if (servidor) await new Promise((resolver) => servidor.close(resolver));
 });
 
-async function nuevaPagina(ancho = 390) {
+async function nuevaPagina(ancho = 390, t) {
   const pagina = await navegador.newPage();
+  const traza = { ancho, fase: "crear página", pendientes: [], fallidas: [], consola: [] };
+  const pendientes = new Set();
+  pagina.on("request", (r) => { pendientes.add(r.url()); traza.pendientes = [...pendientes]; });
+  pagina.on("requestfinished", (r) => { pendientes.delete(r.url()); traza.pendientes = [...pendientes]; });
+  pagina.on("requestfailed", (r) => { pendientes.delete(r.url()); traza.pendientes = [...pendientes]; traza.fallidas.push({ url: r.url(), error: r.failure()?.errorText }); });
+  pagina.on("console", (m) => { if (["error", "warn"].includes(m.type())) traza.consola.push(m.text().slice(0, 250)); });
+  const cerrar = () => pagina.isClosed() ? Promise.resolve() : pagina.close().catch(() => {});
+  const cancelar = () => { t.diagnostic(JSON.stringify(traza)); void cerrar(); };
+  t.signal.addEventListener("abort", cancelar, { once: true });
+  t.after(async () => { t.signal.removeEventListener("abort", cancelar); await cerrar(); });
+  for (const nombre of ["goto", "click", "waitForFunction", "reload", "evaluate", "$eval"]) {
+    const original = pagina[nombre].bind(pagina);
+    pagina[nombre] = (...argumentos) => {
+      traza.fase = `${nombre}: ${String(argumentos[0] ?? "").slice(0, 180)}`;
+      return original(...argumentos);
+    };
+  }
   await pagina.setViewport({ width: ancho, height: ancho < 768 ? 844 : 900 });
   // Geometría y movimiento del contenido; la elección inicial tiene su batería.
   await pagina.evaluateOnNewDocument(() => sessionStorage.setItem("jsar:entrada-v2", "1"));
@@ -66,9 +83,9 @@ async function terminarTransicion(pagina) {
   });
 }
 
-test("la identidad y el proyecto principal aparecen en la primera pantalla de móvil y escritorio", { timeout: 30_000 }, async () => {
+test("la identidad y el proyecto principal aparecen en la primera pantalla de móvil y escritorio", { timeout: 30_000 }, async (t) => {
   for (const ancho of [320, 390, 1440]) {
-    const pagina = await nuevaPagina(ancho);
+    const pagina = await nuevaPagina(ancho, t);
     try {
       const errores = [];
       pagina.on("pageerror", (error) => errores.push(error.message));
@@ -88,8 +105,8 @@ test("la identidad y el proyecto principal aparecen en la primera pantalla de m�
   }
 });
 
-test("el menú móvil se abre con teclado después de desplazarse y Escape devuelve el foco", { timeout: 20_000 }, async () => {
-  const pagina = await nuevaPagina();
+test("el menú móvil se abre con teclado después de desplazarse y Escape devuelve el foco", { timeout: 20_000 }, async (t) => {
+  const pagina = await nuevaPagina(390, t);
   try {
     await cargar(pagina);
     await pagina.evaluate(() => scrollTo(0, 500));
@@ -115,8 +132,8 @@ test("el menú móvil se abre con teclado después de desplazarse y Escape devue
   } finally { await pagina.close(); }
 });
 
-test("el mismo observatorio continúa al navegar y respeta pausa, recarga y movimiento reducido", { timeout: 30_000 }, async () => {
-  const pagina = await nuevaPagina(1440);
+test("el mismo observatorio continúa al navegar y respeta pausa, recarga y movimiento reducido", { timeout: 30_000 }, async (t) => {
+  const pagina = await nuevaPagina(1440, t);
   try {
     await cargar(pagina);
     await pagina.waitForFunction(() => ["webgl", "respaldo"].includes(document.body.dataset.motor));
@@ -150,8 +167,8 @@ test("el mismo observatorio continúa al navegar y respeta pausa, recarga y movi
   } finally { await pagina.close(); }
 });
 
-test("movimiento reducido inicial conserva una composición quieta y reanuda el mismo lienzo", { timeout: 25_000 }, async () => {
-  const pagina = await nuevaPagina(1440);
+test("movimiento reducido inicial conserva una composición quieta y reanuda el mismo lienzo", { timeout: 25_000 }, async (t) => {
+  const pagina = await nuevaPagina(1440, t);
   try {
     await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
     await cargar(pagina);
@@ -171,8 +188,8 @@ test("movimiento reducido inicial conserva una composición quieta y reanuda el 
   } finally { await pagina.close(); }
 });
 
-test("sin JavaScript se pueden leer inicio, blog y juegos, usar navegación y omitir la entrada", { timeout: 15_000 }, async () => {
-  const pagina = await nuevaPagina();
+test("sin JavaScript se pueden leer inicio, blog y juegos, usar navegación y omitir la entrada", { timeout: 15_000 }, async (t) => {
+  const pagina = await nuevaPagina(390, t);
   try {
     await pagina.setJavaScriptEnabled(false);
     for (const ruta of ["/", "/blog/", "/juegos/"]) {
@@ -193,13 +210,13 @@ test("sin JavaScript se pueden leer inicio, blog y juegos, usar navegación y om
   } finally { await pagina.close(); }
 });
 
-test("Juegos se alcanza con menú móvil y conserva navegación, escena y enlaces jugables", { timeout: 35_000 }, async () => {
+test("Juegos se alcanza con menú móvil y conserva el observatorio y enlaces jugables", { timeout: 35_000 }, async (t) => {
   for (const ancho of [320, 390, 960, 1440]) {
-    const pagina = await nuevaPagina(ancho);
+    const pagina = await nuevaPagina(ancho, t);
     try {
       await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
       await cargar(pagina, "/blog/");
-      await pagina.evaluate(() => { window.marcaJuegos = "mismo-documento"; });
+      await pagina.evaluate(() => { window.marcaJuegos = "mismo-documento"; window.observatorioJuegos = document.getElementById("observatorio"); });
       if (ancho < 768) await pagina.click(".menu-mando");
       const enlace = 'nav.menu a[href="/juegos/"]';
       await pagina.focus(enlace);
@@ -208,7 +225,7 @@ test("Juegos se alcanza con menú móvil y conserva navegación, escena y enlace
       await terminarTransicion(pagina);
       assert.equal(await pagina.evaluate(() => window.marcaJuegos), "mismo-documento");
       assert.equal(await pagina.$eval(enlace, (e) => e.getAttribute("aria-current")), "page");
-      assert.equal(await pagina.$eval("body", (e) => e.dataset.escena), "nocturno");
+      assert.equal(await pagina.evaluate(() => document.getElementById("observatorio") === window.observatorioJuegos), true);
       if (ancho < 768) assert.equal(await pagina.$eval(".menu-mando", (e) => e.getAttribute("aria-expanded")), "false");
       await pagina.$eval(".juego-captura", (e) => e.scrollIntoView({ block: "center" }));
       await pagina.waitForFunction(() => {

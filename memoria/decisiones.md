@@ -137,3 +137,21 @@ cambian esa referencia. El vídeo final incluye audio sintético y subtítulo
 literal de tiempos aproximados. Se informa de su recodificación en un detalle
 expandible, sin atribuir sus 30 fps al rendimiento del motor. Las cifras de
 altura se separan en 17.696 automáticas y una revisión manual estimada.
+
+## 2026-09-08 · Un observatorio continuo
+
+La nueva petición reemplaza la escenografía fotográfica y el selector de tres
+ambientes por una habitación modelada que permanece durante la entrada y la
+navegación. Los cambios de contenido conservan cámara, audio y contexto GPU.
+Se incorporó Ciencia al menú, preservando Juegos y todas las publicaciones
+presentes en `origin/master` al integrar `0f27ae4`.
+
+La sala se construye en Three.js y se compila con esbuild; ninguna fotografía
+se usa como textura de la escenografía. La selección de calidad modifica la
+resolución; el software gráfico recibe presupuesto reducido desde el arranque.
+Modelo y umbrales: `memoria/observatorio-3d-20260908.md`.
+
+El estudio científico deriva y verifica un problema inverso de dos modos. La
+misma densidad puede pertenecer a dos estados; una estimación de población modal
+los distingue. Se explicita que se reproduce una propiedad conocida, sin afirmar
+que la visualización haya resuelto un problema abierto de la matemática.

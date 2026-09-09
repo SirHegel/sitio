@@ -44,9 +44,17 @@ async function nuevaPagina(t, { ancho = 1440, sinWebGL = false } = {}) {
   const contexto = await navegador.createBrowserContext();
   const pagina = await contexto.newPage();
   const errores = [];
+  const traza = { ancho, sinWebGL, errores, fase: "crear página" };
+  for (const nombre of ["goto", "click", "evaluate", "$eval", "waitForFunction", "emulateMediaFeatures", "select"]) {
+    const original = pagina[nombre].bind(pagina);
+    pagina[nombre] = (...argumentos) => {
+      traza.fase = `${nombre}: ${String(argumentos[0] ?? "").slice(0, 180)}`;
+      return original(...argumentos);
+    };
+  }
   let cierre;
   const cerrar = () => (cierre ||= contexto.close().catch(() => {}));
-  const cancelar = () => { t.diagnostic(JSON.stringify({ ancho, sinWebGL, errores })); void cerrar(); };
+  const cancelar = () => { t.diagnostic(JSON.stringify(traza)); void cerrar(); };
   t.signal.addEventListener("abort", cancelar, { once: true });
   t.after(async () => { t.signal.removeEventListener("abort", cancelar); await cerrar(); });
   await pagina.setViewport({ width: ancho, height: ancho < 768 ? 844 : 900, isMobile: ancho < 768, hasTouch: ancho < 768 });

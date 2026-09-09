@@ -378,7 +378,7 @@ function inicio() {
         </div>
         <span class="pista-cursor">Mueve el cursor · explora la materia</span>
       </div>
-      <p class="respaldo-aviso" role="status">El contenido está disponible. La sala interactiva necesita WebGL 2.</p>
+      <p class="respaldo-aviso" role="status">El contenido está disponible. La sala interactiva necesita JavaScript y WebGL 2.</p>
     </section>
     <div class="cinta-oficios" aria-label="Áreas de trabajo"><span>Sistemas multiagente</span><i aria-hidden="true">/</i><span>Python & datos</span><i aria-hidden="true">/</i><span>Investigación</span><i aria-hidden="true">/</i><span>Cine fuera de campo</span></div>
     <div class="contenido-editorial">

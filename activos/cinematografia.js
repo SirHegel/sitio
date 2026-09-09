@@ -17,7 +17,7 @@ export function iniciarCinematografia() {
   document.body.append(hint);
   try { pause = localStorage.getItem('jsar:escena-pausa') === '1'; } catch {}
   const paused = () => pause || reduced.matches;
-  const running = () => !paused() && !document.hidden && pageActive && motor;
+  const running = () => !paused() && !document.hidden && pageActive && !failed && motor;
   body.dataset.escena = 'terciopelo';
   document.documentElement.classList.add('js-cine');
   const button = document.getElementById('pausar-escena');
@@ -35,7 +35,7 @@ export function iniciarCinematografia() {
       icon.textContent = paused() ? '▷' : 'Ⅱ';
     }
     document.querySelectorAll('[data-accion-3d]').forEach(btn => {
-      const action = btn.dataset.accion3d;
+      const action = btn.getAttribute('data-accion-3d');
       btn.disabled = !motor || failed;
       btn.setAttribute('aria-pressed', String(Boolean(action === 'telon' ? apertureTarget : action === 'luz' ? lampTarget : scienceTarget)));
     });
@@ -45,7 +45,7 @@ export function iniciarCinematografia() {
     try {
       motor.render({time, pointerX:x, pointerY:y, scroll:Math.min(1, scrollY / Math.max(1,innerHeight * 2)), entry,
         paused:paused(), aperture, lamp, science:Math.min(1,science + (hovered === 'instrumento' ? .25 : 0))});
-      body.dataset.motor = 'webgl';
+      if(body.dataset.motor !== 'webgl') body.dataset.motor = 'webgl';
       // Instrumentación de diagnóstico sin texto de rendimiento inventado.
       canvas.dataset.frames = String(Number(canvas.dataset.frames || 0) + 1);
     } catch (error) { fallback(error); }
@@ -53,13 +53,16 @@ export function iniciarCinematografia() {
   function resize(reset = false) {
     if (!motor) return;
     if (reset) dpr = quality === 'ahorro' ? .85 : Math.min(devicePixelRatio || 1, quality === 'alta' ? 2 : 1.5);
-    motor.resize({width:innerWidth, height:innerHeight, dpr});
+    motor.resize({width:innerWidth, height:innerHeight, dpr, quality});
+    dpr = motor.stats.dpr;
     canvas.dataset.dpr = String(dpr);
     draw();
   }
   function tick(now) {
     frame = 0;
-    if (!running()) return;
+    // La media query puede actualizar matches antes de entregar change.
+    // Reflejar la parada aquí evita dejar controles y CSS activos al reducir.
+    if (!running()) { state(); return; }
     const elapsed = now - last;
     const dt = Math.min(.06, Math.max(0, elapsed / 1000));
     last = now; time += dt;
@@ -123,9 +126,9 @@ export function iniciarCinematografia() {
       controls();
     }
     if (!control || control.disabled) return;
-    if (control.dataset.accion3d === 'telon') apertureTarget = 1-apertureTarget;
-    if (control.dataset.accion3d === 'luz') lampTarget = 1-lampTarget;
-    if (control.dataset.accion3d === 'orbita') scienceTarget = 1-scienceTarget;
+    if (control.getAttribute('data-accion-3d') === 'telon') apertureTarget = 1-apertureTarget;
+    if (control.getAttribute('data-accion-3d') === 'luz') lampTarget = 1-lampTarget;
+    if (control.getAttribute('data-accion-3d') === 'orbita') scienceTarget = 1-scienceTarget;
     if (paused()) {aperture=apertureTarget; lamp=lampTarget; science=scienceTarget; draw();}
     controls();
   });
@@ -152,7 +155,7 @@ export function iniciarCinematografia() {
   addEventListener('sitio:entrada-finalizada',()=>{leaving=true;state();});
   addEventListener('sitio:navegacion',()=>{ menu(false); body.dataset.escena='terciopelo';scienceTarget=location.pathname.startsWith('/ciencia/')?1:0; controls(); if(paused()){science=scienceTarget;draw();} });
   canvas?.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback();});
-  canvas?.addEventListener('webglcontextrestored',()=>{failed=false;state();});
+  canvas?.addEventListener('webglcontextrestored',()=>{failed=false;if(status)status.textContent='Sala en vivo';state();});
   state();
   if (!canvas) return;
   import('./observatorio-motor.js').then(async ({crearObservatorio})=>{

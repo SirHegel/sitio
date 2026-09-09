@@ -147,3 +147,5 @@ html.navegando #principal{opacity:1;transform:none}
 #objeto-hint{position:fixed;left:0;top:0;z-index:35;pointer-events:none;padding:.6rem .75rem;background:#1c0c12ed;color:#f3d4be;border:1px solid #c9947766;font:.56rem/1.5 var(--mono);opacity:0;transition:opacity .2s}
 .objeto-apuntado #objeto-hint{opacity:1}.objeto-apuntado .observatorio-portada{cursor:pointer}
 @media(hover:none){#objeto-hint{display:none}}
+html:not(.js-cine) .respaldo-aviso{display:block}
+html:not(.js-cine) :is(.instrumentos,.orbita-control,.direccion-escena){display:none}

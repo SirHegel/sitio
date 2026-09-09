@@ -266,7 +266,9 @@ test("los ornamentos visibles se animan por defecto y la pausa o movimiento redu
       await cargar(pagina);
       await pagina.$eval(".contenido-editorial .rotulo", (e) => {
         window.__qaSeccion = e.closest(".franja");
-        window.__qaSeccion.scrollIntoView({ block: "center", behavior: "instant" });
+        // Una sección móvil puede medir más de un viewport. Centrar su
+        // rótulo mantiene dentro de pantalla el ornamento que se observa.
+        e.scrollIntoView({ block: "center", behavior: "instant" });
       });
       await pagina.waitForFunction(() => window.__qaSeccion.classList.contains("movimiento-en-vista"));
       const estado = () => pagina.evaluate(() => [window.__qaSeccion, window.__qaSeccion.querySelector(".rotulo")]
@@ -276,9 +278,8 @@ test("los ornamentos visibles se animan por defecto y la pausa o movimiento redu
         }));
       const inicial = await estado();
       assert.ok(inicial.every((e) => e.animacion !== "none" && e.estado === "running"), `haz y filete se animan a ${ancho}px`);
-      await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 300)));
-      const posterior = await estado();
-      assert.ok(posterior.every((e, i) => e.transformacion !== inicial[i].transformacion), "ambos adornos producen movimiento real");
+      await pagina.waitForFunction((anteriores) => [window.__qaSeccion, window.__qaSeccion.querySelector(".rotulo")]
+        .every((e, i) => getComputedStyle(e, i ? "::after" : "::before").transform !== anteriores[i].transformacion), { timeout: 3000 }, inicial);
 
       await pagina.click("#pausar-escena");
       await pagina.waitForFunction(() => document.body.classList.contains("escena-pausada"));
@@ -437,21 +438,16 @@ test("dos navegaciones rápidas conservan el último destino con y sin View Tran
   }
 });
 
-test("un callback de transición demorado no publica un destino cancelado y el historial restaura el scroll", { timeout: 30_000 }, async (t) => {
+test("navegaciones consecutivas conservan el último destino y el historial restaura el scroll", { timeout: 30_000 }, async (t) => {
   const { pagina, errores } = await nuevaPagina(t, { ancho: 1440 });
   try {
     await cargar(pagina);
     await pagina.evaluate(() => {
-      if (document.startViewTransition) {
-        const transicionar = document.startViewTransition.bind(document);
-        document.startViewTransition = (aplicar) => transicionar(async () => {
-          await new Promise((resolver) => setTimeout(resolver, 300));
-          return aplicar();
-        });
-      }
       window.__qaHistorial = history.length;
       document.querySelector('nav.menu a[href="/blog/"]').click();
-      setTimeout(() => document.querySelector('nav.menu a[href="/proyectos/"]').click(), 40);
+      // Ambos clics ocurren antes de resolver el primer fetch: la cancelación
+      // prueba la navegación continua sin depender de una transición retirada.
+      document.querySelector('nav.menu a[href="/proyectos/"]').click();
     });
     await pagina.waitForFunction(() => document.body.dataset.ruta === "/proyectos/");
     await reposar(pagina);

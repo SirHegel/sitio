@@ -12,3 +12,7 @@
 - Neiva 0.4, 7 de septiembre de 2026: evidencia y captura finales incorporadas; controles de ficha a 320/390/960/1.440 px aprobados. Permanecen `TODO(dato)`: mediciones en otros computadores y celulares físicos, levantamiento métrico de la ciudad con precisión/fecha. La compilación Unreal quedó comprobada en la revisión nativa posterior. El Intel UHD tiene medición publicada en el repositorio del juego.
 
 - Neiva nativa, actualizado el 8 de septiembre de 2026: contrato alfa 0.3 activado tras comprobar el archivo público descargado y ejecutado (743.035.069 bytes, SHA-256 coincidente, HTTP 200 y `launchPassed:true`). Recibo fijado a `73f34183af717941cd709e98e38e813c7db39d88`; captura y vídeo final con audio incorporados. Build y ocho casos de QA local aprobados. Verificar el dominio canónico tras desplegar. Permanecen `TODO(dato)`: requisitos mínimos y rendimiento en otros computadores; compilación y ejecución reales en hosts Windows/macOS; precisión física del modelo urbano. Fuentes necesarias: pruebas nativas por plataforma y levantamiento de campo. Pasos y hashes en `documentos/neiva-descarga.md`.
+
+- Observatorio, 8 de septiembre de 2026: TODO(dato): frecuencia y consumo en
+  Safari/iOS/Android físicos; las comprobaciones locales no los representan.
+  TODO(dato): horas humanas imputadas al rediseño y al laboratorio científico.

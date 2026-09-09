@@ -15,6 +15,15 @@ const clamp = (n, a = 0, b = 1) => Math.min(b, Math.max(a, Number.isFinite(n) ? 
 
 export async function crearObservatorio(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+  // Software rasterizers need a pixel budget before the first scene draw.
+  // A missing/blocked debug extension leaves normal hardware quality intact.
+  let software = false;
+  try {
+    const gl = renderer.getContext();
+    const debug = gl.getExtension('WEBGL_debug_renderer_info');
+    const device = debug ? String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)) : '';
+    software = /swiftshader|llvmpipe|softpipe|swrast|lavapipe|software|microsoft basic render|mesa offscreen/i.test(device);
+  } catch { /* Browser privacy settings may deny renderer identification. */ }
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.93;
@@ -68,7 +77,7 @@ export async function crearObservatorio(canvas) {
   panel(0xff1f25, [8, 7, 1], [0, 2, -5], 2.2);
   panel(0xffebca, [8, 1, 6], [0, 7, 0], 3.8);
   const pmrem = new THREE.PMREMGenerator(renderer);
-  const environment = pmrem.fromScene(environmentScene, 0.035, 0.1, 40);
+  const environment = pmrem.fromScene(environmentScene, 0.035, 0.1, 40, { size: software ? 64 : 256 });
   scene.environment = environment.texture;
   scene.environmentIntensity = 0.55;
   environmentGeometry.dispose();
@@ -81,7 +90,7 @@ export async function crearObservatorio(canvas) {
   key.position.set(0.5, 7.4, 5.2);
   key.target.position.set(2.6, 1.3, -0.3);
   key.castShadow = true;
-  key.shadow.mapSize.set(1024, 1024);
+  key.shadow.mapSize.set(software ? 512 : 1024, software ? 512 : 1024);
   key.shadow.bias = -0.0005;
   key.shadow.normalBias = 0.035;
   key.shadow.camera.near = 0.3;
@@ -385,12 +394,22 @@ export async function crearObservatorio(canvas) {
   let width = 1, height = 1, mobile = false, disposed = false;
   let previousTime = null, animationTime = 0, frame = 0;
   let currentDpr = 1;
+  let previousSoftwareControlSignature = '';
   function resize(options = {}) {
     if (disposed) return;
     width = Math.max(1, options.width || canvas.clientWidth || window.innerWidth);
     height = Math.max(1, options.height || canvas.clientHeight || window.innerHeight);
-    currentDpr = clamp(options.dpr ?? window.devicePixelRatio ?? 1, 0.5, 2);
     mobile = width < 760;
+    const requestedDpr = clamp(options.dpr ?? window.devicePixelRatio ?? 1, 0.5, 2);
+    // Software quality keeps the selector meaningful within explicit budgets.
+    // Invariant: W·H·DPR² never exceeds the selected tier's pixel budget.
+    const softwareTier = options.quality === 'alta'
+      ? { pixels: 350000, desktop: 0.6, mobile: 1 }
+      : options.quality === 'ahorro'
+        ? { pixels: 140000, desktop: 0.35, mobile: 0.65 }
+        : { pixels: 260000, desktop: 0.5, mobile: 0.85 };
+    const softwareDpr = Math.min(mobile ? softwareTier.mobile : softwareTier.desktop, Math.sqrt(softwareTier.pixels / (width * height)));
+    currentDpr = software ? Math.min(requestedDpr, softwareDpr) : requestedDpr;
     renderer.setPixelRatio(currentDpr);
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
@@ -460,9 +479,14 @@ export async function crearObservatorio(canvas) {
     }
     orbitGeometry.attributes.position.needsUpdate = true;
     orbitMaterial.opacity = 0.5 + state.science * 0.4;
-    // Bounded shadow cadence: one 1024² map every six displayed frames.
+    // Hardware refreshes 1024² shadows every six frames. Software keeps a 512²
+    // map and refreshes only after a control crosses its midpoint (or on resize).
+    // Rounded controls prevent continuously interpolated input from redrawing it.
     const staticControlChanged = paused && (state.aperture !== previousAperture || state.lamp !== previousLamp || state.science !== previousScience || state.entry !== previousEntry);
-    if ((frame++ % 6 === 0 && !paused) || staticControlChanged) renderer.shadowMap.needsUpdate = true;
+    const softwareControlSignature = `${Math.round(state.aperture)}:${Math.round(state.lamp)}:${Math.round(state.science)}`;
+    const softwareControlChanged = software && softwareControlSignature !== previousSoftwareControlSignature;
+    previousSoftwareControlSignature = softwareControlSignature;
+    if ((!software && frame++ % 6 === 0 && !paused) || staticControlChanged || softwareControlChanged) renderer.shadowMap.needsUpdate = true;
     renderer.render(scene, camera);
   }
 
@@ -494,7 +518,7 @@ export async function crearObservatorio(canvas) {
   return {
     render, resize, dispose, pick,
     get stats() {
-      return { calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, textures: renderer.info.memory.textures, width, height, dpr: currentDpr };
+      return { calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, textures: renderer.info.memory.textures, width, height, dpr: currentDpr, software };
     },
   };
 }
