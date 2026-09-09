@@ -109,6 +109,7 @@ test("ningún contenido público abandona su caja en móvil ni al cambiar de bre
         // persistente y su composición tienen pruebas propias; reconstruir
         // el mismo entorno cientos de veces no aporta cobertura geométrica.
         url.endsWith('/activos/observatorio-motor.js') ||
+        url.endsWith('/activos/neuro-motor.js') ||
         url.includes("/_vercel/") ||
         url.includes("/api/visita")
       ) peticion.abort();

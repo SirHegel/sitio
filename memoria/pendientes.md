@@ -16,3 +16,11 @@
 - Observatorio, 8 de septiembre de 2026: TODO(dato): frecuencia y consumo en
   Safari/iOS/Android físicos; las comprobaciones locales no los representan.
   TODO(dato): horas humanas imputadas al rediseño y al laboratorio científico.
+
+- Neurociencia, 8 de septiembre de 2026: establecer prioridad de las
+  proposiciones mediante revisión bibliográfica especializada; comparar con
+  métodos publicados sobre un mismo problema y validar con datos instrumentales.
+  No están resueltos aquí problemas abiertos de la mente ni de tratamiento.
+  TODO(dato): C₀ incierta, difusión, respuesta del electrodo y ruido biológico;
+  cotas formales de redondeo si se requiere certificación de máquina.
+  Fuente y protocolo actuales: `docs/neurociencia.md`.

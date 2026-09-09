@@ -39,3 +39,5 @@ manuscrito/formularios-privados/
 
 # Motor 3D compilado de forma reproducible.
 activos/observatorio-motor.js
+activos/neuro-motor.js
+activos/motor-compartido-*.js

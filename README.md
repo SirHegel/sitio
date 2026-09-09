@@ -52,12 +52,28 @@ movimiento reducido y la pestaña oculta detienen el reloj de la sala. Sin WebGL
 permanecen contenido, navegación y controles científicos de lectura. La entrada
 opcional ofrece música o silencio y se puede omitir con Escape.
 
-`/ciencia/` contiene un laboratorio de dos modos en un anillo: representación
-paramétrica, esfera de Bloch, densidad con ejes, diseño inverso y exportación CSV.
-Expone un resultado conocido con demostración: dos estados pueden producir la
-misma densidad, y una medición de población modal distingue las ramas. No se
-presenta como solución de un problema abierto. Las referencias audiovisuales y
-su método de inspección están en `documentos/referencias-observatorio.md`.
+`/ciencia/` reúne tres estudios con modelos 3D: reserva vesicular, depuración
+de dopamina y estabilidad de circuitos excitatorios/inhibitorios. Cada ficha
+explica un problema, permite resolverlo y exporta sus curvas. Se derivan diseños
+que conservan incertidumbre y se publican pruebas, antecedentes y límites.
+La prioridad científica no está establecida; los ensayos son sintéticos y no
+constituyen validación biológica. El estudio anterior sigue disponible en
+`/ciencia/interferencia/`.
+
+`node herramientas/investigar-neuro.mjs` reproduce los casos fijados en
+`docs/neuro-protocolo.json` y escribe `activos/resultados-neuro.json`.
+`node --test pruebas/neuro-modelos.test.mjs pruebas/neuro-interfaz.test.mjs`
+comprueba cálculo e interacción. Las demostraciones están en
+`docs/neurociencia.md`. La dopamina usa un conformero computacional de PubChem
+CID 681; los otros modelos son esquemas geométricos. Dos entradas de esbuild
+comparten Three.js para evitar cargar dos copias de la biblioteca.
+
+Las 24 fichas de proyectos incluyen explicaciones de entrada, proceso, salida,
+tecnologías y límites, contrastadas con revisiones fijas de código. El generador
+`proyecto-explicaciones.js` corrige descripciones que no correspondían al código
+sin alterar el inventario medido. Alcance en `docs/proyectos-explicados.md`.
+Las referencias audiovisuales y su método de inspección siguen disponibles en
+`documentos/referencias-observatorio.md`.
 
 ## Música
 

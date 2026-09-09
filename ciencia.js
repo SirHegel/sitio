@@ -2,7 +2,7 @@ import { pagina, persona } from "./plantilla.js";
 
 export function cienciaPagina() {
   return pagina({
-    ruta: "/ciencia/",
+    ruta: "/ciencia/interferencia/",
     titulo: "La forma de una fase · Ciencia · Jhon Steven Alvarez Ruiz",
     descripcion: "Un laboratorio interactivo de interferencia: dos modos, una esfera de Bloch y un problema inverso con demostración y datos reproducibles.",
     claseCuerpo: "pagina-ciencia",

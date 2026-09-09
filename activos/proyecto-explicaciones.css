@@ -1,0 +1,14 @@
+.proyecto-explicacion .proyecto-ejemplo{margin:1.3rem 0 0;padding:1.1rem 1.25rem;border-left:2px solid var(--verde);background:rgba(255,255,255,.035)}
+.proyecto-explicacion dt{font-weight:700;margin:1.1rem 0 .3rem}
+.proyecto-explicacion dt:first-child{margin-top:0}
+.proyecto-explicacion dd{margin:0;line-height:1.75}
+.proyecto-ingenieria{border-top:1px solid rgba(255,255,255,.2);border-bottom:1px solid rgba(255,255,255,.2)}
+.proyecto-ingenieria>summary{cursor:pointer;font-weight:600;min-height:48px;padding:1rem .3rem;line-height:1.6}
+.proyecto-ingenieria>summary:focus-visible{outline:2px solid var(--verde);outline-offset:4px}
+.proyecto-ingenieria-contenido{padding:.25rem .3rem 1.25rem}
+.proyecto-ingenieria-contenido h3{margin-top:1.75rem;font-size:1.15rem}
+.proyecto-ingenieria-contenido li{margin:.7rem 0;line-height:1.75}
+.proyecto-fuentes{padding-left:1.25rem}
+.proyecto-fuentes .micro{display:block;overflow-wrap:anywhere;font-size:.75rem}
+.proyecto-explicacion :is(p,dd,li,a,code){overflow-wrap:anywhere}
+@media(max-width:600px){.proyecto-explicacion .proyecto-ejemplo{padding:1rem}.proyecto-ingenieria-contenido ol{padding-left:1.35rem}}

@@ -31,7 +31,7 @@ export function videoNeivaUnreal() {
 }
 
 // O(K) tiempo y espacio de salida para K controles. La evidencia técnica vive en su registro enlazado.
-export function paginaNeiva() {
+export function paginaNeiva(explicacion = '') {
   const controles = [
     ['W / A / S / D', 'Caminar o conducir'], ['Mouse', 'Mirar alrededor'],
     ['Shift', 'Correr mientras lo mantienes pulsado'], ['Espacio', 'Saltar a pie; frenar en el coche'],
@@ -62,6 +62,7 @@ export function paginaNeiva() {
         ${videoNeivaUnreal()}
       </div>
     </section>
+    ${explicacion}
     <section class="franja" aria-labelledby="abrir-neiva">
       <div class="scrim columna revelar prosa-ancha">
         <h2 id="abrir-neiva">${descargaUnrealValidada() ? 'Para abrir el juego' : 'Preparar tu equipo'}</h2>

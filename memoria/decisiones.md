@@ -155,3 +155,24 @@ El estudio científico deriva y verifica un problema inverso de dos modos. La
 misma densidad puede pertenecer a dos estados; una estimación de población modal
 los distingue. Se explicita que se reproduce una propiedad conocida, sin afirmar
 que la visualización haya resuelto un problema abierto de la matemática.
+
+## 2026-09-08 · Investigación neuronal y explicaciones de software
+
+La ampliación del encargo exige al menos tres soluciones, mente y
+neurotransmisores, modelación y explicaciones comprensibles. La corrección del
+autor exige además no inventar ciencia. Se investigan tres problemas reducidos:
+intervalo vesicular con parámetros inciertos, región factible de depuración
+saturable y estabilidad E/I en una caja de parámetros. Los antecedentes
+encontrados impiden anunciar las familias de métodos como inéditas. Se separan
+demostración, implementación, ensayo sintético y validación biológica pendiente.
+
+Los resultados se generan con un protocolo fijado antes de ejecutarlo y se
+vinculan a hashes de fuente y protocolo. Una respuesta estable E/I decae;
+no representa memoria persistente. Float64 sin redondeo dirigido no se presenta
+como una biblioteca formal de intervalos. Se mantiene la escena global y se
+crea como máximo un contexto de estudio adicional, liberado al navegar.
+
+La explicación de 23 repositorios propios y un diseño privado se contrasta
+con 81 enlaces fijados a revisiones. El catálogo de forks sigue separado.
+Se corrigen descripciones de CRUD, Multiplicadora, Designter y Orquesta según
+el código consultado. El repositorio Practice Python vacío conserva ese estado.

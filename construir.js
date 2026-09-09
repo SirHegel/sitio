@@ -1,5 +1,5 @@
 /* ============================================================================
-   Generador. Lee datos.js, escribe publico/. Sin dependencias.
+   Generador. Lee datos.js, compila los visores y escribe publico/.
        node construir.js
    ========================================================================= */
 
@@ -9,6 +9,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { cienciaPagina } from "./ciencia.js";
+import { indiceCiencia, estudioNeuro, ESTUDIOS_NEURO } from "./ciencia-neuro.js";
+import { proyectoConExplicacion, explicacionProyecto } from "./proyecto-explicaciones.js";
 import { build as compilarModulo } from "esbuild";
 import { pagina, persona, migas, esc, MENU } from "./plantilla.js";
 import {
@@ -131,7 +133,7 @@ function repoConPerfilActual(repo) {
   const nombre = repo.nombre.toLowerCase();
   if (nombre !== "sitio" && nombre !== "sirhegel") return repo;
   const descripcion = nombre === "sitio"
-    ? "Sitio canónico de Jhon Steven Alvarez Ruiz — analista de datos y desarrollador de automatización. Estático, generado y sin dependencias."
+    ? "Sitio canónico de Jhon Steven Alvarez Ruiz: desarrollo de IA, escenografía Three.js y estudios científicos reproducibles."
     : "Analista de datos, desarrollador de automatización y estudiante de Economía. Sistemas de IA, teoría heterodoxa y filosofía.";
   const extractoReadme = String(repo.extractoReadme || "")
     .replace(/economista,\s*analista de datos y desarrollador/gi, "analista de datos y desarrollador de automatización")
@@ -178,12 +180,13 @@ const repositoriosGitHubVigentes = REPOSITORIOS_GITHUB.repositorios.map(repoConP
 const githubPorNombre = new Map(repositoriosGitHubVigentes.map((r) => [r.nombre.toLowerCase(), r]));
 const proyectosCurados = [...PROYECTOS, NEIVA_ABIERTA].map((proyecto) => {
   const vivo = proyecto.repo ? githubPorNombre.get(nombreRepo(proyecto.repo)) : null;
-  return { ...proyecto, github: vivo || null };
+  return proyectoConExplicacion({ ...proyecto, github: vivo || null });
 });
 const nombresCurados = new Set(proyectosCurados.map((p) => nombreRepo(p.repo)).filter(Boolean));
 const proyectosAutomaticos = repositoriosGitHubVigentes
   .filter((repo) => !nombresCurados.has(repo.nombre.toLowerCase()))
   .map(proyectoDesdeGitHub)
+  .map(proyectoConExplicacion)
   .sort((a, b) => (b.github.publicadoEn || "").localeCompare(a.github.publicadoEn || ""));
 const PROYECTOS_TODOS = [...proyectosCurados, ...proyectosAutomaticos];
 const slugsProyecto = new Set();
@@ -428,7 +431,7 @@ ${destacados}
 
 ${franja(`      <a class="ciencia-invitacion revelar" href="/ciencia/">
         <div><p class="micro">03 / LABORATORIO ABIERTO</p><h2>Dar forma<br>a lo <em>invisible.</em></h2></div>
-        <div><p>Una fase cambia el patrón entero. Manipula un estado, observa su interferencia y reconstruye la solución.</p><span class="mas">Explorar el estudio <i>↗</i></span><small>Modelo interactivo · derivación · datos descargables</small></div>
+        <div><p>Explora una sinapsis, la eliminación de dopamina y la estabilidad de una red neuronal. Tres problemas con modelos 3D, soluciones y pruebas reproducibles.</p><span class="mas">Explorar los estudios <i>↗</i></span><small>Neurociencia computacional · datos sintéticos · incertidumbre explícita</small></div>
       </a>`)}
 
 ${franja(`      <section class="juegos-inicio revelar" aria-labelledby="juegos-inicio-titulo">
@@ -626,7 +629,7 @@ ${proyectosAutomaticos.map(fichaProyecto).join("\n") || "        <p class=\"pie-
 }
 
 function proyecto(p) {
-  if (p.slug === "neiva-abierta") return paginaNeiva();
+  if (p.slug === "neiva-abierta") return paginaNeiva(explicacionProyecto(p));
   const razon = p.automatico
     ? parrafosEscapados(p.porQue)
     : `<p class="lead">${p.porQue.trim()}</p>`;
@@ -653,6 +656,8 @@ ${auditoria.releases.map((release) => `        <article class="ficha revelar">
           ${p.demo ? `<a class="boton" href="${p.demo}" rel="noopener" target="_blank"><span>${esc(p.demoEtiqueta || "Probarlo")}</span></a>` : ""}
         </div>
       </div>`)}
+
+${explicacionProyecto(p)}
 
 ${franja(`      <div class="scrim columna revelar proyecto-razon prosa-ancha">
         <p class="micro">Por qué existe</p>
@@ -1342,7 +1347,9 @@ ${epigrafe()}`;
 const RUTAS = [
   ["/", inicio],
   ["/academico/", academico],
-  ["/ciencia/", cienciaPagina],
+  ["/ciencia/", indiceCiencia],
+  ["/ciencia/interferencia/", cienciaPagina],
+  ...ESTUDIOS_NEURO.map(e => [`/ciencia/${e.id}/`, () => estudioNeuro(e.id)]),
   ["/proyectos/", indiceProyectos],
   ["/juegos/", indiceJuegos],
   ["/contribuciones/", contribuciones],
@@ -1371,7 +1378,12 @@ async function copiarArbol(desde, hacia) {
 }
 
 async function construir() {
-  await compilarModulo({ entryPoints: [join(raiz, "activos/observatorio-3d.js")], outfile: join(raiz, "activos/observatorio-motor.js"), bundle: true, minify: true, format: "esm", target: "es2022", legalComments: "eof" });
+  // Ambos modelos comparten Three.js. Solo se retiran fragmentos generados
+  // por este empaquetador; las fuentes y los demás activos se conservan.
+  for (const nombre of await readdir(join(raiz, 'activos'))) {
+    if (/^motor-compartido-[A-Z0-9]+\.js$/.test(nombre)) await rm(join(raiz, 'activos', nombre));
+  }
+  await compilarModulo({ entryPoints: { 'observatorio-motor': join(raiz,'activos/observatorio-3d.js'), 'neuro-motor': join(raiz,'activos/neuro-3d.js') }, outdir: join(raiz,'activos'), chunkNames: 'motor-compartido-[hash]', splitting: true, bundle: true, minify: true, format: 'esm', target: 'es2022', legalComments: 'eof' });
   await rm(salida, { recursive: true, force: true });
   await mkdir(salida, { recursive: true });
 

@@ -1,0 +1,23 @@
+{
+  "version": "neuro-incertidumbre-v1",
+  "fecha": "2026-09-08",
+  "estado": "Fijado antes de ejecutar investigar-neuro.mjs; ensayo sintético, sin datos biológicos.",
+  "semilla": 20260908,
+  "casos": 256,
+  "ruidoAbsolutoMicroM": 0.02,
+  "c0MicroM": 2,
+  "rangoVerdadKm": [0.05, 0.8],
+  "rangoVerdadVmax": [0.001, 0.006],
+  "priorKm": [0.01, 1],
+  "priorVmax": [0.0001, 0.01],
+  "tiemposMedicionMs": [50, 150, 300, 500],
+  "tiempoPrediccionMs": 700,
+  "comparadorPuntualIndices": [0, 3],
+  "umbralToleranciaMicroM": 1e-9,
+  "umbralCobertura": "256/256 parámetros verdaderos y predicciones contenidos; condición de error acotado satisfecha por construcción.",
+  "umbralAnchura": "Ninguna predicción del polígono más ancha que la del rectángulo previo, tolerancia 1e-9 μM.",
+  "sinapsis": {"uMin": 0.25, "uMax": 0.45, "tauMinMs": 600, "tauMaxMs": 1000, "objetivo": 0.2, "puntosPorEje": 21},
+  "circuito": {"wMin": 1.5, "wMax": 1.9, "hMin": 0.8, "hMax": 1.3, "tauEMinMs": 18, "tauEMaxMs": 22, "tauIMinMs": 8, "tauIMaxMs": 12, "margen": 0.2},
+  "alcance": "Los comparadores son puntos medios/inversión puntual y un intervalo previo sin mediciones; muestran consecuencias de ignorar incertidumbre. No son una comparación contra el estado del arte ni contra datos de un cerebro.",
+  "prioridadCientifica": "No establecida. Antecedentes de cinética integrada, intervalos y estimación por conjuntos encontrados. Propuesta específica y demostraciones locales sujetas a revisión externa."
+}

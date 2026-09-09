@@ -649,6 +649,17 @@ async function cargarCiencia() {
 }
 cargarCiencia();
 addEventListener("sitio:navegacion", cargarCiencia);
+let modulosNeuro = null;
+async function cargarNeuro() {
+  if (!modulosNeuro && !document.getElementById('neuro-visor')) return;
+  try {
+    modulosNeuro ||= await Promise.all([import('./neuro-estudio.js'), import('./neuro-lab.js')]);
+    modulosNeuro[0].iniciarEstudiosNeuro();
+    modulosNeuro[1].iniciarNeuroLaboratorio();
+  } catch (error) { console.warn('Estudio de neurociencia no disponible:', error.message); }
+}
+cargarNeuro();
+addEventListener('sitio:navegacion', cargarNeuro);
 avance();
 navegacion();
 addEventListener("sitio:entrada-finalizada", () => reiniciarContenido({ entrada: true }));

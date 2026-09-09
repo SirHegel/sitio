@@ -155,6 +155,8 @@ ${ruta === "/" ? `<meta property="profile:first_name" content="Jhon Steven">
 <link rel="stylesheet" href="/activos/juegos.css">
 <link rel="stylesheet" href="/activos/observatorio.css">
 <link rel="stylesheet" href="/activos/ciencia-lab.css">
+<link rel="stylesheet" href="/activos/neuro.css">
+<link rel="stylesheet" href="/activos/proyecto-explicaciones.css">
 
 <script type="application/ld+json">
 ${json(ld)}

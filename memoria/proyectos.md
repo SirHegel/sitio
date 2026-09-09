@@ -328,3 +328,38 @@ Validación final: 110/110 pruebas, cero omisiones; 294,564 s. La matriz recorri
 registró infracciones en seis combinaciones de Inicio/Ciencia. Generadas 47
 páginas. Modelos, presupuestos, referencias y límites de medición en
 `memoria/observatorio-3d-20260908.md` y `docs/ciencia.md`.
+
+## Tres estudios neuronales y explicación de software, 8 de septiembre de 2026
+
+Ciencia incorpora reserva vesicular, depuración de dopamina y estabilidad E/I.
+Cada estudio tiene geometría Three.js, parámetros, solución inversa, gráficas,
+CSV, demostración y antecedentes. El intervalo vesicular protege una caja de
+parámetros; el polígono de depuración conserva mediciones acotadas; el criterio
+E/I calcula la inhibición suficiente dentro del modelo lineal. Los ensayos
+son sintéticos y la prioridad científica no está establecida.
+
+Protocolo previo y código reproducible en `docs/neuro-protocolo.json` y
+`herramientas/investigar-neuro.mjs`. Cumplimiento vesicular: 441/441 frente a
+207/441 nominales. Estabilidad E/I: 16/16 esquinas frente a 12/16. Contención de
+parámetros y predicciones: 256/256 casos de depuración. La comparación no es
+contra el estado del arte. Se conserva el estudio de interferencia en otra ruta.
+
+Las 24 fichas propias explican propósito, datos, flujo, tecnología, validación
+y límites con 81 enlaces a fuentes fijadas. La lectura corrigió funciones que
+el README atribuía a ejercicios pero que el código no contenía. El repositorio
+vacío y el diseño privado mantienen explícita su falta de evidencia ejecutable.
+
+Batería completa: 141/141 pruebas aprobadas, sin cancelaciones ni omisiones,
+382,894 s. La matriz adaptable recorrió 50 rutas × 13 anchos: 650 combinaciones
+sin desbordamiento. Siete casos verifican la interfaz neuronal; dos regresiones
+fallaron antes de corregir los extremos de los controles. Trece pruebas
+numéricas verifican las soluciones y la reproducción del informe. Axe no
+registró infracciones WCAG2/2.1 A/AA en 12 combinaciones de Ciencia. Las fichas
+ampliadas pasaron 48 combinaciones adicionales de página/viewport.
+
+Se construyen 51 páginas, incluido el panel privado. El motor compartido reduce
+los paquetes 3D de 1.142.074 a 599.645 bytes minificados sin compresión. El
+observatorio conserva su contexto al cambiar de estudio; cada visor local libera
+el suyo al salir. Rendimiento móvil físico y error fisiológico: σ = desconocida.
+Modelo, costos y pendientes en `memoria/neurociencia-20260908.md` y
+`docs/neurociencia.md`. La comprobación canónica se registra tras el despliegue.
