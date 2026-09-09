@@ -5,7 +5,7 @@
 .neuro-intro{font:17px/1.75 var(--sans);color:var(--lab-gris);max-width:640px}
 .neuro-enlace{display:inline-block;font:11px/1.6 var(--mono);padding:1.3rem 0;border-bottom:1px solid var(--lab-linea);margin-top:1rem}
 .neuro-visor{position:relative;min-width:0;min-height:520px;border:1px solid var(--lab-linea);background:#130b10;overflow:hidden}
-.neuro-visor canvas{display:block;width:100%;height:100%;position:absolute;inset:0;touch-action:none;cursor:grab}.neuro-visor canvas:active{cursor:grabbing}
+.neuro-visor canvas{display:block;width:100%;height:100%;position:absolute;inset:0;touch-action:pan-y pinch-zoom;cursor:grab}.neuro-visor canvas:active{cursor:grabbing}
 .neuro-visor-cabecera,.neuro-visor-pie{position:absolute;left:20px;right:20px;z-index:1;display:flex;justify-content:space-between;gap:12px;font:9px/1.6 var(--mono);pointer-events:none;color:#d6c7b8}
 .neuro-visor-cabecera{top:20px}.neuro-visor-cabecera span:last-child{color:#b3a394;text-align:right}.neuro-visor-pie{bottom:18px;align-items:center;flex-wrap:wrap}.neuro-visor-pie div{display:flex;gap:8px;pointer-events:auto}.neuro-visor-pie button{background:#160d13d9;min-height:38px;padding:8px}
 .neuro-respaldo{position:relative;margin:6rem 2rem!important;font:14px/1.7 var(--sans);color:var(--lab-gris)}
@@ -36,3 +36,8 @@
 @media(prefers-reduced-motion:reduce){.neuro-tarjeta{transition:none}}
 body.pagina-ciencia[data-ruta] #principal{background:linear-gradient(180deg,#11080cb8,#11080cf2 70rem)}
 @media print{body.pagina-ciencia[data-ruta] #principal{background:white}}
+@media(pointer:coarse){
+ .neuro-rutas a{display:inline-flex;align-items:center;min-width:44px;min-height:44px}
+ .neuro-visor-pie button{min-width:44px;min-height:44px}
+ .neuro-control input{height:44px;margin-block:3px}
+}

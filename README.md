@@ -7,6 +7,7 @@ de Vercel permiten publicar escritos y consultar registros de seguridad en `/adm
 
 ```bash
 npm test                  # seguridad, contenido, audio, rutas y snapshots
+npm run test:movil        # Chromium, WebKit y Firefox contra el servidor local
 npm run build             # genera publico/
 npm run cv                # regenera la hoja de vida ATS en HTML y PDF
 npm run servir            # http://127.0.0.1:8099
@@ -51,6 +52,13 @@ Ligera usa 0,85. La frecuencia alcanzada depende del equipo. La pausa, el
 movimiento reducido y la pestaña oculta detienen el reloj de la sala. Sin WebGL
 permanecen contenido, navegación y controles científicos de lectura. La entrada
 opcional ofrece música o silencio y se puede omitir con Escape.
+
+La adaptación móvil protege los recortes de pantalla, amplía los controles
+táctiles y conserva desplazamiento vertical y zoom sobre los visores. Auto
+mantiene la resolución aprendida al cambiar el alto visible. La auditoría
+multinavegador recorre las rutas del sitemap en vertical y horizontal; requiere
+instalar los navegadores de Playwright e iniciar el servidor local. Alcance,
+comandos y límites físicos en [compatibilidad móvil](docs/compatibilidad-movil.md).
 
 `/ciencia/` reúne tres estudios con modelos 3D: reserva vesicular, depuración
 de dopamina y estabilidad de circuitos excitatorios/inhibitorios. Cada ficha

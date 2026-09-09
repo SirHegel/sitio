@@ -363,3 +363,30 @@ observatorio conserva su contexto al cambiar de estudio; cada visor local libera
 el suyo al salir. Rendimiento móvil físico y error fisiológico: σ = desconocida.
 Modelo, costos y pendientes en `memoria/neurociencia-20260908.md` y
 `docs/neurociencia.md`. La comprobación canónica se registra tras el despliegue.
+
+## Compatibilidad móvil · 9 de septiembre de 2026
+
+Se revisaron motores Chromium, WebKit y Firefox con entrada táctil emulada y
+pantallas verticales/apaisadas. La exploración detectó márgenes seguros
+sobrescritos, controles pequeños, solape al ampliar texto, mínimos de grid que
+excedían el ancho disponible y bloqueo del scroll al iniciar el gesto sobre un
+modelo. Los cambios corrigen esas condiciones sin retirar la sala continua.
+La política Auto conserva el DPR aprendido al cambiar la altura visible o la
+orientación; una selección explícita de calidad puede iniciar otra medición.
+
+Hay regresiones que fallan antes y pasan después. El gesto vertical conserva
+scroll nativo; el horizontal gira el modelo, y un segundo dedo no sustituye al
+puntero principal. La ampliación de raíz CSS conserva cifras grandes y reflow
+sin ocultar el exceso. Insets y ampliación de raíz son simulaciones explícitas,
+no equivalentes a configuración completa de accesibilidad de un teléfono.
+
+Validación: 158/158 pruebas, cero omisiones/cancelaciones, 355,919 s. La matriz
+habitual recorrió 650 combinaciones sin desbordamiento. La nueva herramienta
+multinavegador completó 500/500 casos y 15/15 recorridos en 140,517 s:
+Chrome 152.0.7977.64, WebKit 26.5 y Firefox 153.0, sobre Linux. El ensayo
+bloquea WebGL para verificar HTML y respaldo; la geometría y el audio se
+comprobaron por separado. No se midieron FPS o consumo de teléfonos físicos.
+
+Protocolo, hashes, fuentes y alcance en `docs/compatibilidad-movil.md`;
+registro técnico en `memoria/compatibilidad-movil-20260909.md`. Publicación
+canónica y comprobación posterior se registran al completar el despliegue.

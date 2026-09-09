@@ -176,3 +176,25 @@ La explicación de 23 repositorios propios y un diseño privado se contrasta
 con 81 enlaces fijados a revisiones. El catálogo de forks sigue separado.
 Se corrigen descripciones de CRUD, Multiplicadora, Designter y Orquesta según
 el código consultado. El repositorio Practice Python vacío conserva ese estado.
+
+## 2026-09-09 · Compatibilidad móvil comprobable
+
+La petición abarca navegadores y sistemas móviles. Se verifica una matriz
+explícita de motores, tamaños y gestos; no se atribuye compatibilidad universal
+ni medición física de iPhone/Android a una emulación en Linux. El viewport
+conserva escalado y zoom permitidos. Las áreas seguras usan env() y variables
+CSS para comprobar por separado recortes superiores, laterales e inferiores.
+
+Se corrigen mínimos de grid que excedían una pantalla al ampliar la raíz CSS,
+mandos que se solapaban y blancos táctiles de controles científicos. El visor
+neuronal permite pan vertical y pellizco; el giro táctil usa el eje horizontal
+y mantiene la identidad del puntero hasta cancelación o pérdida de captura.
+Auto conserva el DPR aprendido cuando cambia el tamaño visible; una selección
+explícita de calidad puede reiniciar la resolución. Cada defecto tiene
+regresión antes/después; los dobles de reloj y motor comprueban política,
+no fotogramas por segundo físicos.
+
+La nueva herramienta usa Playwright solo en desarrollo, fijado a 1.62.0.
+La corrida final local completó 500/500 casos y 15/15 recorridos: 200 Chrome,
+150 WebKit y 150 Firefox. Contratos, fuentes y límites en
+`docs/compatibilidad-movil.md`. Las pruebas de geometría 3D se mantienen aparte.

@@ -149,7 +149,9 @@ export function iniciarCinematografia() {
   },{passive:true});
   document.addEventListener('pointerleave',()=>{targetX=0;targetY=0;hovered=null;body.classList.remove('objeto-apuntado');});
   document.getElementById('calidad-3d')?.addEventListener('change',e=>{quality=e.target.value;samples=[];resize(true);});
-  addEventListener('resize',()=>resize(true),{passive:true});
+  // Las barras móviles cambian la altura al deslizarse. Auto conserva el DPR
+  // aprendido; solo una elección explícita de calidad reinicia esa medición.
+  addEventListener('resize',()=>resize(quality !== 'auto'),{passive:true});
   document.addEventListener('visibilitychange',state);
   reduced.addEventListener('change',state);
   addEventListener('pagehide',()=>{pageActive=false;cancelAnimationFrame(frame);frame=0;});

@@ -672,6 +672,9 @@ nav.menu a.activo::after { transform: scaleX(1); }
 }
 
 .boton {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   position: relative;
   isolation: isolate;
   display: inline-flex;
@@ -687,7 +690,7 @@ nav.menu a.activo::after { transform: scaleX(1); }
   background: transparent;
   border: 1px solid var(--filete-2);
   border-radius: var(--radio);
-  padding: 0.85rem 1.5rem;
+  padding: 0.85rem min(1.5rem, 5vw);
   min-height: 3.25rem;
   cursor: pointer;
   overflow: hidden;
@@ -708,7 +711,7 @@ nav.menu a.activo::after { transform: scaleX(1); }
   transform: translateY(-2px);
 }
 .boton:hover::before, .boton:focus-visible::before { transform: translateY(0); }
-.boton span { position: relative; z-index: 1; }
+.boton span { position: relative; z-index: 1; min-width: 0; }
 .boton.primario { border-color: var(--ambar); color: var(--ambar); }
 .boton.primario:hover, .boton.primario:focus-visible { color: var(--noche); }
 
@@ -720,7 +723,7 @@ nav.menu a.activo::after { transform: scaleX(1); }
 
 .metricas {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
   gap: 1px;
   background: var(--filete);
   border: 1px solid var(--filete);
@@ -728,10 +731,12 @@ nav.menu a.activo::after { transform: scaleX(1); }
   overflow: hidden;
 }
 .metrica {
+  min-width: 0;
+  overflow-wrap: anywhere;
   background: var(--scrim);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  padding: 1.75rem 1.5rem;
+  padding: 1.75rem min(1.5rem, 6%);
   transition: background 480ms var(--suave);
 }
 .metrica:hover { background: var(--scrim-alto); }
@@ -940,6 +945,8 @@ a.ficha { color: inherit; }
 
 /* La flecha del enlace avanza al pasar el puntero. */
 .mas {
+  max-width: 100%;
+  overflow-wrap: anywhere;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -1474,6 +1481,8 @@ a.escrito-card:focus-visible { outline-offset: 5px; }
 .epigrafe { text-align: center; padding-block: clamp(3rem, 8vh, 5rem); }
 .epigrafe .plancha {
   display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   padding: clamp(1.75rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem);
   background: var(--scrim);
   border: 1px solid var(--filete);
@@ -1516,9 +1525,10 @@ footer.pie {
   margin-inline: auto;
   padding-block: 3rem 2rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
   gap: 2rem;
 }
+.pie-caja > * { min-width: 0; overflow-wrap: anywhere; }
 .pie h4 {
   font-family: var(--sans);
   font-size: var(--micro);

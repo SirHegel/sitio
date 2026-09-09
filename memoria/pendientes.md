@@ -24,3 +24,11 @@
   TODO(dato): C₀ incierta, difusión, respuesta del electrodo y ruido biológico;
   cotas formales de redondeo si se requiere certificación de máquina.
   Fuente y protocolo actuales: `docs/neurociencia.md`.
+
+- Móvil, 9 de septiembre de 2026: verificadas ventanas/entrada táctil emuladas
+  en Chrome 152.0.7977.64, WebKit 26.5 y Firefox 153.0 sobre Linux. Pendientes
+  teléfonos físicos Safari/iOS, Chrome/Android, Firefox/Android y Samsung
+  Internet: teclado virtual, barras del navegador, recortes reales, ampliación
+  de texto del sistema, reproducción tras suspensión, temperatura y consumo.
+  La raíz CSS al 200% y los insets inyectados son regresiones acotadas, no esas
+  mediciones físicas. Protocolo: `docs/compatibilidad-movil.md`.

@@ -149,3 +149,45 @@ html.navegando #principal{opacity:1;transform:none}
 @media(hover:none){#objeto-hint{display:none}}
 html:not(.js-cine) .respaldo-aviso{display:block}
 html:not(.js-cine) :is(.instrumentos,.orbita-control,.direccion-escena){display:none}
+
+/* Keep the scene edge-to-edge while HTML controls stay outside display cutouts.
+   These variables also allow an explicit inset simulation in layout tests. */
+:root{--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px)}
+.envoltura{padding-left:var(--safe-left);padding-right:var(--safe-right)}
+.barra{padding-top:var(--safe-top)}
+.portada.observatorio-portada{min-height:calc(100svh - 76px - var(--safe-top))}
+.pie{padding-bottom:calc(5rem + var(--safe-bottom))}
+.direccion-escena{left:calc(1rem + var(--safe-left));bottom:calc(1rem + var(--safe-bottom))}
+#mando{right:calc(1rem + var(--safe-right));bottom:calc(1rem + var(--safe-bottom))}
+.umbral-composicion{padding:calc(clamp(1.5rem,4.6vw,5.5rem) + var(--safe-top)) calc(clamp(1.5rem,4.6vw,5.5rem) + var(--safe-right)) calc(clamp(1.5rem,4.6vw,5.5rem) + var(--safe-bottom)) calc(clamp(1.5rem,4.6vw,5.5rem) + var(--safe-left))}
+.ciencia-invitacion>*{min-width:0;overflow-wrap:anywhere}
+@media(max-width:760px){
+ .portada.observatorio-portada{min-height:calc(100svh - 66px - var(--safe-top))}
+ .direccion-escena{left:calc(.6rem + var(--safe-left));bottom:calc(.6rem + var(--safe-bottom))}
+ #mando{right:calc(.6rem + var(--safe-right));bottom:calc(.6rem + var(--safe-bottom))}
+ .umbral-composicion{padding:calc(1.5rem + var(--safe-top)) calc(1.4rem + var(--safe-right)) calc(1.5rem + var(--safe-bottom)) calc(1.4rem + var(--safe-left))}
+}
+@media(max-width:544px){
+ .direccion-escena{max-width:calc(100vw - var(--safe-left) - var(--safe-right) - 1.8rem - 44px)}
+ .estado-render{min-width:0;white-space:normal;line-height:1.3}
+ .estado-render i,.calidad-label,#pausar-escena{flex-shrink:0}
+ #estado-render{min-width:0;overflow-wrap:anywhere}
+ #mando{width:44px;padding-inline:0;justify-content:center}
+}
+@media(max-height:550px) and (min-width:600px){
+ .umbral-composicion{padding:calc(1.25rem + var(--safe-top)) calc(2rem + var(--safe-right)) calc(1.25rem + var(--safe-bottom)) calc(2rem + var(--safe-left));gap:.5rem}
+ .umbral-presentacion{max-width:none;padding:.35rem 0}
+ .umbral-supertitulo{margin:.25rem 0}
+ #umbral-titulo{font-size:2.4rem;line-height:.98}
+ #umbral-descripcion{margin:.4rem 0 0;max-width:none;font-size:.72rem}
+ .umbral-coordenada{display:none}.umbral-acceso{padding-top:.5rem}.umbral-aviso{margin:0}
+}
+@media(pointer:coarse){
+ #pausar-escena,#calidad-3d,#mando{min-width:44px;min-height:44px}
+ .ciencia .ciencia-control input{height:44px;background:transparent;margin-block:8px}
+ .ciencia .ciencia-control input::-webkit-slider-runnable-track{height:4px;background:linear-gradient(to right,var(--lab-rojo) var(--valeur,50%),#5b4946 var(--valeur,50%))}
+ .ciencia .ciencia-control input::-webkit-slider-thumb{width:24px;height:24px;margin-top:-10px}
+ .ciencia .ciencia-control input::-moz-range-track{height:4px;background:#5b4946}
+ .ciencia .ciencia-control input::-moz-range-progress{height:4px;background:var(--lab-rojo)}
+ .ciencia .ciencia-control input::-moz-range-thumb{width:20px;height:20px}
+}

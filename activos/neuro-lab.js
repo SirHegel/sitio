@@ -139,20 +139,26 @@ export function iniciarNeuroLaboratorio() {
     reduced.addEventListener('change', state, options);
     let drag = null;
     canvas.addEventListener('pointerdown', (event) => {
-      drag = { x: event.clientX, y: event.clientY, yaw: item.yaw, pitch: item.pitch };
-      canvas.setPointerCapture(event.pointerId);
+      if (!event.isPrimary || event.button !== 0 || drag) return;
+      drag = { id: event.pointerId, touch: event.pointerType === 'touch', x: event.clientX, y: event.clientY, yaw: item.yaw, pitch: item.pitch };
+      // Touch already has implicit capture; keep native pan/zoom arbitration.
+      if (!drag.touch) canvas.setPointerCapture(event.pointerId);
     }, options);
     canvas.addEventListener('pointermove', (event) => {
       if (!drag) {
-        if (!stopped()) { const rect = canvas.getBoundingClientRect(); item.pointerX = (event.clientX - rect.left) / Math.max(1, rect.width) * 2 - 1; }
+        if (!stopped() && event.pointerType === 'mouse') { const rect = canvas.getBoundingClientRect(); item.pointerX = (event.clientX - rect.left) / Math.max(1, rect.width) * 2 - 1; }
         return;
       }
+      if (event.pointerId !== drag.id) return;
       item.yaw = drag.yaw + (event.clientX - drag.x) * 0.009;
-      item.pitch = Math.max(-0.55, Math.min(0.65, drag.pitch + (event.clientY - drag.y) * 0.006));
+      // Touch keeps vertical page scrolling and pinch zoom native. Horizontal
+      // dragging rotates; a mouse or keyboard can still change both axes.
+      if (!drag.touch) item.pitch = Math.max(-0.55, Math.min(0.65, drag.pitch + (event.clientY - drag.y) * 0.006));
       if (!allowed()) draw();
     }, options);
-    const end = () => { drag = null; };
+    const end = (event) => { if (drag?.id === event.pointerId) drag = null; };
     canvas.addEventListener('pointerup', end, options); canvas.addEventListener('pointercancel', end, options);
+    canvas.addEventListener('lostpointercapture', end, options);
     canvas.addEventListener('pointerleave', () => { if (!drag && !stopped()) item.pointerX = 0; }, options);
     canvas.addEventListener('keydown', (event) => {
       if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home'].includes(event.key)) return;

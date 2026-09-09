@@ -9,6 +9,7 @@
     "build:mapa": "node herramientas/construir-mapa-oro.js",
     "cv": "node herramientas/generar-hoja-de-vida.js",
     "test": "node --test --test-concurrency=1 pruebas/*.test.mjs",
+    "test:movil": "node herramientas/auditar-movil.mjs",
     "sync": "npm run sync:github && npm run sync:activity",
     "sync:github": "node herramientas/sincronizar-github.js",
     "sync:activity": "node herramientas/sincronizar-actividad.js",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "axe-core": "^4.13.0",
     "esbuild": "0.28.2",
+    "playwright-core": "1.62.0",
     "puppeteer-core": "25.8.0"
   },
   "dependencies": {
