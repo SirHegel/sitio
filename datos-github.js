@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-09-08T09:47:18.000Z",
+  "actualizadoEn": "2026-09-09T05:39:35.000Z",
   "total": 23,
   "perfilGitHub": {
     "repositoriosPublicos": 43,
@@ -313,6 +313,15 @@ export const REPOSITORIOS_GITHUB = {
   },
   "releases": [
     {
+      "repositorio": "gh-achievement-audit",
+      "etiqueta": "v0.2.0",
+      "nombre": "v0.2.0",
+      "url": "https://github.com/SirHegel/gh-achievement-audit/releases/tag/v0.2.0",
+      "publicadoEn": "2026-09-09T05:39:35.000Z",
+      "preliminar": false,
+      "activos": []
+    },
+    {
       "repositorio": "neiva-abierta",
       "etiqueta": "unreal-v0.3.0-linux-alpha",
       "nombre": "Neiva Abierta · Unreal 0.3.0 · Linux (alfa)",
@@ -579,8 +588,8 @@ export const REPOSITORIOS_GITHUB = {
   ],
   "contribucionesExternas": {
     "totales": {
-      "pullRequestsPublicos": 63,
-      "fusionadosPublicos": 45,
+      "pullRequestsPublicos": 68,
+      "fusionadosPublicos": 50,
       "pullRequests": 20,
       "repositorios": 19,
       "fusionadas": 3,
@@ -1378,7 +1387,7 @@ export const REPOSITORIOS_GITHUB = {
       "lenguajes": [
         {
           "nombre": "Python",
-          "bytes": 108253
+          "bytes": 114719
         }
       ],
       "temas": [
@@ -1399,27 +1408,29 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-08-28T12:07:35.000Z",
-      "actualizadoEn": "2026-08-28T12:15:56.000Z",
-      "publicadoEn": "2026-08-28T12:17:34.000Z",
-      "extractoReadme": "gh-achievement-audit\n\nAn evidence-first, read-only GitHub CLI extension that reports what a public profile\nactually renders, then keeps supporting event counts separate from achievement claims.\n\nGitHub documents Achievements as a public-preview profile feature and does not publish a\ncomplete official criteria or tier table. This tool therefore never turns an unofficial\nthreshold into a claim that a badge was earned.\nWhat it audits\nServer-rendered visible achievements, cross-checked against known detail endpoints.\nEvery visible merged pull request authored by the account, paginated by cursor and\nreduced to public totals.\nEvery accepted GitHub Discussions answer visible to the caller, with public evidence URLs\nbut no comment bodies.\nOwned public non-fork repositories, total stars, and the highest-starred repository.\nPublic GraphQL program signals for Developer Program, Security Bug Bounty Hunter, Campus\nExpert, and GitHub Star.\nMerged contributions to github/advisory-database as event evidence, without claiming\nthat profile indexing has completed.\n\nIt never creates comments, stars, reviews, follows, pull requests, co-authorship, or any\nother activity.\n\n“Outside personal namespace” has one deliberately narrow meaning: the repository owner's\nlogin differs from the audited account's login. It does not claim that an organization is\nindependent from that account.\nInstall\n\nRequirements: Python 3.10 or newer and an authenticated\nGitHub CLI.\n\nUse\n\nAudit the authenticated account:\n\nAudit any public account:\n\nProduce the versioned JSON report:\n\nThe JSON contract is published at\nschema/report-v1.schema.json. A successful command emits a\ncomplete report and exits 0. Usage, authentication, API, pagination, HTML, endpoint, or\ncontract failures emit no partial report and exit 2.\nTrust boundary\n\nThe extension makes authenticated, read-only GraphQL queries through gh api and performs\nlow-volume public GET requests to github.com. Independent cursors are fully paginated;\nchanging totals, repeated cursors, malformed nodes, GraphQL errors, DOM drift, and\nprofile/detail disagreement fail closed.\n\nSome user connections can include private events visible to the authenticated caller and\ndo not offer a public-only filter. Minimal metadata is used only long enough to identify\nand exclude those nodes. Private events and repository names are never placed in the\nreport. Discussion bodies are not requested at all.\n\nA missing item in visibleachievements means only “not rendered publicly at audit time.”\nGitHub allows users to hide Achievements, so absence is not evidence that an event never\nhappened.\nSources\nGitHub profile reference\nGitHub Discussions GraphQL reference\ngh api pagination reference\nDevelopment\n\nThe deterministic suite covers independent pagination, changing totals, repeated cursors,\nprivate-event exclusion, untrusted metadata, redirected and oversized HTTP responses,\nHTML drift, unknown future badges, endpoint disagreement, zero-result accounts, optimized\nPython,…",
+      "actualizadoEn": "2026-09-09T05:39:21.000Z",
+      "publicadoEn": "2026-09-09T05:39:35.000Z",
+      "extractoReadme": "gh-achievement-audit\n\nAn evidence-first, read-only GitHub CLI extension that reports what a public profile\nactually renders, then keeps supporting event counts separate from achievement claims.\n\nGitHub documents Achievements as a public-preview profile feature and does not publish a\ncomplete official criteria or tier table. This tool therefore never turns an unofficial\nthreshold into a claim that a badge was earned.\nWhat it audits\nServer-rendered visible achievements, cross-checked against known detail endpoints.\nEvery visible merged pull request authored by the account, paginated by cursor and\nreduced to public totals, including how many the audited account merged itself\n(selfmergedtotal).\nEvery accepted GitHub Discussions answer visible to the caller, with public evidence URLs\nbut no comment bodies, and a selfaccepted flag whenever the discussion author is the\naudited account.\nOwned public non-fork repositories, total stars, and the highest-starred repository.\nPublic GraphQL program signals for Developer Program, Security Bug Bounty Hunter, Campus\nExpert, and GitHub Star.\nMerged contributions to github/advisory-database as event evidence, without claiming\nthat profile indexing has completed.\n\nIt never creates comments, stars, reviews, follows, pull requests, co-authorship, or any\nother activity.\n\n“Outside personal namespace” has one deliberately narrow meaning: the repository owner's\nlogin differs from the audited account's login. It does not claim that an organization is\nindependent from that account.\nInstall\n\nRequirements: Python 3.10 or newer and an authenticated\nGitHub CLI.\n\nUse\n\nAudit the authenticated account:\n\nAudit any public account:\n\nProduce the versioned JSON report:\n\nThe JSON contract is published at\nschema/report-v1.schema.json; the current\nschemaversion is 1.2: 1.1 added selfaccepted and selfacceptedtotal to the\naccepted-answer evidence, and 1.2 added selfmergedtotal to the merged pull-request\ncounts. A successful command emits a\ncomplete report and exits 0. Usage, authentication, API, pagination, HTML, endpoint, or\ncontract failures emit no partial report and exit 2.\nTrust boundary\n\nThe extension makes authenticated, read-only GraphQL queries through gh api and performs\nlow-volume public GET requests to github.com. Independent cursors are fully paginated;\nchanging totals, repeated cursors, malformed nodes, GraphQL errors, DOM drift, and\nprofile/detail disagreement fail closed.\n\nSome user connections can include private events visible to the authenticated caller and\ndo not offer a public-only filter. Minimal metadata is used only long enough to identify\nand exclude those nodes. Private events and repository names are never placed in the\nreport. Discussion bodies are not requested at all.\n\nA missing item in visibleachievements means only “not rendered publicly at audit time.”\nGitHub allows users to hide Achievements, so absence is not evidence that an event never\nhappened.\nEvidence log\n\ndocs/evidence-log.md records, with dates and…",
       "inventario": {
-        "revision": "8c9da850a2ffa4c5eb2015039e6f73c57cd2e51c",
+        "revision": "c817e835f9a196e2f0091c75d5501ef54955d14f",
         "vacio": false,
         "completo": true,
-        "archivos": 24,
-        "bytesVersionados": 148651,
+        "archivos": 27,
+        "bytesVersionados": 166450,
         "archivosFuente": 3,
         "archivosPrueba": 3,
-        "archivosDocumentacion": 6,
+        "archivosDocumentacion": 8,
         "workflows": 1,
         "manifiestos": [
           "pyproject.toml",
           "requirements-dev.txt"
         ],
         "componentes": [
+          ".editorconfig",
           ".github",
           ".gitignore",
           ".pip-tools.toml",
+          "CHANGELOG.md",
           "CODE_OF_CONDUCT.md",
           "CONTRIBUTING.md",
           "LICENSE",
@@ -1427,6 +1438,7 @@ export const REPOSITORIOS_GITHUB = {
           "SECURITY.md",
           "SUPPORT.md",
           "achievement_audit",
+          "docs",
           "gh-achievement-audit",
           "pyproject.toml",
           "requirements-dev.in",
@@ -1436,6 +1448,15 @@ export const REPOSITORIOS_GITHUB = {
         ]
       },
       "releases": [
+        {
+          "repositorio": "gh-achievement-audit",
+          "etiqueta": "v0.2.0",
+          "nombre": "v0.2.0",
+          "url": "https://github.com/SirHegel/gh-achievement-audit/releases/tag/v0.2.0",
+          "publicadoEn": "2026-09-09T05:39:35.000Z",
+          "preliminar": false,
+          "activos": []
+        },
         {
           "repositorio": "gh-achievement-audit",
           "etiqueta": "v0.1.0",
@@ -2478,11 +2499,11 @@ export const REPOSITORIOS_GITHUB = {
       "lenguajes": [
         {
           "nombre": "JavaScript",
-          "bytes": 886426
+          "bytes": 1075327
         },
         {
           "nombre": "CSS",
-          "bytes": 136753
+          "bytes": 169128
         },
         {
           "nombre": "HTML",
@@ -2511,18 +2532,18 @@ export const REPOSITORIOS_GITHUB = {
       "estrellas": 0,
       "forks": 0,
       "creadoEn": "2026-08-20T23:00:55.000Z",
-      "actualizadoEn": "2026-09-08T09:43:16.000Z",
-      "publicadoEn": "2026-09-08T09:42:28.000Z",
-      "extractoReadme": "Sitio de Jhon Steven Alvarez Ruiz\n\nSitio personal, blog y portafolio de Jhon Steven Alvarez Ruiz — analista de\ndatos y desarrollador de automatización en Neiva, Colombia. Genera HTML estático;\nReact/Preact y MapLibre se cargan para los mapas del estudio. Las funciones privadas\nde Vercel permiten publicar escritos y consultar registros de seguridad en /admin/.\n\nArquitectura\n\n· Pieza · Responsabilidad ·\n\n· datos.js · Perfil, experiencia y proyectos seleccionados. ·\n· datos-github.js · Snapshot seguro de repositorios propios, inventarios, releases, PR externas, logros y métricas fijadas a revisión. ·\n· datos-actividad.js · Totales anónimos de tokens, llamadas, tareas y proveedores. ·\n· escritos/.md · Fuente editorial del blog. ·\n· plantilla.js · Cabecera, navegación, SEO y JSON-LD comunes. ·\n· construir.js · Blog, proyectos, actividad, feed, sitemap y HTML estático. ·\n· juegos.js y activos/juegos.css · Catálogo /juegos/: Neiva Abierta y Bloquitos, enlaces directos y presentación adaptable al celular. ·\n· datos/descarga-neiva.json y descarga-neiva.js · Descarga nativa: exige URL, SHA, bytes, plataforma y comprobante de ejecución coincidentes. ·\n· herramientas/preparar-descarga-neiva.mjs · Coteja el archivo ya descargado; sin --aplicar no activa enlaces. Flujo de publicación. ·\n· api/ y lib/ · Autenticación, CMS y auditoría en funciones de Vercel. ·\n· activos/animacion.js · Movimiento, audio persistente y navegación progresiva. ·\n· activos/cinematografia.js y .css · Escenas originales, luz de proyección, menú móvil y pausa accesible. ·\n· activos/lectura-accesible.js · Desplazamiento de tablas y fórmulas mediante teclado. ·\n· datos/continuidad-publicacion-oro.json · Estado del artículo ya publicado y SHA del manuscrito revisado. ·\n\nLa navegación interna reemplaza únicamente el contenido principal. El elemento\npermanece vivo, por lo que cambiar de Inicio a Blog o Proyectos no\nreinicia ni apaga la obra.\n\nTerciopelo, Nocturno y Celuloide cambian según la sección o la elección del lector.\nEl canvas está limitado a 45 partículas y 30 cuadros por segundo; se pausa cuando\nla pestaña está oculta. El movimiento reducido se respeta también al cambiar la\npreferencia durante la visita. La entrada nunca exige un clic para acceder al contenido.\nMúsica\n\nLa obra es la Sinfonía n.º 5 en do menor, op. 67 de Beethoven, interpretada\npor la Skidmore College Orchestra. Es una grabación real completa de 35:41,\nalmacenada localmente como MP3; el navegador no sintetiza notas ni consulta un\nservicio de terceros.\n\nLa procedencia, los cuatro movimientos originales, la declaración de dominio\npúblico y la huella SHA-256 están en\nactivos/beethoven-quinta-sinfonia.LICENCIA.md.\nBlog y panel privado\n\nCada escrito es Markdown con un encabezado pequeño y validado:\n\nEl panel /admin/ permite crear y actualizar estos archivos mediante la API de\ncontenidos de GitHub. Cada publicación queda versionada en master; la\nintegración GitHub–Vercel vuelve a construir automáticamente el sitio.\nSolo…",
+      "actualizadoEn": "2026-09-09T05:30:59.000Z",
+      "publicadoEn": "2026-09-09T05:30:18.000Z",
+      "extractoReadme": "Sitio de Jhon Steven Alvarez Ruiz\n\nSitio personal, blog y portafolio de Jhon Steven Alvarez Ruiz — analista de\ndatos y desarrollador de automatización en Neiva, Colombia. Genera HTML estático;\nReact/Preact y MapLibre se cargan para los mapas del estudio. Las funciones privadas\nde Vercel permiten publicar escritos y consultar registros de seguridad en /admin/.\n\nArquitectura\n\n· Pieza · Responsabilidad ·\n\n· datos.js · Perfil, experiencia y proyectos seleccionados. ·\n· datos-github.js · Snapshot seguro de repositorios propios, inventarios, releases, PR externas, logros y métricas fijadas a revisión. ·\n· datos-actividad.js · Totales anónimos de tokens, llamadas, tareas y proveedores. ·\n· escritos/.md · Fuente editorial del blog. ·\n· plantilla.js · Cabecera, navegación, SEO y JSON-LD comunes. ·\n· construir.js · Blog, proyectos, actividad, feed, sitemap y HTML estático. ·\n· juegos.js y activos/juegos.css · Catálogo /juegos/: Neiva Abierta y Bloquitos, enlaces directos y presentación adaptable al celular. ·\n· datos/descarga-neiva.json y descarga-neiva.js · Descarga nativa: exige URL, SHA, bytes, plataforma y comprobante de ejecución coincidentes. ·\n· herramientas/preparar-descarga-neiva.mjs · Coteja el archivo ya descargado; sin --aplicar no activa enlaces. Flujo de publicación. ·\n· api/ y lib/ · Autenticación, CMS y auditoría en funciones de Vercel. ·\n· activos/animacion.js · Movimiento, audio persistente y navegación progresiva. ·\n· activos/cinematografia.js · Un contexto 3D persistente, cámara, calidad adaptativa, menú y pausa. ·\n· activos/observatorio-3d.js y observatorio.css · Geometría Three.js procedural y dirección visual del observatorio. ·\n· ciencia.js y activos/modelo-ciencia.js · Laboratorio de interferencia, modelo auditable y problema inverso. ·\n· activos/lectura-accesible.js · Desplazamiento de tablas y fórmulas mediante teclado. ·\n· datos/continuidad-publicacion-oro.json · Estado del artículo ya publicado y SHA del manuscrito revisado. ·\n\nLa navegación interna reemplaza únicamente el contenido principal. El elemento\npermanece vivo, por lo que cambiar de Inicio a Blog o Proyectos no\nreinicia ni apaga la obra.\n\nLa entrada y todas las páginas comparten una habitación modelada con Three.js:\nterciopelo, suelo chevrón, lámpara, butaca y un instrumento orbital de cromo.\nNo se cargan fotografías ni videos como escenografía. El puntero mueve la\ncámara; los objetos y sus controles equivalentes permiten modificar luz, telón\nu órbita. Se compila observatorio-motor.js con esbuild en cada construcción.\n\nEl reloj sigue requestAnimationFrame; la opción Auto reduce la resolución si\n120 cuadros consecutivos promedian más de 25 ms. Alta permite DPR hasta 2;\nLigera usa 0,85. La frecuencia alcanzada depende del equipo. La pausa, el\nmovimiento reducido y la pestaña oculta detienen el reloj de la sala. Sin WebGL\npermanecen contenido, navegación y controles científicos de lectura. La entrada\nopcional ofrece música o silencio y se puede omitir con Escape.\n\nLa…",
       "inventario": {
-        "revision": "f049d3bd449b8d0bf0b0b3e2dcd999bfaa89e626",
+        "revision": "b90804119ff1e29a7b0ca235c6c90b7167aceccc",
         "vacio": false,
         "completo": true,
-        "archivos": 143,
-        "bytesVersionados": 60883350,
-        "archivosFuente": 60,
-        "archivosPrueba": 19,
-        "archivosDocumentacion": 23,
+        "archivos": 179,
+        "bytesVersionados": 61989287,
+        "archivosFuente": 77,
+        "archivosPrueba": 28,
+        "archivosDocumentacion": 32,
         "workflows": 2,
         "manifiestos": [
           "package-lock.json",
@@ -2536,6 +2557,8 @@ export const REPOSITORIOS_GITHUB = {
           "README.md",
           "activos",
           "api",
+          "ciencia-neuro.js",
+          "ciencia.js",
           "components",
           "construir.js",
           "datos",
@@ -2545,6 +2568,7 @@ export const REPOSITORIOS_GITHUB = {
           "datos.js",
           "descarga-neiva.js",
           "despliegue",
+          "docs",
           "documentos",
           "escritos",
           "escritos.js",
@@ -2557,6 +2581,7 @@ export const REPOSITORIOS_GITHUB = {
           "package-lock.json",
           "package.json",
           "plantilla.js",
+          "proyecto-explicaciones.js",
           "pruebas",
           "public",
           "salidas",
