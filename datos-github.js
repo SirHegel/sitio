@@ -761,6 +761,11 @@ export const REPOSITORIOS_GITHUB = {
   },
   "logros": [
     {
+      "slug": "galaxy-brain",
+      "nombre": "Galaxy Brain",
+      "url": "https://github.com/SirHegel?achievement=galaxy-brain&tab=achievements"
+    },
+    {
       "slug": "quickdraw",
       "nombre": "Quickdraw",
       "url": "https://github.com/SirHegel?achievement=quickdraw&tab=achievements"
