@@ -9,7 +9,6 @@ import { iniciarCinematografia } from "./cinematografia.js";
 import { iniciarLecturaAccesible } from "./lectura-accesible.js";
 import { iniciarMovimientoInterfaz } from "./movimiento-interfaz.js";
 import { iniciarEntrada, entradaPendiente } from "./entrada.js";
-import { iniciarSalaInteractiva } from "./sala-interactiva.js";
 import "./cargar-mapa-oro.js";
 
 const preferenciaMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -540,7 +539,7 @@ function navegacion() {
         }));
       };
 
-      if (movimientoQuieto()) {
+      if (movimientoQuieto() || document.body.dataset.escena === "terciopelo") {
         aplicar();
       } else {
         document.documentElement.dataset.transicion = historial === "pop" ? "regreso" : "avance";
@@ -640,7 +639,16 @@ iniciarEntrada(audio());
 iniciarCinematografia();
 if (movimientoQuieto()) reiniciarContenido();
 iniciarMovimientoInterfaz();
-iniciarSalaInteractiva();
+let moduloCiencia = null;
+async function cargarCiencia() {
+  if (!moduloCiencia && !document.getElementById('laboratorio-ciencia')) return;
+  try {
+    moduloCiencia ||= await import('./ciencia-lab.js');
+    moduloCiencia.iniciarCiencia();
+  } catch (error) { console.warn('Laboratorio no disponible:', error.message); }
+}
+cargarCiencia();
+addEventListener("sitio:navegacion", cargarCiencia);
 avance();
 navegacion();
 addEventListener("sitio:entrada-finalizada", () => reiniciarContenido({ entrada: true }));

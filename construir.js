@@ -8,6 +8,8 @@ import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { cienciaPagina } from "./ciencia.js";
+import { build as compilarModulo } from "esbuild";
 import { pagina, persona, migas, esc, MENU } from "./plantilla.js";
 import {
   SITIO, CLAVE_INDEXNOW, GOOGLE_ARCHIVO, PERSONA, EPIGRAFE, PRESENTACION, METRICAS, EXPERIENCIA,
@@ -344,54 +346,39 @@ function inicio() {
   const destacados = proyectosCurados.slice(0, 3).map(fichaProyecto).join("\n");
   const escritosRecientes = ESCRITOS_LISTADOS.slice(0, 3).map(fichaEscrito).join("\n");
 
-  const cuerpo = `    <section class="portada" aria-label="Portafolio de Jhon Steven Alvarez Ruiz">
+  const cuerpo = `    <section class="portada observatorio-portada" aria-label="Portafolio de Jhon Steven Alvarez Ruiz">
       <div class="portada-superior">
-        <p class="micro portada-creditos">Portafolio de autor <span>Neiva, Colombia · ${new Date().getFullYear()}</span></p>
-        <button id="recorrer-escenas" type="button" aria-pressed="false"><span aria-hidden="true">▷</span> <span data-recorrido-etiqueta>Recorrer las escenas</span></button>
+        <p class="micro portada-creditos"><span class="senal-viva" aria-hidden="true"></span> Inteligencia artificial & pensamiento heterodoxo</p>
+        <span class="coordenadas">NEIVA, CO &nbsp; 02°55′ N · 75°17′ O</span>
       </div>
       <div class="portada-caja">
-        <p class="portada-autor">Jhon Steven Alvarez Ruiz</p>
-        <h1 class="nombre nombre-editorial"><span>Una mirada</span><span><em>fuera de campo.</em></span></h1>
+        <p class="portada-autor">Jhon Steven Alvarez Ruiz <span> / SirHegel</span></p>
+        <h1 class="nombre nombre-editorial"><span>La lógica</span><span>también tiene</span><span><em>sus sueños.</em></span></h1>
         <div class="portada-sinopsis">
-          <p class="titular">${esc(PERSONA.titular)}</p>
-          <p class="subtitular">El mundo merece una segunda lectura.</p>
+          <p class="titular">Desarrollo sistemas de IA y automatización.<br>Investigo lo que ocurre al otro lado de lo evidente.</p>
+          <p class="subtitular">Código, materia y una saludable sospecha de la realidad.</p>
           <div class="acciones">
             <a class="boton primario" href="/proyectos/"><span>Explorar proyectos</span><span aria-hidden="true">↗</span></a>
-            <a class="boton boton-texto" href="/blog/"><span>Leer mis escritos</span><span aria-hidden="true">→</span></a>
+            <a class="boton boton-texto" href="/ciencia/"><span>Entrar al laboratorio</span><span aria-hidden="true">→</span></a>
           </div>
         </div>
       </div>
-      <div class="escena-cartela" aria-live="polite" aria-atomic="true">
-        <p class="micro" data-escena-subtitulo data-subtitulo-terciopelo="Acto I / Lo que se oculta" data-subtitulo-nocturno="Acto II / La ciudad despierta" data-subtitulo-celuloide="Acto III / La memoria en luz">Acto I / Lo que se oculta</p>
-        <p data-escena-titulo data-titulo-terciopelo="La habitación roja" data-titulo-nocturno="Después de medianoche" data-titulo-celuloide="La sala de proyección">La habitación roja</p>
-        <span class="escena-formato">35 MM &nbsp; / &nbsp; ESCENOGRAFÍA ORIGINAL</span>
+      <div class="objeto-cartela">
+        <span class="micro">OBJETO 001 / ESTUDIO DE UNA ÓRBITA</span>
+        <p>El orden tiene<br><em>una grieta.</em></p>
+        <button class="orbita-control" type="button" data-accion-3d="orbita" aria-pressed="false" disabled><span aria-hidden="true">⊕</span> Alterar la órbita</button>
       </div>
       <div class="portada-inferior">
-        <a class="portada-continuar" href="#mirada"><span aria-hidden="true">↓</span> Desliza para explorar</a>
-        <div class="escenas-selector" role="group" aria-label="Elegir escenario cinematográfico">
-          <button type="button" data-ir-escena="terciopelo" aria-pressed="true"><span>01</span> Terciopelo</button>
-          <button type="button" data-ir-escena="nocturno" aria-pressed="false"><span>02</span> Nocturno</button>
-          <button type="button" data-ir-escena="celuloide" aria-pressed="false"><span>03</span> Celuloide</button>
+        <a class="portada-continuar" href="#mirada"><span aria-hidden="true">↓</span> Sigue la señal</a>
+        <div class="instrumentos" role="group" aria-label="Interactuar con el observatorio">
+          <button type="button" data-accion-3d="telon" aria-pressed="false" disabled><span aria-hidden="true">↔</span> Abrir el telón</button>
+          <button type="button" data-accion-3d="luz" aria-pressed="true" disabled><span aria-hidden="true">◉</span> Luz de sala</button>
         </div>
+        <span class="pista-cursor">Mueve el cursor · explora la materia</span>
       </div>
+      <p class="respaldo-aviso" role="status">El contenido está disponible. La sala interactiva necesita WebGL 2.</p>
     </section>
-
-    <div class="cinta-oficios" aria-label="Áreas de trabajo"><span>Análisis de datos</span><i aria-hidden="true">✳</i><span>Economía</span><i aria-hidden="true">✳</i><span>Automatización</span><i aria-hidden="true">✳</i><span>Una mirada propia</span></div>
-    <section id="sala-roja" aria-labelledby="sala-roja-titulo" data-motor="imagen">
-      <picture><source media="(max-width: 768px)" srcset="/activos/escenas/terciopelo-movil.webp"><img class="sala-roja-respaldo" src="/activos/escenas/terciopelo.webp" width="1672" height="941" loading="lazy" alt="Escenografía de terciopelo rojo con suelo geométrico y una abertura iluminada"></picture>
-      <canvas id="sala-roja-lienzo" aria-hidden="true"></canvas>
-      <div class="sala-roja-cartel">
-        <p class="micro">Intermedio / Una escena habitable</p>
-        <h2 id="sala-roja-titulo">La habitación<br><em>roja.</em></h2>
-        <p>Una reverencia a <i>Twin Peaks</i>.<br>Hay algo al otro lado del telón.</p>
-      </div>
-      <div class="sala-roja-mandos" role="group" aria-label="Interactuar con la habitación roja">
-        <button id="abrir-telon" type="button" aria-pressed="false" disabled><span>Abrir el telón</span><i aria-hidden="true">↗</i></button>
-        <button id="luz-sala" type="button" aria-pressed="true" disabled><span>Apagar la lámpara</span><i aria-hidden="true">◉</i></button>
-      </div>
-      <p class="sala-roja-instruccion">Usa los controles o recorre la escena con el cursor.</p>
-      <p class="sala-roja-estatica">Vista estática cuando el navegador no dispone de WebGL.</p>
-    </section>
+    <div class="cinta-oficios" aria-label="Áreas de trabajo"><span>Sistemas multiagente</span><i aria-hidden="true">/</i><span>Python & datos</span><i aria-hidden="true">/</i><span>Investigación</span><i aria-hidden="true">/</i><span>Cine fuera de campo</span></div>
     <div class="contenido-editorial">
 
 ${franja(`      <div id="mirada" class="mirada-composicion">
@@ -400,12 +387,14 @@ ${franja(`      <div id="mirada" class="mirada-composicion">
         <h2 class="titulo media">Pensar con los pies<br><em>en la tierra.</em></h2>
 ${PRESENTACION.map((p) => `        <p class="lead">${p.trim()}</p>`).join("\n")}
       </div>
-      <figure class="retrato retrato-cine revelar">
-        <div class="fotograma-creditos"><span>El autor</span><span>JS / 01</span></div>
-        <div class="fotograma-imagen"><img src="/activos/retrato.jpg" width="800" height="800" loading="lazy" alt="Retrato de ${esc(PERSONA.nombre)}"><span class="fotograma-esquina" aria-hidden="true">+</span></div>
-        <figcaption>Jhon Steven Alvarez Ruiz<br><span>Neiva, Huila. Disponible para trabajo remoto.</span></figcaption>
+      <aside class="ficha-autor revelar">
+        <span class="micro">EL AUTOR / FICHA ABIERTA</span>
+        <span class="autor-monograma" aria-hidden="true">JS<span>/</span></span>
+        <h3>Jhon Steven<br>Alvarez Ruiz</h3>
+        <p>Neiva, Huila.<br>Economía, software y sistemas multiagente.</p>
+        <p class="autor-disponible"><span class="senal-viva" aria-hidden="true"></span> Disponible para trabajo remoto</p>
         <a class="mas" href="/hoja-de-vida/">Mi hoja de vida <i>↗</i></a>
-      </figure>
+      </aside>
       </div>
 
       <hr class="regla">
@@ -435,16 +424,10 @@ ${destacados}
       </div>
       <p class="sep-m"><a class="mas" href="/proyectos/">Los ${PROYECTOS_TODOS.length} proyectos y repositorios <i>→</i></a></p>`)}
 
-${franja(`      <div class="intermedio revelar">
-        <div class="sala-imaginaria" aria-hidden="true"><img src="/activos/escenas/nocturno.webp" width="1674" height="940" loading="lazy" alt=""><span class="sala-rotulo">INTERMEDIO / DESPUÉS DE MEDIANOCHE</span></div>
-        <div class="intermedio-texto">
-          <p class="micro">Fuera de campo</p>
-          <h2>Hay películas<br>que nunca<br><em>terminan.</em></h2>
-          <p>La conversación de Woody Allen. La extrañeza de David Lynch.
-          Me interesa ese cine que termina y se queda dando vueltas en la cabeza.</p>
-          <a class="mas" href="/blog/">Mis notas al margen <i>→</i></a>
-        </div>
-      </div>`)}
+${franja(`      <a class="ciencia-invitacion revelar" href="/ciencia/">
+        <div><p class="micro">03 / LABORATORIO ABIERTO</p><h2>Dar forma<br>a lo <em>invisible.</em></h2></div>
+        <div><p>Una fase cambia el patrón entero. Manipula un estado, observa su interferencia y reconstruye la solución.</p><span class="mas">Explorar el estudio <i>↗</i></span><small>Modelo interactivo · derivación · datos descargables</small></div>
+      </a>`)}
 
 ${franja(`<div data-ambiente="celuloide">${rotulo("03 / Notas al margen", "Últimos textos", "verde")}</div>
       <div class="lista-escritos" data-escalonar>
@@ -1348,6 +1331,7 @@ ${epigrafe()}`;
 const RUTAS = [
   ["/", inicio],
   ["/academico/", academico],
+  ["/ciencia/", cienciaPagina],
   ["/proyectos/", indiceProyectos],
   ["/contribuciones/", contribuciones],
   ["/blog/", () => indiceBlog()],
@@ -1375,6 +1359,7 @@ async function copiarArbol(desde, hacia) {
 }
 
 async function construir() {
+  await compilarModulo({ entryPoints: [join(raiz, "activos/observatorio-3d.js")], outfile: join(raiz, "activos/observatorio-motor.js"), bundle: true, minify: true, format: "esm", target: "es2022", legalComments: "eof" });
   await rm(salida, { recursive: true, force: true });
   await mkdir(salida, { recursive: true });
 

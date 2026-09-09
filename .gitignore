@@ -36,3 +36,6 @@ manuscrito/formularios-privados/
 # Temporales de escrituras reanudables; el archivo final se instala con rename.
 **/.*.cierre-*
 **/.*.publicacion-*
+
+# Motor 3D compilado de forma reproducible.
+activos/observatorio-motor.js

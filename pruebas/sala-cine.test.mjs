@@ -1,6 +1,6 @@
 /* Pruebas de contrato de la sala: controles utilizables, mismo origen y
    degradación progresiva. Cada comprobación de navegador usa O(1) páginas;
-   la auditoría de activos usa O(A) tiempo y O(A) espacio, A = 6 escenas. */
+   la auditoría de solicitudes usa O(R) tiempo y O(R) espacio, R = recursos. */
 import test, { before, after } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
@@ -122,7 +122,7 @@ async function nuevaPagina(t, { ancho = 390, sinWebGL = false, sinTransicionNati
       for (const nombre of ["drawArrays", "drawElements"]) {
         const original = Tipo.prototype[nombre];
         Tipo.prototype[nombre] = function (...argumentos) {
-          if (this.canvas.id === "lienzo") window.__qaSala.dibujados += 1;
+          if (this.canvas.id === "observatorio") window.__qaSala.dibujados += 1;
           return original.apply(this, argumentos);
         };
       }
@@ -134,12 +134,13 @@ async function nuevaPagina(t, { ancho = 390, sinWebGL = false, sinTransicionNati
 async function cargar(pagina) {
   await pagina.goto(origen + "/", { waitUntil: "networkidle2" });
   await pagina.waitForFunction(() => document.documentElement.classList.contains("js-cine") && !document.getElementById("puerta"));
+  await pagina.waitForFunction(() => ["webgl", "respaldo"].includes(document.body.dataset.motor));
   seguimiento.get(pagina).estado = await pagina.evaluate(() => {
-    const lienzo = document.getElementById("lienzo");
-    const gl = lienzo.dataset.motor === "webgl" ? lienzo.getContext("webgl") : null;
+    const lienzo = document.getElementById("observatorio");
+    const gl = document.body.dataset.motor === "webgl" ? lienzo.getContext("webgl2") : null;
     const info = gl?.getExtension("WEBGL_debug_renderer_info");
     return {
-      visible: document.visibilityState, motor: lienzo.dataset.motor,
+      visible: document.visibilityState, motor: document.body.dataset.motor,
       renderer: info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : null,
       ancho: lienzo.width, alto: lienzo.height, dibujos: window.__qaSala.dibujados,
     };
@@ -155,16 +156,15 @@ async function reposar(pagina) {
 async function medirDibujos(pagina) {
   return pagina.evaluate(async () => {
     const inicio = performance.now();
-    const antes = window.__qaSala.dibujados;
+    const antes = Number(document.getElementById("observatorio").dataset.frames || 0);
     await new Promise((resolver) => setTimeout(resolver, 350));
-    return { cantidad: window.__qaSala.dibujados - antes, duracion: performance.now() - inicio };
+    return { cantidad: Number(document.getElementById("observatorio").dataset.frames || 0) - antes, duracion: performance.now() - inicio };
   });
 }
 
 async function comprobarFondoAnimado(pagina, lugar) {
-  const muestra = await medirDibujos(pagina);
-  assert.ok(muestra.cantidad > 0, `${lugar}: el fondo sigue dibujando`);
-  assert.ok(muestra.cantidad <= Math.ceil(muestra.duracion * 30 / 1000) + 2, `${lugar}: conserva el techo de 30 fps, tolerancia de dos dibujos de sincronización`);
+  const antes = await pagina.$eval("#observatorio", (e) => Number(e.dataset.frames || 0));
+  await pagina.waitForFunction((anterior) => Number(document.getElementById("observatorio").dataset.frames || 0) > anterior, { timeout: 8000 }, antes);
   assert.equal(await pagina.$eval("body", (e) => e.classList.contains("escena-oculta")), false, `${lugar}: la escena permanece visible`);
 }
 
@@ -181,79 +181,39 @@ async function prepararGestoTarjeta(pagina, selector) {
   return pagina.$eval(selector, (e) => e.getBoundingClientRect().toJSON());
 }
 
-test("las escenas publicadas conservan seis imágenes locales bajo 200 kB cada una", () => {
-  for (const nombre of ["terciopelo", "nocturno", "celuloide"]) {
-    for (const sufijo of ["", "-movil"]) {
-      const archivo = resolve(publico, `activos/escenas/${nombre}${sufijo}.webp`);
-      assert.ok(existsSync(archivo), `${nombre}${sufijo} se publica`);
-      assert.ok(statSync(archivo).size < 200_000, `${nombre}${sufijo} excede el presupuesto fijado de 200 kB`);
-    }
-  }
-});
-
-test("la selección de escenas funciona con teclado y carga versiones móviles bajo la CSP publicada", { timeout: 30_000 }, async (t) => {
+test("la sala usa recursos locales sin fotografías escénicas bajo la CSP publicada", { timeout: 30_000 }, async (t) => {
   const { pagina, solicitudes, errores } = await nuevaPagina(t);
   try {
     await cargar(pagina);
-    const escenas = await pagina.$$eval("[data-ir-escena]", (botones) => botones.map((boton) => boton.dataset.irEscena));
-    assert.deepEqual(new Set(escenas), new Set(["terciopelo", "nocturno", "celuloide"]));
-    await pagina.focus('[data-ir-escena="celuloide"]');
-    await pagina.keyboard.press("Enter");
-    await pagina.waitForFunction(() => document.body.dataset.escena === "celuloide");
-    await reposar(pagina);
-    assert.equal(await pagina.$eval('[data-ir-escena="celuloide"]', (e) => e.getAttribute("aria-pressed")), "true");
-    assert.equal(await pagina.$$eval('[data-ir-escena][aria-pressed="true"]', (e) => e.length), 1);
-    const capturas = solicitudes.filter((url) => new URL(url).pathname.startsWith("/activos/escenas/"));
-    assert.ok(capturas.length > 0, "la sala carga sus imágenes");
-    assert.ok(capturas.every((url) => new URL(url).origin === origen && new URL(url).pathname.endsWith("-movil.webp")), "móvil no descarga la variante de escritorio");
+    assert.equal(await pagina.$eval("body", (e) => e.dataset.motor), "webgl", "el navegador de prueba permite renderizar geometría real");
+    assert.equal(await pagina.$$eval("#observatorio", (e) => e.length), 1);
+    assert.equal(await pagina.$("#cambiar-escena, #recorrer-escenas, [data-ir-escena]"), null);
+    assert.deepEqual(solicitudes.filter((url) => /\/activos\/escenas\//.test(new URL(url).pathname)), [], "la escena no solicita los fondos fotográficos antiguos");
+    assert.equal(await pagina.$$eval(".portada img, #puerta img", (e) => e.length), 0, "la entrada y la portada no dependen de fotos");
+    assert.ok(solicitudes.filter((url) => /observatorio.*\.js/.test(new URL(url).pathname)).every((url) => new URL(url).origin === origen));
     assert.deepEqual(await pagina.evaluate(() => window.__qaSala.bloqueos), [], "ningún recurso requiere relajar CSP");
     assert.deepEqual(errores, []);
   } finally { await pagina.close(); }
 });
 
-test("sin WebGL la escena sigue visible y los controles no bloquean navegación ni lectura", { timeout: 25_000 }, async (t) => {
-  const { pagina, errores } = await nuevaPagina(t, { sinWebGL: true });
+test("sin WebGL el respaldo conserva lectura y navegación en móvil", { timeout: 25_000 }, async (t) => {
+  const { pagina, solicitudes, errores } = await nuevaPagina(t, { sinWebGL: true });
   try {
     await cargar(pagina);
-    await pagina.click('[data-ir-escena="nocturno"]');
-    await pagina.waitForFunction(() => document.body.dataset.escena === "nocturno");
-    await reposar(pagina);
-    await pagina.waitForFunction(() => Number(getComputedStyle(document.querySelector(".ambiente-nocturno")).opacity) > .1);
-    const fondo = await pagina.$eval(".ambiente-nocturno", (e) => ({ imagen: getComputedStyle(e).backgroundImage, opacidad: Number(getComputedStyle(e).opacity) }));
-    assert.match(fondo.imagen, /nocturno/);
-    assert.ok(fondo.opacidad > 0, "permanece una escena CSS cuando no hay GPU");
+    assert.equal(await pagina.$eval("body", (e) => e.dataset.motor), "respaldo");
+    assert.ok(await pagina.$eval("main h1", (e) => e.textContent.trim().length > 0 && e.getBoundingClientRect().height > 0));
+    assert.equal(await pagina.$eval(".respaldo-aviso", (e) => getComputedStyle(e).display === "none"), false);
+    assert.equal(await pagina.$$eval("[data-accion-3d]", (botones) => botones.every((e) => e.disabled)), true, "las acciones gráficas no simulan funcionar sin GPU");
+    assert.deepEqual(solicitudes.filter((url) => /\/activos\/escenas\//.test(new URL(url).pathname)), []);
     await pagina.click(".menu-mando");
     await pagina.click('nav.menu a[href="/blog/"]');
     await pagina.waitForFunction(() => document.body.dataset.ruta === "/blog/");
     await reposar(pagina);
     assert.ok(await pagina.$eval("main h1", (e) => e.textContent.trim().length > 0));
-    assert.equal(await pagina.evaluate(() => window.__qaSala.navegaciones.length), 1, "navegación progresiva funciona en fallback");
+    assert.equal(await pagina.evaluate(() => window.__qaSala.navegaciones.length), 1);
+    assert.ok(await pagina.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2));
+    assert.deepEqual(await pagina.evaluate(() => window.__qaSala.bloqueos), []);
     assert.deepEqual(errores, []);
-  } finally { await pagina.close(); }
-});
-
-test("el recorrido voluntario se detiene al pausar o pedir movimiento reducido", { timeout: 25_000 }, async (t) => {
-  const { pagina } = await nuevaPagina(t, { ancho: 1440 });
-  try {
-    await cargar(pagina);
-    assert.equal(await pagina.$eval("#recorrer-escenas", (e) => e.getAttribute("aria-pressed")), "false", "no inicia un carrusel automático al cargar");
-    await pagina.click("#recorrer-escenas");
-    assert.equal(await pagina.$eval("#recorrer-escenas", (e) => e.getAttribute("aria-pressed")), "true");
-    await pagina.click("#pausar-escena");
-    assert.equal(await pagina.$eval("#recorrer-escenas", (e) => e.getAttribute("aria-pressed")), "false");
-    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 250)));
-    const cuadros = await pagina.evaluate(() => window.__qaSala.dibujados);
-    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 250)));
-    assert.equal(await pagina.evaluate(() => window.__qaSala.dibujados), cuadros, "pausar detiene los draw calls de la sala");
-    await pagina.click("#pausar-escena");
-    await pagina.click("#recorrer-escenas");
-    await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
-    await pagina.waitForFunction(() => document.getElementById("pausar-escena").disabled);
-    assert.equal(await pagina.$eval("#recorrer-escenas", (e) => e.getAttribute("aria-pressed")), "false");
-    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 250)));
-    const reducidos = await pagina.evaluate(() => window.__qaSala.dibujados);
-    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 250)));
-    assert.equal(await pagina.evaluate(() => window.__qaSala.dibujados), reducidos, "la preferencia detiene los draw calls");
   } finally { await pagina.close(); }
 });
 
@@ -261,7 +221,7 @@ test("el fondo sigue animado en contenido, blog, proyectos y pie, y respeta la p
   const { pagina, errores } = await nuevaPagina(t, { ancho: 1440 });
   try {
     await cargar(pagina);
-    if (await pagina.$eval("#lienzo", (e) => e.dataset.motor !== "webgl")) {
+    if (await pagina.$eval("body", (e) => e.dataset.motor !== "webgl")) {
       t.skip("Chrome no ofrece WebGL; la degradación sin GPU se cubre aparte");
       return;
     }
@@ -424,34 +384,28 @@ test("las tarjetas responden a puntero y teclado, se neutralizan al pausar y se 
   }
 });
 
-test("perder el contexto gráfico recupera el fondo y mantiene utilizables los controles", { timeout: 25_000 }, async (t) => {
+test("perder el contexto gráfico conserva la lectura y restaura el mismo observatorio", { timeout: 30_000 }, async (t) => {
   const { pagina, errores } = await nuevaPagina(t, { ancho: 1440 });
   try {
     await cargar(pagina);
     const disponible = await pagina.evaluate(() => {
-      const gl = document.getElementById("lienzo").getContext("webgl");
+      window.__qaCanvasAntes = document.getElementById("observatorio");
+      const gl = window.__qaCanvasAntes.getContext("webgl2");
       window.__qaContexto = gl?.getExtension("WEBGL_lose_context");
       return Boolean(window.__qaContexto);
     });
     if (!disponible) { t.skip("Chrome no ofrece WEBGL_lose_context; el caso sin WebGL se cubre aparte"); return; }
-    assert.ok(await pagina.$eval("#lienzo", (e) => e.width * e.height <= 360_000), "SwiftShader respeta el presupuesto de 360000 píxeles");
-    const anchoInicial = await pagina.$eval("#lienzo", (e) => e.width);
-    await pagina.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
-    await pagina.waitForFunction((anterior) => document.getElementById("lienzo").width !== anterior, {}, anchoInicial);
-    assert.ok(await pagina.$eval("#lienzo", (e) => e.width * e.height <= 360_000), "ampliar el viewport conserva el presupuesto del backend software");
-    await pagina.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
-    await pagina.waitForFunction((anterior) => document.getElementById("lienzo").width === anterior, {}, anchoInicial);
-    await pagina.click('[data-ir-escena="nocturno"]');
-    await pagina.waitForFunction(() => document.body.classList.contains("escena-cambiando"));
     await pagina.evaluate(() => window.__qaContexto.loseContext());
-    await pagina.waitForFunction(() => !document.body.classList.contains("sala-lista") && !document.body.classList.contains("escena-cambiando"));
-    await pagina.waitForFunction(() => document.body.dataset.escena === "nocturno");
+    await pagina.waitForFunction(() => document.body.dataset.motor === "respaldo");
+    assert.ok(await pagina.$eval("main h1", (e) => e.getBoundingClientRect().height > 0));
+    await pagina.evaluate(() => document.querySelector('nav.menu a[href="/blog/"]').click());
+    await pagina.waitForFunction(() => document.body.dataset.ruta === "/blog/");
     await reposar(pagina);
-    await pagina.waitForFunction(() => Number(getComputedStyle(document.querySelector(".ambiente-nocturno")).opacity) > .1);
-    assert.ok(await pagina.$eval(".ambiente-nocturno", (e) => Number(getComputedStyle(e).opacity) > 0));
     await pagina.evaluate(() => window.__qaContexto.restoreContext());
-    await pagina.waitForFunction(() => document.body.classList.contains("sala-lista"));
-    assert.ok(await pagina.$eval("#lienzo", (e) => e.width * e.height <= 360_000), "restaurar el contexto conserva el presupuesto");
+    await pagina.waitForFunction(() => document.body.dataset.motor === "webgl");
+    assert.equal(await pagina.evaluate(() => document.getElementById("observatorio") === window.__qaCanvasAntes), true);
+    await comprobarFondoAnimado(pagina, "contexto restaurado");
+    assert.deepEqual(await pagina.evaluate(() => window.__qaSala.bloqueos), []);
     assert.deepEqual(errores, []);
   } finally { await pagina.close(); }
 });

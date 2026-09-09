@@ -114,90 +114,59 @@ test("el menú móvil se abre con teclado después de desplazarse y Escape devue
   } finally { await pagina.close(); }
 });
 
-test("una escena elegida permanece durante la navegación y el fondo obedece pausa y movimiento reducido", { timeout: 25_000 }, async () => {
+test("el mismo observatorio continúa al navegar y respeta pausa, recarga y movimiento reducido", { timeout: 30_000 }, async () => {
   const pagina = await nuevaPagina(1440);
   try {
-    await pagina.evaluateOnNewDocument(() => {
-      window.cuadrosEscena = 0;
-      for (const tipo of [window.WebGLRenderingContext, window.WebGL2RenderingContext]) {
-        if (!tipo) continue;
-        for (const nombre of ["drawArrays", "drawElements"]) {
-          const dibujar = tipo.prototype[nombre];
-          tipo.prototype[nombre] = function (...argumentos) {
-            if (this.canvas?.id === "lienzo") window.cuadrosEscena++;
-            return dibujar.apply(this, argumentos);
-          };
-        }
-      }
-    });
     await cargar(pagina);
-    await pagina.click("#cambiar-escena");
-    const escena = await pagina.$eval("body", (e) => e.dataset.escena);
-    assert.equal(escena, "nocturno");
-    await pagina.evaluate(() => { window.marcaContinuidad = "mismo-documento"; });
+    await pagina.waitForFunction(() => ["webgl", "respaldo"].includes(document.body.dataset.motor));
+    assert.equal(await pagina.$("#cambiar-escena"), null, "la navegación conserva una sala uniforme");
+    await pagina.evaluate(() => { window.marcaContinuidad = document; window.observatorioContinuo = document.getElementById("observatorio"); });
     await pagina.click('nav.menu a[href="/blog/"]');
     await pagina.waitForFunction(() => document.body.dataset.ruta === "/blog/");
     await terminarTransicion(pagina);
-    assert.equal(await pagina.evaluate(() => window.marcaContinuidad), "mismo-documento", "la navegación conserva audio y controles");
-    assert.equal(await pagina.$eval("body", (e) => e.dataset.escena), escena);
+    assert.equal(await pagina.evaluate(() => document === window.marcaContinuidad), true);
+    assert.equal(await pagina.evaluate(() => document.getElementById("observatorio") === window.observatorioContinuo), true);
 
     await pagina.click("#pausar-escena");
     await pagina.waitForFunction(() => document.body.classList.contains("escena-pausada"));
-    // WebGL puede descartar su buffer tras componer sin dibujar otro cuadro.
-    // Contar comandos comprueba la pausa sin exigir preserveDrawingBuffer.
-    const cuadroPausado = await pagina.evaluate(() => window.cuadrosEscena);
-    if (await pagina.$eval("#lienzo", (e) => e.dataset.motor === "webgl")) {
-      assert.ok(cuadroPausado > 0, "el motor dibujó antes de pausar");
-    }
-    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 150)));
-    assert.equal(await pagina.evaluate(() => window.cuadrosEscena), cuadroPausado, "el lienzo deja de dibujar al pausar");
+    await pagina.evaluate(() => new Promise((resolver) => requestAnimationFrame(() => requestAnimationFrame(resolver))));
+    const pausado = await pagina.$eval("#observatorio", (e) => Number(e.dataset.frames || 0));
+    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 200)));
+    assert.equal(await pagina.$eval("#observatorio", (e) => Number(e.dataset.frames || 0)), pausado, "el motor no produce cuadros durante la pausa");
     await pagina.reload({ waitUntil: "networkidle2" });
     assert.equal(await pagina.$eval("#pausar-escena", (e) => e.getAttribute("aria-pressed")), "true", "la pausa se conserva tras recargar");
     await pagina.click("#pausar-escena");
 
     await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
     await pagina.waitForFunction(() => document.getElementById("pausar-escena").disabled);
-    const cuadroReducido = await pagina.evaluate(() => window.cuadrosEscena);
-    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 150)));
-    assert.equal(await pagina.evaluate(() => window.cuadrosEscena), cuadroReducido, "el cambio del sistema detiene el lienzo inmediatamente");
-    assert.equal(await pagina.$eval(".luz-proyector", (e) => getComputedStyle(e).animationName), "none");
+    await pagina.evaluate(() => new Promise((resolver) => requestAnimationFrame(() => requestAnimationFrame(resolver))));
+    const reducido = await pagina.$eval("#observatorio", (e) => Number(e.dataset.frames || 0));
+    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 200)));
+    assert.equal(await pagina.$eval("#observatorio", (e) => Number(e.dataset.frames || 0)), reducido);
     await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "no-preference" }]);
     await pagina.waitForFunction(() => !document.getElementById("pausar-escena").disabled);
     assert.equal(await pagina.$eval("#pausar-escena", (e) => e.getAttribute("aria-pressed")), "false");
   } finally { await pagina.close(); }
 });
 
-test("movimiento reducido inicial usa imágenes y solicita WebGL sólo al habilitar movimiento", { timeout: 20_000 }, async () => {
+test("movimiento reducido inicial conserva una composición quieta y reanuda el mismo lienzo", { timeout: 25_000 }, async () => {
   const pagina = await nuevaPagina(1440);
   try {
     await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
-    await pagina.evaluateOnNewDocument(() => {
-      window.solicitudesSala = 0;
-      const contexto = HTMLCanvasElement.prototype.getContext;
-      HTMLCanvasElement.prototype.getContext = function (tipo, ...opciones) {
-        if (this.id === "lienzo" && /^(webgl2?|experimental-webgl)$/.test(tipo)) window.solicitudesSala++;
-        return contexto.call(this, tipo, ...opciones);
-      };
-    });
     await cargar(pagina);
-    assert.equal(await pagina.evaluate(() => window.solicitudesSala), 0, "la lectura estática no solicita un contexto GPU");
-    assert.equal(await pagina.$eval("#lienzo", (e) => e.dataset.motor), "imagen");
+    await pagina.waitForFunction(() => ["webgl", "respaldo"].includes(document.body.dataset.motor));
     assert.equal(await pagina.$eval("#pausar-escena", (e) => e.disabled), true);
-    await pagina.click("#cambiar-escena");
-    assert.equal(await pagina.$eval("body", (e) => e.dataset.escena), "nocturno");
-    assert.equal(await pagina.$eval(".ambiente-nocturno", (e) => getComputedStyle(e).opacity), "1", "el respaldo fotográfico permite cambiar de escena");
-    assert.equal(await pagina.evaluate(() => window.solicitudesSala), 0, "cambiar la imagen tampoco abre la GPU");
-
-    await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "no-preference" }]);
-    await pagina.waitForFunction(() => window.solicitudesSala === 1 && !document.getElementById("pausar-escena").disabled);
-    assert.equal(await pagina.$eval("body", (e) => e.dataset.escena), "nocturno", "la sala arranca en la escena elegida");
-    await pagina.click("#pausar-escena");
-    await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
-    await pagina.waitForFunction(() => document.getElementById("pausar-escena").disabled);
+    await pagina.evaluate(() => { window.observatorioReducido = document.getElementById("observatorio"); });
+    const antes = await pagina.$eval("#observatorio", (e) => Number(e.dataset.frames || 0));
+    await pagina.evaluate(() => new Promise((resolver) => setTimeout(resolver, 200)));
+    assert.equal(await pagina.$eval("#observatorio", (e) => Number(e.dataset.frames || 0)), antes);
+    assert.ok(await pagina.$eval("main h1", (e) => e.textContent.trim().length > 0));
     await pagina.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "no-preference" }]);
     await pagina.waitForFunction(() => !document.getElementById("pausar-escena").disabled);
-    assert.equal(await pagina.evaluate(() => window.solicitudesSala), 1, "el contexto existente no se recrea al cambiar preferencias");
-    assert.equal(await pagina.$eval("#pausar-escena", (e) => e.getAttribute("aria-pressed")), "true", "el cambio de preferencias conserva la pausa manual");
+    if (await pagina.$eval("body", (e) => e.dataset.motor === "webgl")) {
+      await pagina.waitForFunction((anterior) => Number(document.getElementById("observatorio").dataset.frames) > anterior, {}, antes);
+    }
+    assert.equal(await pagina.evaluate(() => document.getElementById("observatorio") === window.observatorioReducido), true);
   } finally { await pagina.close(); }
 });
 

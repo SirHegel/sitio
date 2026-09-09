@@ -2,7 +2,7 @@
   "name": "sitio-jhon-steven-alvarez-ruiz",
   "version": "1.0.0",
   "private": true,
-  "description": "Sitio personal de Jhon Steven Alvarez Ruiz. Estático y sin dependencias de ejecución.",
+  "description": "Sitio personal de Jhon Steven Alvarez Ruiz. HTML estático, escenografía 3D y laboratorio científico interactivo.",
   "type": "module",
   "scripts": {
     "build": "npm run build:mapa && node construir.js",
@@ -27,6 +27,7 @@
     "maplibre-gl": "6.6.0",
     "preact": "10.29.8",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "three": "^0.186.0"
   }
 }

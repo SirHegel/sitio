@@ -49,6 +49,7 @@ async function nuevaPagina(t, { ancho = 390, preferencia = "0", reducido = false
   const contexto = await navegador.createBrowserContext();
   const pagina = await contexto.newPage();
   const errores = [];
+  const imagenes = [];
   const traza = { ancho, fase: "crear página", errores };
   let cierre;
   const cerrar = () => (cierre ||= contexto.close().catch(() => {}));
@@ -68,6 +69,7 @@ async function nuevaPagina(t, { ancho = 390, preferencia = "0", reducido = false
   pagina.on("pageerror", (error) => errores.push(error.message));
   await pagina.setRequestInterception(true);
   pagina.on("request", (peticion) => {
+    if (peticion.resourceType() === "image") imagenes.push(peticion.url());
     if (peticion.resourceType() === "media" || /\/_vercel\/|\/api\/visita/.test(peticion.url())) peticion.abort();
     else peticion.continue();
   });
@@ -103,7 +105,7 @@ async function nuevaPagina(t, { ancho = 390, preferencia = "0", reducido = false
     };
   }, { preferencia, audio });
   if (sinJS) await pagina.setJavaScriptEnabled(false);
-  return { pagina, errores, cerrar };
+  return { pagina, errores, cerrar, imagenes };
 }
 
 async function cargar(pagina) {
@@ -181,12 +183,14 @@ test("entrar con música llama play dentro del gesto y conserva el mismo audio a
   const { pagina, errores } = await nuevaPagina(t, { ancho: 1440 });
   await cargar(pagina);
   await comprobarDialogo(pagina);
+  await pagina.waitForFunction(() => document.body.dataset.motor === "webgl" && Number(document.getElementById("observatorio").dataset.frames) > 0);
+  await pagina.evaluate(() => { window.__qaCanvasEntrada = document.getElementById("observatorio"); });
   await pagina.click("#entrar-con-musica");
   const llamadas = await pagina.evaluate(() => window.__qaEntrada.reproducciones);
   assert.deepEqual(llamadas, [{ confiable: true, dentroDelGesto: true, activacion: true, destino: "entrar-con-musica" }], "play se solicita antes de abandonar el evento del usuario");
   await esperarSalida(pagina);
   await pagina.evaluate(() => { window.__qaAudioEntrada = document.querySelector("audio"); window.__qaDocumentoEntrada = document; window.__qaAudioEntrada.currentTime = 17.25; });
-  for (const ruta of ["/blog/", "/proyectos/"]) {
+  for (const ruta of ["/blog/", "/proyectos/", "/ciencia/"]) {
     await pagina.evaluate((destino) => document.querySelector(`nav.menu a[href="${destino}"]`).click(), ruta);
     await pagina.waitForFunction((destino) => document.body.dataset.ruta === destino && !document.documentElement.classList.contains("navegando"), {}, ruta);
     assert.deepEqual(await pagina.evaluate(() => ({
@@ -195,6 +199,7 @@ test("entrar con música llama play dentro del gesto y conserva el mismo audio a
       llamadas: window.__qaEntrada.reproducciones.length, sonando: !window.__qaAudioEntrada.paused,
     })), { documento: true, audio: true, cantidad: 1, segundo: 17.25, llamadas: 1, sonando: true });
     assert.equal(await pagina.evaluate(puertaVisible), false);
+    assert.equal(await pagina.evaluate(() => document.getElementById("observatorio") === window.__qaCanvasEntrada), true, "la sala de entrada continúa durante la lectura y navegación");
   }
   await comprobarSinErrores(pagina, errores);
 });
@@ -269,4 +274,14 @@ test("sin JavaScript el contenido y la navegación permanecen accesibles sin ele
   assert.equal(new URL(pagina.url()).pathname, "/proyectos/");
   assert.ok(await pagina.$eval("main h1", (e) => e.textContent.trim()));
   assert.deepEqual(errores, []);
+});
+
+test("el primer acceso modela su sala sin solicitar fotografías de portada o entrada", { timeout: 20_000 }, async (t) => {
+  const { pagina, errores, imagenes } = await nuevaPagina(t, { ancho: 1440 });
+  await cargar(pagina);
+  await comprobarDialogo(pagina);
+  await pagina.waitForFunction(() => document.body.dataset.motor === "webgl" && Number(document.getElementById("observatorio").dataset.frames) > 0);
+  assert.equal(await pagina.$$eval("#puerta img, .portada img", (e) => e.length), 0);
+  assert.deepEqual(imagenes.filter((url) => /\.(?:avif|webp|jpe?g|png)(?:[?#]|$)/i.test(url)), [], "la primera vista se renderiza sin descargar fondos raster");
+  await comprobarSinErrores(pagina, errores);
 });

@@ -26,7 +26,9 @@ npm run sync:activity     # actualiza el agregado del ledger local
 | `construir.js` | Blog, proyectos, actividad, feed, sitemap y HTML estático. |
 | `api/` y `lib/` | Autenticación, CMS y auditoría en funciones de Vercel. |
 | `activos/animacion.js` | Movimiento, audio persistente y navegación progresiva. |
-| `activos/cinematografia.js` y `.css` | Escenas originales, luz de proyección, menú móvil y pausa accesible. |
+| `activos/cinematografia.js` | Un contexto 3D persistente, cámara, calidad adaptativa, menú y pausa. |
+| `activos/observatorio-3d.js` y `observatorio.css` | Geometría Three.js procedural y dirección visual del observatorio. |
+| `ciencia.js` y `activos/modelo-ciencia.js` | Laboratorio de interferencia, modelo auditable y problema inverso. |
 | `activos/lectura-accesible.js` | Desplazamiento de tablas y fórmulas mediante teclado. |
 | `datos/continuidad-publicacion-oro.json` | Estado del artículo ya publicado y SHA del manuscrito revisado. |
 
@@ -34,10 +36,25 @@ La navegación interna reemplaza únicamente el contenido principal. El elemento
 `<audio>` permanece vivo, por lo que cambiar de Inicio a Blog o Proyectos no
 reinicia ni apaga la obra.
 
-Terciopelo, Nocturno y Celuloide cambian según la sección o la elección del lector.
-El canvas está limitado a 45 partículas y 30 cuadros por segundo; se pausa cuando
-la pestaña está oculta. El movimiento reducido se respeta también al cambiar la
-preferencia durante la visita. La entrada nunca exige un clic para acceder al contenido.
+La entrada y todas las páginas comparten una habitación modelada con Three.js:
+terciopelo, suelo chevrón, lámpara, butaca y un instrumento orbital de cromo.
+No se cargan fotografías ni videos como escenografía. El puntero mueve la
+cámara; los objetos y sus controles equivalentes permiten modificar luz, telón
+u órbita. Se compila `observatorio-motor.js` con esbuild en cada construcción.
+
+El reloj sigue `requestAnimationFrame`; la opción Auto reduce la resolución si
+120 cuadros consecutivos promedian más de 25 ms. Alta permite DPR hasta 2;
+Ligera usa 0,85. La frecuencia alcanzada depende del equipo. La pausa, el
+movimiento reducido y la pestaña oculta detienen el reloj de la sala. Sin WebGL
+permanecen contenido, navegación y controles científicos de lectura. La entrada
+opcional ofrece música o silencio y se puede omitir con Escape.
+
+`/ciencia/` contiene un laboratorio de dos modos en un anillo: representación
+paramétrica, esfera de Bloch, densidad con ejes, diseño inverso y exportación CSV.
+Expone un resultado conocido con demostración: dos estados pueden producir la
+misma densidad, y una medición de población modal distingue las ramas. No se
+presenta como solución de un problema abierto. Las referencias audiovisuales y
+su método de inspección están en `documentos/referencias-observatorio.md`.
 
 ## Música
 

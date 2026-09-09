@@ -18,6 +18,7 @@ export const MENU = [
   { ruta: "/hoja-de-vida/", texto: "Hoja de vida" },
   { ruta: "/academico/", texto: "Académico" },
   { ruta: "/proyectos/", texto: "Proyectos" },
+  { ruta: "/ciencia/", texto: "Ciencia" },
   { ruta: "/contribuciones/", texto: "Contribuciones" },
   { ruta: "/blog/", texto: "Blog" },
   { ruta: "/trayectoria/", texto: "Trayectoria" },
@@ -99,8 +100,7 @@ export function pagina({
 }) {
   const url = SITIO + ruta;
   const ld = { "@context": "https://schema.org", "@graph": grafo };
-  const escenaInicial = ruta.startsWith("/blog/") ? "celuloide"
-    : /^\/(proyectos|contribuciones|academico)\//.test(ruta) ? "nocturno" : "terciopelo";
+  const escenaInicial = "terciopelo";
 
   const enlaces = MENU.map(
     (m) => {
@@ -151,8 +151,8 @@ ${ruta === "/" ? `<meta property="profile:first_name" content="Jhon Steven">
 <link rel="stylesheet" href="/activos/transiciones.css">
 <link rel="stylesheet" href="/activos/movimiento.css">
 <link rel="stylesheet" href="/activos/entrada.css">
-${!ruta.startsWith("/admin/") ? `<link rel="preload" as="image" href="/activos/escenas/${escenaInicial}.webp" media="(min-width: 769px)">
-<link rel="preload" as="image" href="/activos/escenas/${escenaInicial}-movil.webp" media="(max-width: 768px)">` : ""}
+<link rel="stylesheet" href="/activos/observatorio.css">
+<link rel="stylesheet" href="/activos/ciencia-lab.css">
 
 <script type="application/ld+json">
 ${json(ld)}
@@ -162,13 +162,8 @@ ${json(ld)}
 
 <a class="saltar" href="#principal">Saltar al contenido</a>
 
-<div id="fondo" aria-hidden="true">
-  <div class="ambiente ambiente-terciopelo"></div>
-  <div class="ambiente ambiente-nocturno"></div>
-  <div class="ambiente ambiente-celuloide"></div>
-  <div class="luz-proyector"></div>
-</div>
-<canvas id="lienzo" aria-hidden="true"></canvas>
+<div id="fondo" aria-hidden="true"></div>
+${!ruta.startsWith("/admin/") ? '<canvas id="observatorio" aria-hidden="true"></canvas>' : ''}
 <div id="grano" aria-hidden="true"></div>
 <div id="halo" aria-hidden="true"></div>
 <div id="avance" aria-hidden="true"></div>
@@ -221,9 +216,9 @@ ${cuerpo}
 
 </div>
 
-${ruta.startsWith("/admin/") ? "" : `<div class="direccion-escena" aria-label="Ambiente visual">
-  <span class="escena-indice" aria-hidden="true">01</span>
-  <button id="cambiar-escena" type="button" aria-label="Cambiar ambiente visual: Terciopelo">Terciopelo <span aria-hidden="true">↗</span></button>
+${ruta.startsWith("/admin/") ? "" : `<div class="direccion-escena" aria-label="Controles del observatorio">
+  <span class="estado-render"><i aria-hidden="true"></i><span id="estado-render">Observatorio</span></span>
+  <label class="calidad-label"><span class="solo-lectores">Calidad del modelo 3D</span><select id="calidad-3d" aria-label="Calidad del modelo 3D"><option value="auto">Auto</option><option value="alta">Alta</option><option value="ahorro">Ligera</option></select></label>
   <button id="pausar-escena" type="button" aria-pressed="false" aria-label="Pausar movimiento del sitio"><span aria-hidden="true">Ⅱ</span></button>
 </div>
 
@@ -245,8 +240,7 @@ ${scripts.map((src) => `<script type="module" src="${esc(src)}"></script>`).join
 
 function puertaHTML() {
   return `<dialog id="puerta" aria-labelledby="umbral-titulo" aria-describedby="umbral-descripcion">
-  <div class="umbral-fondo" aria-hidden="true"></div>
-  <canvas id="umbral-lienzo" aria-hidden="true"></canvas>
+
   <div class="umbral-velo" aria-hidden="true"></div>
   <div class="umbral-marco" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="umbral-composicion">
@@ -256,11 +250,11 @@ function puertaHTML() {
       <span class="umbral-edicion">Archivo personal<br>Una mirada propia</span>
     </header>
     <div class="umbral-presentacion">
-      <p class="umbral-supertitulo">Antes del primer plano</p>
-      <h2 id="umbral-titulo">Al otro lado<br><em>de lo evidente.</em></h2>
-      <p id="umbral-descripcion">El mundo merece una segunda lectura.</p>
+      <p class="umbral-supertitulo">IA · ciencia · cine</p>
+      <h2 id="umbral-titulo">Toda lógica<br>tiene su<br><em>lado extraño.</em></h2>
+      <p id="umbral-descripcion">Un observatorio entre el código y lo desconocido.</p>
     </div>
-    <div class="umbral-coordenada" aria-hidden="true"><span>00 / El umbral</span><i></i><span>La función comienza contigo</span></div>
+    <div class="umbral-coordenada" aria-hidden="true"><span>00 / El observatorio</span><i></i><span>Mueve el cursor. La habitación responde.</span></div>
     <footer class="umbral-acceso">
       <div class="umbral-partitura"><span class="umbral-nota" aria-hidden="true">♫</span><p>Beethoven <span>Sinfonía n.º 5</span></p><small>Elige cómo entrar.</small></div>
       <div class="umbral-opciones">
