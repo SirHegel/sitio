@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-09-09T05:39:35.000Z",
+  "actualizadoEn": "2026-09-10T02:12:53.000Z",
   "total": 23,
   "perfilGitHub": {
     "repositoriosPublicos": 43,
@@ -651,7 +651,7 @@ export const REPOSITORIOS_GITHUB = {
         "estado": "abierta",
         "url": "https://github.com/pypa/hatch/pull/2403",
         "creadoEn": "2026-08-20T20:03:30.000Z",
-        "actualizadoEn": "2026-08-20T20:03:30.000Z"
+        "actualizadoEn": "2026-09-10T02:12:53.000Z"
       },
       {
         "repositorio": "psf/black",
