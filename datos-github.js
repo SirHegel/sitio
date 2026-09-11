@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-09-10T15:16:20.000Z",
+  "actualizadoEn": "2026-09-11T04:40:55.000Z",
   "total": 23,
   "perfilGitHub": {
     "repositoriosPublicos": 43,
@@ -651,7 +651,7 @@ export const REPOSITORIOS_GITHUB = {
         "estado": "abierta",
         "url": "https://github.com/pypa/hatch/pull/2403",
         "creadoEn": "2026-08-20T20:03:30.000Z",
-        "actualizadoEn": "2026-09-10T15:16:20.000Z"
+        "actualizadoEn": "2026-09-11T03:54:11.000Z"
       },
       {
         "repositorio": "psf/black",
@@ -1763,7 +1763,7 @@ export const REPOSITORIOS_GITHUB = {
       "forks": 0,
       "creadoEn": "2026-08-22T17:38:15.000Z",
       "actualizadoEn": "2026-08-28T02:56:42.000Z",
-      "publicadoEn": "2026-09-07T14:12:29.000Z",
+      "publicadoEn": "2026-09-11T04:40:55.000Z",
       "extractoReadme": "NÁCAR — Sistemas minerales por Juan\n\nLanding premium para presentar y vender proyectos de tratamiento mineral con magnesio para piscinas. Incluye sitio público, formulario de diagnóstico, CMS privado y bandeja de prospectos.\nPrimer arranque seguro\n\nEl repositorio se entrega sin usuario, contraseña, hash, secreto de sesión, token de almacenamiento ni datos de prospectos. Tampoco existe una cuenta predeterminada.\n\nRequiere Node.js 24 o posterior. El archivo .nvmrc fija la misma línea que CI, los tipos de Node y el despliegue; el .npmrc versionado sólo activa engine-strict, de modo que npm rechaza versiones anteriores incluso si se omiten scripts. Las credenciales de registros privados deben guardarse en la configuración personal de npm, nunca en este repositorio.\n\nnpm run setup solicita en una terminal privada el usuario y una contraseña de al menos 14 caracteres elegidos por el nuevo propietario. La contraseña no se escribe en ningún archivo: se guarda solamente un hash scrypt con sal aleatoria. El comando también genera un secreto de sesión y deja .env.local con permisos 600.\n\nDespués hay que configurar un almacenamiento privado de Vercel Blob y agregar su token como BLOBREADWRITETOKEN en .env.local. Se puede vincular un proyecto propio y descargar sus variables con:\n\nSi .env.local ya contiene un acceso, el comando exige escribir ROTAR antes de reemplazarlo. Conserva las demás variables. Para iniciar:\n\nAbre El panel privado está en /admin/login y permanece bloqueado si falta o es inválida cualquiera de sus variables. El alta inicial se hace solo desde la terminal, nunca desde una ruta pública de Internet.\nVariables de entorno\n\nUsa .env.example como inventario, sin colocar valores reales en ese archivo:\n\nPara producción, define SITEURL con el origen HTTPS completo y registra los valores mediante el gestor de secretos de Vercel o del proveedor elegido. No subas .env.local, no pegues secretos en incidencias o pull requests y no uses variables NEXTPUBLIC para información sensible.\nCMS, acceso y almacenamiento\n\nEl panel permite editar la marca, portada, secciones, tarjetas, proceso, FAQ, SEO, contacto e imagen principal; también permite activar u ocultar módulos completos y publicar los cambios.\n\nLos contenidos y prospectos se guardan como JSON privado en Vercel Blob. Los prospectos tienen estados, notas internas y borrado definitivo desde el panel. La sesión dura diez horas, está firmada mediante HMAC y usa una cookie HttpOnly, SameSite=Strict y Secure en producción. El acceso aplica validación de origen y limitación local de intentos; en despliegues distribuidos también debe activarse el rate limit o firewall del proveedor.\nContactos y entrega de solicitudes\n\nEl formulario valida, evita duplicados por reintento, genera una referencia y guarda cada solicitud en la bandeja privada. El WhatsApp y el correo comercial se configuran desde “Marca y contacto” dentro del panel; el número debe usar formato internacional sin +, espacios ni guiones.…",
       "inventario": {
         "revision": "15975530e44bc1075e6e364ce5d397ea7cf83b8b",
