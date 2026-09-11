@@ -9,7 +9,7 @@ export const REPOSITORIOS_GITHUB = {
     "repositoriosPublicos": 43,
     "repositoriosPropios": 23,
     "forksPublicos": 20,
-    "seguidores": 6,
+    "seguidores": 5,
     "seguidos": 2
   },
   "forks": [
