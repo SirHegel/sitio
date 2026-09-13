@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-09-13T07:01:38.000Z",
+  "actualizadoEn": "2026-09-13T21:07:40.000Z",
   "total": 23,
   "perfilGitHub": {
     "repositoriosPublicos": 43,
@@ -2345,7 +2345,7 @@ export const REPOSITORIOS_GITHUB = {
       "forks": 0,
       "creadoEn": "2026-08-18T19:05:42.000Z",
       "actualizadoEn": "2026-08-20T22:24:14.000Z",
-      "publicadoEn": "2026-08-20T07:33:03.000Z",
+      "publicadoEn": "2026-09-13T21:07:40.000Z",
       "extractoReadme": "Saldantia — site\n\nStatic marketing site. No framework, no build step, no dependencies: HTML, four\nstylesheets and one script.\nStructure\n\n· Path · Role ·\n\n· index.html · The whole page. ·\n· css/base.css · Design tokens, reset, utilities. ·\n· css/hero.css · Opening section. ·\n· css/servicios.css · Services grid. ·\n· css/secciones.css · Remaining blocks. ·\n· js/scroll.js · Reveal-on-scroll and navigation state. ·\nRunning it\n\nOpen index.html, or serve the directory:\n\nQuality audit\n\nAUDITORIACALIDAD.md records a full pass over the\nsite: every class in the markup accounted for, render verified at 1024, 768 and\n480 px with no horizontal overflow, all seven form controls given a valid\nlabel[for], decorative SVGs hidden from the accessibility tree, and normal\ntext held at 4.5:1 contrast or better against every surface it sits on.\n\nTwo colour changes came out of it: --text-faint was lightened, and\n--accent-text was introduced so small red text could meet contrast without\naltering the red used on buttons and filled surfaces.",
       "inventario": {
         "revision": "195ac3fc5803a33be2d8315cad28e3195fd41da1",
