@@ -766,6 +766,11 @@ export const REPOSITORIOS_GITHUB = {
       "url": "https://github.com/SirHegel?achievement=galaxy-brain&tab=achievements"
     },
     {
+      "slug": "pair-extraordinaire",
+      "nombre": "Pair Extraordinaire",
+      "url": "https://github.com/SirHegel?achievement=pair-extraordinaire&tab=achievements"
+    },
+    {
       "slug": "pull-shark",
       "nombre": "Pull Shark",
       "url": "https://github.com/SirHegel?achievement=pull-shark&tab=achievements"
