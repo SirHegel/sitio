@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-09-18T04:21:56.000Z",
+  "actualizadoEn": "2026-09-18T14:28:41.000Z",
   "total": 23,
   "perfilGitHub": {
     "repositoriosPublicos": 43,
@@ -589,11 +589,11 @@ export const REPOSITORIOS_GITHUB = {
   "contribucionesExternas": {
     "totales": {
       "pullRequestsPublicos": 68,
-      "fusionadosPublicos": 50,
+      "fusionadosPublicos": 51,
       "pullRequests": 20,
       "repositorios": 19,
-      "fusionadas": 3,
-      "abiertas": 10,
+      "fusionadas": 4,
+      "abiertas": 9,
       "cerradas": 7
     },
     "pullRequests": [
@@ -616,10 +616,10 @@ export const REPOSITORIOS_GITHUB = {
       {
         "repositorio": "python-poetry/poetry",
         "titulo": "docs: clarify update group lock scope",
-        "estado": "abierta",
+        "estado": "fusionada",
         "url": "https://github.com/python-poetry/poetry/pull/11024",
         "creadoEn": "2026-08-28T03:08:12.000Z",
-        "actualizadoEn": "2026-08-28T03:09:01.000Z"
+        "actualizadoEn": "2026-09-18T14:28:41.000Z"
       },
       {
         "repositorio": "kodepandai/awesome-gh-cli-extensions",
