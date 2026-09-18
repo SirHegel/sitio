@@ -3,7 +3,7 @@
 export const REPOSITORIOS_GITHUB = {
   "propietario": "SirHegel",
   "perfil": "https://github.com/SirHegel",
-  "actualizadoEn": "2026-09-14T15:09:27.000Z",
+  "actualizadoEn": "2026-09-18T04:21:56.000Z",
   "total": 23,
   "perfilGitHub": {
     "repositoriosPublicos": 43,
@@ -675,7 +675,7 @@ export const REPOSITORIOS_GITHUB = {
         "estado": "cerrada",
         "url": "https://github.com/sphinx-doc/sphinx/pull/14627",
         "creadoEn": "2026-08-20T17:25:39.000Z",
-        "actualizadoEn": "2026-08-20T22:33:29.000Z"
+        "actualizadoEn": "2026-09-18T04:21:56.000Z"
       },
       {
         "repositorio": "pytest-dev/pytest",
